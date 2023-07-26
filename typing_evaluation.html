@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typing Evaluation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="evaluation-block">
+  <h1>Typing Evaluation</h1>
+  <div id="introduction">
+    <p>
+      This section of the evaluation is focused on seeing how easy this keyboard is to use.
+      When you start, you will see a paragraph appear – your goal is to type this paragraph out as you see it. 
+    </p>
+    <b>
+      Please ensure you are sat comfortably and naturally before you start the evaluation.
+    </b>
+    <br>
+    <br>
+    <div class="progression-buttons">
+      <button class = "full-width" id="begin" onclick="start()">Start the evaluation</button>
+    </div>
+    <br>
+  </div>
+  <div id="input-area" style="display: none">
+    <div id="evaluation-area">
+    </div>
+    <div id="input-field">
+      <label for="input"></label><textarea id="input" placeholder="" class="hidden-input"></textarea>
+    </div>
+  </div>
+  <script>
+    function start(){
+      document.getElementById('introduction').style.display = "none";
+      document.getElementById('input-area').style.display = "block";
+    }
+    
+    let words = [
+      'a', 'ability', 'able', 'about', 'above', 'accept', 'according', 'account', 'across', 'act', 'action', 'activity', 'actually', 'add', 'address', 'administration', 'admit', 'adult', 'affect', 'after', 'again', 'against', 'age', 'agency', 'agent', 'ago', 'agree', 'agreement', 'ahead', 'air', 'all', 'allow', 'almost', 'alone', 'along', 'already', 'also', 'although', 'always', 'American', 'among', 'amount', 'analysis', 'and', 'animal', 'another', 'answer', 'any', 'anyone', 'anything', 'appear', 'apply', 'approach', 'area', 'argue', 'arm', 'around', 'arrive', 'art', 'article', 'artist', 'as', 'ask', 'assume', 'at', 'attack', 'attention', 'attorney', 'audience', 'author', 'authority', 'available', 'avoid', 'away', 'baby', 'back', 'bad', 'bag', 'ball', 'bank', 'bar', 'base', 'be', 'beat', 'beautiful', 'because', 'become', 'bed', 'before', 'begin', 'behavior', 'behind', 'believe', 'benefit', 'best', 'better', 'between', 'beyond', 'big', 'bill', 'billion', 'bit', 'black', 'blood', 'blue', 'board', 'body', 'book', 'born', 'both', 'box', 'boy', 'break', 'bring', 'brother', 'budget', 'build', 'building', 'business', 'but', 'buy', 'by', 'call', 'camera', 'campaign', 'can', 'cancer', 'candidate', 'capital', 'car', 'card', 'care', 'career', 'carry', 'case', 'catch', 'cause', 'cell', 'center', 'central', 'century', 'certain', 'certainly', 'chair', 'challenge', 'chance', 'change', 'character', 'charge', 'check', 'child', 'choice', 'choose', 'church', 'citizen', 'city', 'civil', 'claim', 'class', 'clear', 'clearly', 'close', 'coach', 'cold', 'collection', 'college', 'color', 'come', 'commercial', 'common', 'community', 'company', 'compare', 'computer', 'concern', 'condition', 'conference', 'Congress', 'consider', 'consumer', 'contain', 'continue', 'control', 'cost', 'could', 'country', 'couple', 'course', 'court', 'cover', 'create', 'crime', 'cultural', 'culture', 'cup', 'current', 'customer', 'cut', 'dark', 'data', 'daughter', 'day', 'dead', 'deal', 'death', 'debate', 'decade', 'decide', 'decision', 'deep', 'defense', 'degree', 'democratic', 'describe', 'design', 'despite', 'detail', 'determine', 'develop', 'development', 'die', 'difference', 'different', 'difficult', 'dinner', 'direction', 'director', 'discover', 'discuss', 'discussion', 'disease', 'do', 'doctor', 'dog', 'door', 'down', 'draw', 'dream', 'drive', 'drop', 'drug', 'during', 'each', 'early', 'east', 'easy', 'eat', 'economic', 'economy', 'edge', 'education', 'effect', 'effort', 'eight', 'either', 'election', 'else', 'employee', 'end', 'energy', 'enjoy', 'enough', 'enter', 'entire', 'environment', 'environmental', 'especially', 'establish', 'even', 'evening', 'event', 'ever', 'every', 'everybody', 'everyone', 'everything', 'evidence', 'exactly', 'example', 'executive', 'exist', 'expect', 'experience', 'expert', 'explain', 'eye', 'face', 'fact', 'factor', 'fail', 'fall', 'family', 'far', 'fast', 'father', 'fear', 'federal', 'feel', 'feeling', 'few', 'field', 'fight', 'figure', 'fill', 'film', 'final', 'finally', 'financial', 'find', 'fine', 'finger', 'finish', 'fire', 'firm', 'first', 'fish', 'five', 'floor', 'fly', 'focus', 'follow', 'food', 'foot', 'for', 'force', 'foreign', 'forget', 'form', 'former', 'forward', 'four', 'free', 'friend', 'from', 'front', 'full', 'fund', 'future', 'game', 'garden', 'gas', 'general', 'generation', 'get', 'girl', 'give', 'glass', 'go', 'goal', 'good', 'government', 'great', 'green', 'ground', 'group', 'grow', 'growth', 'guess', 'gun', 'guy', 'hair', 'half', 'hand', 'hang', 'happen', 'happy', 'hard', 'have', 'he', 'head', 'health', 'hear', 'heart', 'heat', 'heavy', 'help', 'her', 'here', 'herself', 'high', 'him', 'himself', 'his', 'history', 'hit', 'hold', 'home', 'hope', 'hospital', 'hot', 'hotel', 'hour', 'house', 'how', 'however', 'huge', 'human', 'hundred', 'husband', 'I', 'idea', 'identify', 'if', 'image', 'imagine', 'impact', 'important', 'improve', 'in', 'include', 'including', 'increase', 'indeed', 'indicate', 'individual', 'industry', 'information', 'inside', 'instead', 'institution', 'interest', 'interesting', 'international', 'interview', 'into', 'investment', 'involve', 'issue', 'it', 'item', 'its', 'itself', 'job', 'join', 'just', 'keep', 'key', 'kid', 'kill', 'kind', 'kitchen', 'know', 'knowledge', 'land', 'language', 'large', 'last', 'late', 'later', 'laugh', 'law', 'lawyer', 'lay', 'lead', 'leader', 'learn', 'least', 'leave', 'left', 'leg', 'legal', 'less', 'let', 'letter', 'level', 'lie', 'life', 'light', 'like', 'likely', 'line', 'list', 'listen', 'little', 'live', 'local', 'long', 'look', 'lose', 'loss', 'lot', 'love', 'low', 'machine', 'magazine', 'main', 'maintain', 'major', 'majority', 'make', 'man', 'manage', 'management', 'manager', 'many', 'market', 'marriage', 'material', 'matter', 'may', 'maybe', 'me', 'mean', 'measure', 'media', 'medical', 'meet', 'meeting', 'member', 'memory', 'mention', 'message', 'method', 'middle', 'might', 'military', 'million', 'mind', 'minute', 'miss', 'mission', 'model', 'modern', 'moment', 'money', 'month', 'more', 'morning', 'most', 'mother', 'mouth', 'move', 'movement', 'movie', 'much', 'music', 'must', 'my', 'myself', 'name', 'nation', 'national', 'natural', 'nature', 'near', 'nearly', 'necessary', 'need', 'network', 'never', 'new', 'news', 'newspaper', 'next', 'nice', 'night', 'no', 'none', 'nor', 'north', 'not', 'note', 'nothing', 'notice', 'now', 'number', 'occur', 'of', 'off', 'offer', 'office', 'officer', 'official', 'often', 'oh', 'oil', 'ok', 'old', 'on', 'once', 'one', 'only', 'onto', 'open', 'operation', 'opportunity', 'option', 'or', 'order', 'organization', 'other', 'others', 'our', 'out', 'outside', 'over', 'own', 'owner', 'page', 'pain', 'painting', 'paper', 'parent', 'part', 'participant', 'particular', 'particularly', 'partner', 'party', 'pass', 'past', 'patient', 'pattern', 'pay', 'peace', 'people', 'per', 'perform', 'performance', 'perhaps', 'period', 'person', 'personal', 'phone', 'physical', 'pick', 'picture', 'piece', 'place', 'plan', 'plant', 'play', 'player', 'PM', 'point', 'police', 'policy', 'political', 'politics', 'poor', 'popular', 'population', 'position', 'positive', 'possible', 'power', 'practice', 'prepare', 'present', 'president', 'pressure', 'pretty', 'prevent', 'price', 'private', 'probably', 'problem', 'process', 'produce', 'product', 'production', 'professional', 'professor', 'program', 'project', 'property', 'protect', 'prove', 'provide', 'public', 'pull', 'purpose', 'push', 'put', 'quality', 'question', 'quickly', 'quite', 'race', 'radio', 'raise', 'range', 'rate', 'rather', 'reach', 'read', 'ready', 'real', 'reality', 'realize', 'really', 'reason', 'receive', 'recent', 'recently', 'recognize', 'record', 'red', 'reduce', 'reflect', 'region', 'relate', 'relationship', 'religious', 'remain', 'remember', 'remove', 'report', 'represent', 'require', 'research', 'resource', 'respond', 'response', 'responsibility', 'rest', 'result', 'return', 'reveal', 'rich', 'right', 'rise', 'risk', 'road', 'rock', 'role', 'room', 'rule', 'run', 'safe', 'same', 'save', 'say', 'scene', 'school', 'science', 'scientist', 'score', 'sea', 'season', 'seat', 'second', 'section', 'security', 'see', 'seek', 'seem', 'sell', 'send', 'senior', 'sense', 'series', 'serious', 'serve', 'service', 'set', 'seven', 'several', 'shake', 'share', 'she', 'shoot', 'short', 'shot', 'should', 'shoulder', 'show', 'side', 'sign', 'significant', 'similar', 'simple', 'simply', 'since', 'sing', 'single', 'sister', 'sit', 'site', 'situation', 'six', 'size', 'skill', 'skin', 'small', 'smile', 'so', 'social', 'society', 'soldier', 'some', 'somebody', 'someone', 'something', 'sometimes', 'son', 'song', 'soon', 'sort', 'sound', 'source', 'south', 'southern', 'space', 'speak', 'special', 'specific', 'speech', 'spend', 'sport', 'spring', 'staff', 'stage', 'stand', 'standard', 'star', 'start', 'state', 'statement', 'station', 'stay', 'step', 'still', 'stock', 'stop', 'store', 'story', 'strategy', 'street', 'strong', 'structure', 'student', 'study', 'stuff', 'style', 'subject', 'success', 'successful', 'such', 'suddenly', 'suffer', 'suggest', 'summer', 'support', 'sure', 'surface', 'system', 'table', 'take', 'talk', 'task', 'tax', 'teach', 'teacher', 'team', 'technology', 'television', 'tell', 'ten', 'tend', 'term', 'test', 'than', 'thank', 'that', 'the', 'their', 'them', 'themselves', 'then', 'theory', 'there', 'these', 'they', 'thing', 'think', 'third', 'this', 'those', 'though', 'thought', 'thousand', 'threat', 'three', 'through', 'throughout', 'throw', 'thus', 'time', 'to', 'today', 'together', 'tonight', 'too', 'top', 'total', 'tough', 'toward', 'town', 'trade', 'traditional', 'training', 'travel', 'treat', 'treatment', 'tree', 'trial', 'trip', 'trouble', 'true', 'truth', 'try', 'turn', 'TV', 'two', 'type', 'under', 'understand', 'unit', 'until', 'up', 'upon', 'us', 'use', 'usually', 'value', 'various', 'very', 'victim', 'view', 'violence', 'visit', 'voice', 'vote', 'wait', 'walk', 'wall', 'want', 'war', 'watch', 'water', 'way', 'we', 'weapon', 'wear', 'week', 'weight', 'well', 'west', 'western', 'what', 'whatever', 'when', 'where', 'whether', 'which', 'while', 'white', 'who', 'whole', 'whom', 'whose', 'why', 'wide', 'wife', 'will', 'win', 'wind', 'window', 'wish', 'with', 'within', 'without', 'woman', 'wonder', 'word', 'work', 'worker', 'world', 'worry', 'would', 'write', 'writer', 'wrong', 'yard', 'yeah', 'year', 'yes', 'yet', 'you', 'young', 'your', 'yourself'
+    ]
+    
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    let paragraph = 0;
+    const minLength = 32;
+    const maxLength = 64;
+    const paragraphs = 2;
+    const punctuation = ['.', ',', ';', ':', '!', '?', ' -'];
+    const terminations = ['.', '!', '?'];
+    
+    let phrases = [];
+    
+    generatePhrases();
+    
+    function generatePhrases(){
+      for (let i = 0; i < paragraphs; i++) {
+        let div = document.createElement("div");
+        let span = document.createElement("span");
+        let id = 'character-visualiser-' + i.toString();
+                
+        let paragraph = generateParagraph();
+        let content = {
+          id: id,
+          phrase: paragraph
+        }
+        phrases.push(content);
+
+        span.className = 'typing-visualiser';
+        span.id = id;
+        span.innerText = paragraph;
+        
+        div.appendChild(span);
+        div.appendChild(document.createElement("br"));
+        div.appendChild(document.createElement("br"));
+        document.getElementById('evaluation-area').appendChild(div);
+      }
+    }
+    
+    function choosePhrase() {
+      currentPhrase = phrases[paragraph].phrase;
+      visualiseCharacterValidity();
+    }
+    
+    function generateParagraph(){
+      let generated = '';
+      let length = getRandomInt(minLength, maxLength);
+      for (let i = 1; i <= length; i++) {
+        generated += words[getRandomInt(0, words.length - 1)];
+        if (i === length){
+          generated += terminations[getRandomInt(0, terminations.length - 1)];
+        }
+        else {
+          if (i < length && Math.random() < 0.15) {
+            generated += punctuation[getRandomInt(0, punctuation.length - 1)];
+            generated += ' ';
+          } else {
+            generated += ' ';
+          }
+        }
+      }
+      return generated;
+    }
+    
+    const inputElement = document.getElementById('input');
+
+    let startTime;
+    let endTime;
+    let timeTaken;
+    
+    let currentPhrase;
+    let currentInput = '';
+
+    let accuracy = 100;
+    let mistakes = 0;
+    
+    let totalKeysPressed = 0;
+    let totalTypedCharacters = 0;
+
+    let wordsPerMinute = 0;
+    let charactersPerMinute = 0;
+
+    let correctedErrorCount = 0;
+    let deletedCharacterCount = 0;
+    let previousErrorCount = 0;
+
+    let typingEfficiency = 0;
+    let correctionEfficiency = 0;
+
+    let totalKeystrokeDuration = 0;
+    let totalKeystrokeSpacing = 0;
+    let totalKeyTransitionDuration = 0;
+
+    let meanKeystrokeDuration = 0;
+    let meanKeystrokeSpacing = 0;
+    let meanKeyTransitionTiming = 0;
+
+    let keystrokeDurationVariance = 0;
+    let keystrokeSpacingVariance = 0;
+    let keyTransitionTimingVariance = 0;
+
+    let listening = false;
+    let started = false;
+    let finished = false;
+
+    const millisecondsToSeconds = 1000.0;
+    const secondsToMinutes = 60.0;
+    const charactersToWords = 5.0;
+
+    function onInputChange() {
+      if (listening && !started){
+        startTime = new Date();
+        started = true;
+      }
+      if (!finished)
+      {
+        if (currentInput !== currentPhrase.slice(0, currentInput.length)) {
+          mistakes++;
+        }
+        currentInput = inputElement.value;
+        calculatePerformance();
+        visualiseCharacterValidity();
+      }
+      if (currentInput.length === currentPhrase.length)
+      {
+        paragraph++;
+        if (paragraph < paragraphs){
+          calculatePerformance();
+          resetListeners();
+          inputElement.value = '';
+          choosePhrase();
+        }
+        else {
+          finished = true;
+          calculatePerformance();
+          cacheMetrics();
+          window.location.href = 'subjective_evaluation.html';
+        }
+      }
+    }
+
+    function calculatePerformance(){
+      evaluateTypingPerformance();
+      evaluateEfficiency();
+      calculateVariance();
+    }
+    
+    function resetListeners(){
+      startTime = new Date();
+      endTime = new Date();
+      timeTaken = 0;
+      
+      currentInput = '';
+
+      accuracy = 100;
+      mistakes = 0;
+
+      totalKeysPressed = 0;
+      totalTypedCharacters = 0;
+
+      wordsPerMinute = 0;
+      charactersPerMinute = 0;
+
+      correctedErrorCount = 0;
+      deletedCharacterCount = 0;
+      previousErrorCount = 0;
+
+      typingEfficiency = 0;
+      correctionEfficiency = 0;
+
+      totalKeystrokeDuration = 0;
+      totalKeystrokeSpacing = 0;
+      totalKeyTransitionDuration = 0;
+
+      meanKeystrokeDuration = 0;
+      meanKeystrokeSpacing = 0;
+      meanKeyTransitionTiming = 0;
+
+      keystrokeDurationVariance = 0;
+      keystrokeSpacingVariance = 0;
+      keyTransitionTimingVariance = 0;
+    }
+
+    function visualiseCharacterValidity(){
+      inputElement.placeholder = currentPhrase;
+      let visualiser = document.getElementById(phrases[paragraph].id);
+      visualiser.textContent = null;
+      currentPhrase.split('').forEach(char => {
+        const charSpan = document.createElement('span');
+        charSpan.textContent = char;
+        visualiser.appendChild(charSpan);
+      })
+
+      let i = inputElement.value;
+      let referenceCharacter = i.split('');
+
+      let quoteSpanArray = visualiser.querySelectorAll('span');
+      quoteSpanArray.forEach((char, index) => {
+        let checkedCharacter = referenceCharacter[index]
+        if (checkedCharacter == null) {
+          char.classList.remove('correct-char');
+          char.classList.remove('incorrect-char');
+          char.classList.remove('current-char');
+          if (index === inputElement.value.length) {
+            char.classList.add('current-char');
+            char.classList.remove('inactive-char');
+          }
+          else{
+            char.classList.remove('current-char');
+            char.classList.add('inactive-char');
+          }
+        } else if (checkedCharacter === char.innerText) {
+          char.classList.add('correct-char');
+          char.classList.remove('incorrect-char');
+
+        } else {
+          char.classList.add('incorrect-char');
+          char.classList.remove('correct-char');
+          char.classList.remove('current-char');
+        }
+      })
+    }
+    
+    function calculateVariance() {
+      calculateKeystrokeDurationVariance();
+      calculateKeystrokeSpacingVariance();
+      calculateKeyTransitionVariance();
+    }
+    
+    const keyEvent = {
+      index: 0,
+      keydownTime: 0,
+      keyupTime: 0,
+      keystrokeDuration: 0,
+      keystrokeSpacing: 0,
+      keyTransitionDuration: 0,
+      keyCode: '',
+      active: false
+    }
+    
+    let keyEvents = [];
+
+    document.addEventListener('keydown', function(event) {
+      if (!started || finished) return;
+      if (event.key.length === 1) {
+        totalTypedCharacters++;
+      }
+      if (event.key === 'Backspace') {
+        deletedCharacterCount++;
+      }
+    });
+    document.addEventListener('keydown', function(event) {
+      if (!finished) {
+        inputElement.focus();
+        let i = inputElement.value.length;
+        inputElement.setSelectionRange(i, i);
+      }
+      if (started && !finished) {
+        totalKeysPressed++;
+        keyEvents.push({index: totalKeysPressed, keydownTime: new Date(), keyupTime: 0, keyCode: event.code, active: true});
+        if (totalKeysPressed > 1){
+          let i = keyEvents.length - 1;
+          let keystrokeSpacing = keyEvents[i].keydownTime - keyEvents[i - 1].keydownTime;
+          keyEvents[i].keystrokeSpacing = keystrokeSpacing;
+          totalKeystrokeSpacing += keystrokeSpacing;
+          if (!keyEvents[i - 1].active){
+            let keyTransitionDuration = keyEvents[i].keydownTime - keyEvents[i - 1].keyupTime;
+            keyEvents[i].keyTransitionDuration = keyTransitionDuration;
+            totalKeyTransitionDuration += keyTransitionDuration;
+          }
+        }
+      }
+    });
+    document.addEventListener('keyup', function(event) {
+      let pressed = '';
+      keyEvents.forEach(key => {
+        if (key.active === true) {
+          pressed += key.keyCode + ' ';
+          if (key.keyCode === event.code){
+            key.keyupTime = new Date();
+            key.active = false;
+            key.keystrokeDuration = key.keyupTime - key.keydownTime;
+            totalKeystrokeDuration += key.keystrokeDuration;
+          }
+        }
+      });
+    });
+
+    function calculateKeystrokeDurationVariance() {
+      let sum = 0;
+      keyEvents.forEach(key => {
+        if(!isNaN(key.keystrokeDuration)) {
+          let diff = (key.keystrokeDuration - meanKeystrokeDuration);
+          sum += (diff * diff);
+        }
+      })
+      keystrokeDurationVariance = sum / (totalKeysPressed - 1);
+    }
+    function calculateKeystrokeSpacingVariance() {
+      let sum = 0;
+      keyEvents.forEach(key => {
+        if (!isNaN(key.keystrokeSpacing)) {
+          let diff = (key.keystrokeSpacing - meanKeystrokeSpacing);
+          sum += (diff * diff);
+        }
+      })
+      keystrokeSpacingVariance = sum / (totalKeysPressed - 1);
+    }
+    function calculateKeyTransitionVariance() {
+      let sum = 0;
+      keyEvents.forEach(key => {
+        if(!isNaN(key.keyTransitionDuration)) {
+          let diff = (key.keyTransitionDuration - meanKeyTransitionTiming);
+          sum += (diff * diff); 
+        }
+      })
+      keyTransitionTimingVariance = sum / (totalKeysPressed - 1);
+    }
+    
+    function startListening() {
+      listening = true;
+    }
+    
+    function evaluateEfficiency() {
+      let typingInefficiency = (totalTypedCharacters / currentInput.length) * 100.0;
+      typingEfficiency = 100.0 - Math.abs((typingInefficiency) - 100.0);
+      correctionEfficiency = (correctedErrorCount / deletedCharacterCount) * 100.0;
+    }
+    
+    function evaluateTypingPerformance() {
+      wordsPerMinute = Math.round(((currentInput.length / charactersToWords) / timeTaken) * secondsToMinutes);
+      charactersPerMinute = Math.round((currentInput.length / timeTaken) * secondsToMinutes);
+      accuracy = checkAccuracy(currentPhrase, currentInput);
+    }
+
+    function checkAccuracy(toReference, toCheck) {
+      let errors = 0;
+      for (let i = 0; i < toCheck.length; i++) {
+        if (toReference[i] !== toCheck[i]) {
+          errors++;
+        }
+      }
+      if (errors < previousErrorCount) {
+        correctedErrorCount++;
+      }
+      previousErrorCount = errors;
+      return 100.0 - ((errors / toCheck.length) * 100.0);
+    }
+
+    setInterval(function() {
+      if (!finished && started){
+        endTime = new Date();
+        timeTaken = ((endTime - startTime) / millisecondsToSeconds);
+        meanKeystrokeDuration = totalKeystrokeDuration / totalKeysPressed;
+        meanKeystrokeSpacing = totalKeystrokeSpacing / totalKeysPressed;
+        meanKeyTransitionTiming = totalKeyTransitionDuration / totalKeysPressed;
+      }
+    })
+
+    function cacheMetrics(){
+      let metrics = [
+        {id: 'target-phrase', value: currentPhrase},
+        {id: 'entered-phrase', value: currentInput},
+        {id: 'time-taken', value: timeTaken},
+        {id: 'words-per-minute', value: wordsPerMinute},
+        {id: 'characters-per-minute', value: charactersPerMinute},
+        {id: 'total-characters-typed', value: totalTypedCharacters},
+        {id: 'total-keys-pressed', value: totalKeysPressed},
+        {id: 'corrected-error-count', value: correctedErrorCount},
+        {id: 'deleted-character-count', value: deletedCharacterCount},
+        {id: 'accuracy', value: accuracy},
+        {id: 'typing-efficiency', value: typingEfficiency},
+        {id: 'correction-efficiency', value: correctionEfficiency},
+        {id: 'mean-keystroke-duration', value: meanKeystrokeDuration},
+        {id: 'mean-keystroke-spacing', value: meanKeystrokeSpacing},
+        {id: 'mean-key-transition', value: meanKeyTransitionTiming},
+        {id: 'keystroke-duration-variance', value: keystrokeDurationVariance},
+        {id: 'keystroke-spacing-variance', value: keystrokeSpacingVariance},
+        {id: 'key-transition-variance', value: keyTransitionTimingVariance}
+      ]
+
+      metrics.forEach(metric => {
+        sessionStorage.setItem(metric.id, metric.value);
+      })
+      
+      /*let metricsJSON = {};
+      metrics.forEach(metric => {
+        metricsJSON[metric.id] = metric.value;
+      });
+      
+      let id = 'typing-evaluation-metrics-' + paragraph.toString();
+      sessionStorage.setItem(id, JSON.stringify(metricsJSON, null, 2));
+      */
+    }
+    
+    inputElement.addEventListener('input', onInputChange);
+    inputElement.addEventListener('focus', startListening);
+    
+    choosePhrase();
+  </script>
+</body>
+</html>

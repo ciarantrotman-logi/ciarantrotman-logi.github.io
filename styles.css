@@ -1,0 +1,84 @@
+html, body {
+  width: 100%
+}
+
+.current-char {
+  color: white;
+  background-color: black;
+}
+
+.incorrect-char {
+  color: white;
+  background-color: lightcoral;
+}
+ 
+.correct-char {
+  color: black;
+}
+
+.inactive-char {
+  color: lightgrey;
+}
+
+.typing-visualiser {
+  color: lightgrey;
+  font-family: "Courier New", ui-monospace;
+  font-weight: bold;
+  font-size: large;
+  margin: 32px;
+}
+
+.evaluation-block {
+  width: 50%;
+  font-family: sans-serif;
+  margin: 50px 25% 100px;
+}
+
+.slider {
+  width: 100%;
+}
+
+.progression-button {
+  display: block;
+  width: 48%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.progression-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.label-container {
+  margin-top: 10px;
+  margin-bottom: 50px;
+  font-size: 9pt;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.left-label {
+  text-align: left;
+}
+
+.right-label {
+  text-align: right;
+}
+
+.center-label {
+  text-align: center;
+}
+
+.hidden-input {
+  opacity: 0;
+  user-select: none;
+}
+
+.user-information-block {
+  margin-bottom: 8px;
+}

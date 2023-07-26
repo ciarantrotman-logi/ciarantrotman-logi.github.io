@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Information</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="evaluation-block">
+    <h1>Getting Started</h1>
+    <div id="introduction">
+        <p>
+            Thank you very much for participating in this user study. 
+            <br>
+                This study is broken up into three sections:
+            <ol>
+                <li>First we will ask you some basic questions about you</li>
+                <li>Then you will be asked to use the keyboard that you're evaluating</li>
+                <li>Lastly you'll be asked for your feedback on your thoughts</li>
+            </ol>
+            Temporary cookies will be stored in your browser to record some data related to the evaluation and 
+            will be cleared when you close the browser.
+        </p>
+        <button class = "full-width" onclick="inputUserInformation()">I understand and consent</button>
+    </div>
+    <div id="user-information" style="display: none">
+        <label for="user-name">What is your full name? </label><input type="text" id="user-name" placeholder="">
+        <p>
+            Below are a few different statements, please use the dropdown menus to select the option that most accurately
+            reflects the truth for you:
+        </p>
+        <div class="user-information-block">
+            <label for="user-hand-size">My hand size is </label>
+            <select id="user-hand-size">
+                <option value="extra-small">extra small (<160mm)</option>
+                <option value="small">small  (160mm - 174mm)</option>
+                <option value="medium" selected>medium (175mm - 189mm)</option>
+                <option value="large">large (190mm - 204mm)</option>
+                <option value="extra-large">extra large (>204mm)</option>
+            </select> on the hand size chart when measured from palm to middle finger.
+        </div>
+        <div class="user-information-block">
+            <label for="technical-familiarity">I know </label>
+            <select id="technical-familiarity">
+                <option value="unfamiliar">nothing</option>
+                <option value="somewhat-familiar" selected>a little</option>
+                <option value="very-familiar">a lot</option>
+            </select> about how keyboards work.
+        </div>
+        <div class="user-information-block">
+            <label for="keyboard-usage">I often use a keyboard in a </label>
+            <select id="keyboard-usage">
+                <option value="gaming">gaming</option>
+                <option value="productivity" selected>productivity</option>
+                <option value="gaming-and-productivity">gaming and productivity</option>
+            </select> context.
+        </div>
+        <div class="user-information-block">
+            <label for="test-condition-flag">I am doing this evaluation </label>
+            <select id="test-condition-flag">
+                <option value="true" selected>as part of an in person user test</option>
+                <option value="false">on my own</option>
+            </select>,
+            <label for="ergonomic-flag"> </label>
+            <select id="ergonomic-flag">
+                <option value="true" selected>in a test environment</option>
+                <option value="false">in an informal setting</option>
+            </select>.
+        </div>
+        <br>
+        <button onclick="inputKeyboardInformation()" id="continue-to-keyboard-data" class="full-width" >Continue to keyboard information</button></a>
+    </div>
+    <div id="keyboard-information" style="display: none">
+        <p>
+            Below are a few different statements, please use the dropdown menus and text fields to input the option that most accurately
+            reflects the truth for you:
+        </p>
+        <div class="user-information-block">
+            <label for="evaluated-keyboard-make">The keyboard brand being evaluated is </label><input type="text" id="evaluated-keyboard-make" placeholder="brand name">
+            <label for="evaluated-keyboard-model">and the model is </label><input type="text" id="evaluated-keyboard-model" placeholder="model name">.
+        </div>
+        <div class="user-information-block">
+            
+        </div>
+        <div class="user-information-block">
+            <label for="keyboard-layout">This keyboard has the </label>
+            <select id="keyboard-layout">
+                <option value="iso" selected>ISO</option>
+                <option value="ansi">ANSI</option>
+                <option value="jis">JIS</option>
+            </select> layout
+            <label for="keyboard-language">, and is in </label>
+            <select id="keyboard-language">
+            </select>. For help identifying your layout, please see <a href="https://support.apple.com/en-ie/HT201794" target="_blank">this resource</a>.
+        </div>
+        <div class="user-information-block">
+            
+        </div>
+        <div class="user-information-block">
+            <label for="benchmark-flag">This </label>
+            <select id="benchmark-flag">
+                <option value="true" selected>is</option>
+                <option value="false">is not</option>
+            </select> the keyboard or one of the keyboards that I normally use.
+        </div>
+        <div class="user-information-block">
+            <label for="palm-rest-flag">I </label>
+            <select id="palm-rest-flag">
+                <option value="true">am</option>
+                <option value="false" selected>am not</option>
+            </select> using a palm rest during this evaluation.
+        </div>
+        <br>
+        <a href="typing_evaluation.html"><button onclick="startEvaluation()" id="continue-to-evaluation" class="full-width" >Continue to typing evaluation</button></a>
+    </div>
+</body>
+<script>
+    let ansi = [
+        {id:'english-us', label: 'US English'},
+        {id:'chinese-pinyin', label: 'Chinese (Pinyin)'},
+        {id:'chinese-zhuyin', label: 'Chinese (Zhuyin)'},
+        {id:'thai', label: 'Thai'},
+        {id:'korean', label: 'korean'}
+    ]
+    let iso = [
+        {layout: 'iso', id: "english-international", label: "International English" },
+        {layout: 'iso', id: "british-irish", label: "British / Irish" },
+        {layout: 'iso', id: "arabic", label: "Arabic" },
+        {layout: 'iso', id: "bulgarian", label: "Bulgarian" },
+        {layout: 'iso', id: "french-belgian", label: "French / Belgian" },
+        {layout: 'iso', id: "french-canadian", label: "Canadian French" },
+        {layout: 'iso', id: "greek", label: "Greek" },
+        {layout: 'iso', id: "hebrew", label: "Hebrew" },
+        {layout: 'iso', id: "turkish-f", label: "Turkish (F)" },
+        {layout: 'iso', id: "turkish-q", label: "Turkish (Q)" },
+        {layout: 'iso', id: "croatian-slovenian", label: "Croatian / Slovenian" },
+        {layout: 'iso', id: "czech", label: "Czech" },
+        {layout: 'iso', id: "danish", label: "Danish" },
+        {layout: 'iso', id: "italian", label: "Italian" },
+        {layout: 'iso', id: "norwegian", label: "Norwegian" },
+        {layout: 'iso', id: "portuguese", label: "Portuguese" },
+        {layout: 'iso', id: "slovak", label: "Slovak" },
+        {layout: 'iso', id: "spanish-standard", label: "Spanish" },
+        {layout: 'iso', id: "spanish-latin", label: "Latin American Spanish" },
+        {layout: 'iso', id: "swiss", label: "Swiss" },
+        {layout: 'iso', id: "german-austrian", label: "German / Austrian" },
+        {layout: 'iso', id: "hungarian", label: "Hungarian" },
+        {layout: 'iso', id: "icelandic", label: "Icelandic" },
+        {layout: 'iso', id: "swedish-finnish", label: "Swedish / Finnish" },
+        {layout: 'iso', id: "dutch", label: "Dutch" },
+        {layout: 'iso', id: "romanian", label: "Romanian" }
+    ]
+    let jis = [
+        {layout: 'jis', id: "japanese", label: "Japanese" }
+    ]
+    
+    let layoutDropdown = document.getElementById('keyboard-layout');
+    let languageDropdown = document.getElementById('keyboard-language');
+    
+    layoutDropdown.addEventListener('change', function (){
+        populateKeyboardLanguageOptions();
+    })
+    
+    function populateKeyboardLanguageOptions(){
+        languageDropdown.innerHTML = "";
+        switch (layoutDropdown.value){
+            case 'iso':
+                iso.forEach(language =>{
+                    let option = document.createElement('option');
+                    option.value = language.id;
+                    option.text = language.label;
+                    languageDropdown.appendChild(option);
+                })
+                break;
+            case 'ansi':
+                ansi.forEach(language =>{
+                    let option = document.createElement('option');
+                    option.value = language.id;
+                    option.text = language.label;
+                    languageDropdown.appendChild(option);
+                })
+                break;
+            case 'jis':
+                jis.forEach(language =>{
+                    let option = document.createElement('option');
+                    option.value = language.id;
+                    option.text = language.label;
+                    languageDropdown.appendChild(option);
+                })
+                break;
+        }
+    }
+    
+    populateKeyboardLanguageOptions();
+    
+    function inputUserInformation(){
+        document.getElementById('introduction').style.display = 'none';
+        document.getElementById('user-information').style.display = 'block';
+    }
+    function inputKeyboardInformation(){
+        document.getElementById('introduction').style.display = 'none';
+        document.getElementById('user-information').style.display = 'none';
+        document.getElementById('keyboard-information').style.display = 'block';
+    }
+    function startEvaluation(){
+        sessionStorage.setItem('user-name', document.getElementById('user-name').value);
+        sessionStorage.setItem('user-hand-size', document.getElementById('user-hand-size').value);
+        sessionStorage.setItem('user-technical-familiarity', document.getElementById('technical-familiarity').value);
+        sessionStorage.setItem('user-keyboard-usage', document.getElementById('keyboard-usage').value);
+        sessionStorage.setItem('evaluated-keyboard-make', document.getElementById('evaluated-keyboard-make').value);
+        sessionStorage.setItem('evaluated-keyboard-model', document.getElementById('evaluated-keyboard-model').value);
+        sessionStorage.setItem('evaluated-keyboard-layout', document.getElementById('keyboard-layout').value);
+        sessionStorage.setItem('evaluated-keyboard-language', document.getElementById('keyboard-language').value);
+        sessionStorage.setItem('benchmark-flag', document.getElementById('benchmark-flag').value);
+        sessionStorage.setItem('palm-rest-flag', document.getElementById('palm-rest-flag').value);
+    }
+    setInterval(function() {
+        document.getElementById('continue-to-keyboard-data').disabled = document.getElementById('user-name').value.length === 0;
+        document.getElementById('continue-to-evaluation').disabled 
+            = document.getElementById('evaluated-keyboard-make').value.length === 0
+            || document.getElementById('evaluated-keyboard-model').value.length === 0;
+    })
+</script>
+</html>
