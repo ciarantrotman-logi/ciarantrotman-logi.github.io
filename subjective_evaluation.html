@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Subjective Evaluation</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body class="evaluation-block">
     <h1>Keyboard Evaluation</h1>
@@ -11,10 +13,10 @@
         This is the last section of the keyboard evaluation! Thank you again for your participation.
         <br> <br>
         Now you will be asked to rate your thoughts and impressions of the keyboard you are evaluating
-        across seven different categories. This should take around five minutes.
+        across seven different categories. 
         <br> <br>
-        When you are finished you will see a "Submit and Download Data" button, and you will be asked to download a file 
-        containing the data from your test. <b>Please save this file and send it to the facilitator.</b><br><br>
+        This should take around <b>five minutes</b>.
+        <br> <br>
         <div class="progression-buttons">
             <button class = "full-width" id="continue" onclick="onContinue()">I understand</button>
         </div>
@@ -26,8 +28,10 @@
             <button class = "progression-button" id="next-section" onclick="nextSection()">Next Section</button>
         </div><br>
         <div class="progression-buttons">
-            <button class = "full-width" id="submit" onclick="submit()">Submit and download data</button>
+            <button class = "full-width" id="submit" onclick="submit()">Finish user test</button>
         </div>
+    </div>
+    <div id="finish-screen" style="display: none">
     </div>
 <script>
     
@@ -40,7 +44,7 @@
     
     let sections = [
         {   header: 'Cognitive Load',
-            introduction: 'This first section is focused on understanding how easy or difficult you found using this keyboard while performing the typing evaluation.',
+            introduction: 'This first section is focused on understanding how <b>easy or difficult you found the evaluation task</b> with this keyboard.',
             instructions: 'Select using the sliders below the rating you consider the most appropriate for each statement.',
             id: 'task-load-index',
             metrics: [
@@ -69,116 +73,101 @@
                     high: "Very much",
                     description: "How frustrated or irritated did you feel when performing the typing task when using this keyboard?"}
             ],
-            range: {min: 1, max: 21, value: 11}},
+            range: {min: -10, max: 10, value: 0}},
         {   header: 'Usability',
-            introduction: 'Lastly, we want to get your final impressions of what it was like to use this keyboard overall.',
+            introduction: 'Next, we want to get understand how <b>how you found using this keyboard</b> during the evaluation.',
             instructions: 'Select using the sliders below the rating you consider the most appropriate for each statement.',
             id: 'keyboard-usability-score',
             metrics: [
-                {   id: "keyboard-usability-score-functionality-umux",
+                {   id: "umux-p-functionality",
                     low: "Strongly disagree",
                     high: "Strongly agree",
                     description: "This keyboard’s capabilities meet my requirements"},
-                {   id: "keyboard-usability-score-frustration-umux",
+                {   id: "umux-n-frustration",
                     low: "Strongly disagree",
                     high: "Strongly agree",
                     description: "Using this keyboard is a frustrating experience"},
-                {   id: "keyboard-usability-score-easiness-umux",
+                {   id: "umux-p-easiness",
                     low: "Strongly disagree",
                     high: "Strongly agree",
                     description: "This keyboard is easy to use"},
-                {   id: "keyboard-usability-score-difficulty-umux",
+                {   id: "umux-n-difficulty",
                     low: "Strongly disagree",
                     high: "Strongly agree",
                     description: "I have to spend too much time correcting things with this keyboard"},
-                {   id: "keyboard-usability-score-legibility-umux-k",
+                {   id: "umux-k-legibility",
                     low: "Strongly disagree",
                     high: "Strongly agree",
                     description: "I was easily able to understand the text and iconography on this keyboard"},
-                {   id: "keyboard-usability-score-ergonomics-umux-k",
+                {   id: "umux-k-ergonomics",
                     low: "Strongly disagree",
                     high: "Strongly agree",
                     description: "I found that I was easily able to reach all of the keys I needed to press"},
-                {   id: "keyboard-usability-score-satisfaction-umux-k",
+                {   id: "umux-k-satisfaction",
                     low: "Strongly disagree",
                     high: "Strongly agree",
                     description: "I found that typing on this keyboard felt satisfying"}
             ],
-            range: {min: 1, max: 5, value: 3}},
-        {   header: 'Immersion and Flow',
-            introduction: 'Now we want to get a quick insight into how immersed you were when you were doing the keyboard evaluation',
+            range: {min: -2, max: 2, value: 0}},
+        {   header: 'Immersion',
+            introduction: 'Now we want to get a quick insight into how <b>immersed you were</b> while you were doing this evaluation.',
             instructions: 'Select using the sliders below the rating you consider the most appropriate for each statement.',
             id: 'flow-short-scale',
             metrics: [
-                {   id: "flow-short-scale-challenge",
+                {   id: "fss-aba-challenge",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "I felt just the right amount of challenge during the evaluation task"},
-                {   id: "flow-short-scale-fluidity",
+                {   id: "fss-fp-fluidity",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "My thoughts and actions ran fluidly and smoothly while I was performing the evaluation task"},
-                {   id: "flow-short-scale-temporality",
+                {   id: "fss-aba-temporality",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "I did not notice the time passing during the evaluation task"},
-                {   id: "flow-short-scale-concentration",
+                {   id: "fss-fp-concentration",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "I had no difficulty concentrating while I was performing the evaluation task"},
-                {   id: "flow-short-scale-clarity",
+                {   id: "fss-fp-clarity",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "My mind was completely clear while I was performing the evaluation task"},
-                {   id: "flow-short-scale-absorption",
+                {   id: "fss-aba-absorption",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "I was totally absorbed in the evaluation task"},
-                {   id: "flow-short-scale-autonomy",
+                {   id: "fss-fp-autonomy",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "The right movements occurred of their own accord while I was performing the evaluation task"},
-                {   id: "flow-short-scale-confidence",
+                {   id: "fss-fp-confidence",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "I knew what I had to do at each step of the way during the evaluation task"},
-                {   id: "flow-short-scale-control",
+                {   id: "fss-fp-control",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
                     description: "I felt like I had everything under control while I was performing the evaluation task"},
-                {   id: "flow-short-scale-thought",
+                {   id: "fss-aba-thought",
                     low: "Not at all",
                     center: "Partly",
                     high: "Very much",
-                    description: "I was completely lost in thought during the evaluation task"},
-                {   id: "flow-short-scale-risk",
-                    low: "Not at all",
-                    center: "Partly",
-                    high: "Very much",
-                    description: "Something important to me was at stake during the evaluation task"},
-                {   id: "flow-short-scale-urgency",
-                    low: "Not at all",
-                    center: "Partly",
-                    high: "Very much",
-                    description: "I felt as though I must not make any mistakes during the evaluation task"},
-                {   id: "flow-short-scale-worry",
-                    low: "Not at all",
-                    center: "Partly",
-                    high: "Very much",
-                    description: "I was worried about failing while I was performing the evaluation task"}
+                    description: "I was completely lost in thought during the evaluation task"}
             ],
-            range: {min: 1, max: 3, value: 2}},
+            range: {min: -1, max: 1, value: 0}},
         {   header: 'Acoustics',
-            introduction: 'This next section looks at your perception of the different qualities of the sound that the keyboard you are evaluating makes when you are typing with it.',
+            introduction: 'This next section looks at what your impressions of the <b>sound of the keyboard</b> are.',
             instructions: 'Select using the sliders below the rating you consider the most appropriate for the acoustics of the keyboard you are evaluating.',
             id: 'timbre-semantic-pairs',
             metrics: [
@@ -218,11 +207,11 @@
                     low: "Thick",
                     high: "Thin",
                     description: ""},
-                {   id: "timbre-strength",
+                {   id: "timbre-weakness",
                     low: "Weak",
                     high: "Powerful",
                     description: ""},
-                {   id: "timbre-texture",
+                {   id: "timbre-metallicness",
                     low: "Metallic",
                     high: "Deep",
                     description: ""},
@@ -230,16 +219,15 @@
                     low: "Harsh",
                     high: "Mild",
                     description: ""},
-                {   id: "timbre-aesthetics",
+                {   id: "timbre-beauty",
                     low: "Beautiful",
                     high: "Ugly",
                     description: ""},
-                {   metric: "Crispiness",
-                    id: "timbre-keyboard-crispiness",
+                {   id: "timbre-keyboard-crispiness",
                     low: "Crispy",
                     high: "Thocky",
                     description: ""},
-                {   id: "timbre-keyboard-quality",
+                {   id: "timbre-keyboard-premiumness",
                     low: "Premium",
                     high: "Basic",
                     description: ""},
@@ -248,9 +236,9 @@
                     high: "Unsatisfying",
                     description: ""}
             ],
-            range: {min: 0, max: 100, value: 50}},
+            range: {min: -50, max: 50, value: 0}},
         {   header: 'Tactile Feedback',
-            introduction: 'This section is focused on getting a sense of your perception of the tactile feedback you get when you press a key on this keyboard.',
+            introduction: 'Next, we want a sense of what your impressions of the <b>tactile feedback from the keyboard</b> are.',
             instructions: 'Select using the sliders below the rating you consider the most appropriate for the click feel of the keyboard you are evaluating.',
             id: 'haptic-semantic-pairs',
             metrics: [
@@ -266,7 +254,7 @@
                     low: "Satisfying",
                     high: "Unsatisfying",
                     description: ""},
-                {   id: "haptic-weight",
+                {   id: "haptic-heaviness",
                     low: "Heavy",
                     high: "Light",
                     description: ""},
@@ -274,7 +262,7 @@
                     low: "Strong",
                     high: "Weak",
                     description: ""},
-                {   id: "haptic-clarity",
+                {   id: "haptic-distinctness",
                     low: "Distinct",
                     high: "Indistinct",
                     description: ""},
@@ -286,26 +274,30 @@
                     low: "Stable",
                     high: "Unstable",
                     description: ""},
-                {   id: "haptic-quality",
+                {   id: "haptic-premiumness",
                     low: "Premium",
                     high: "Basic",
                     description: ""}
             ],
-            range: {min: 0, max: 100, value: 50}},
+            range: {min: -50, max: 50, value: 0}},
         {   header: 'Touch and Feel',
-            introduction: 'Next we want to get a sense of what you think of the actual physical touch and feel of the keys on the keyboard itself.',
+            introduction: 'Now we want a quick sense of your thoughts on the <b>touch and feel of the keys</b> on this keyboard.',
             instructions: 'Select using the sliders below the rating you consider the most appropriate for the feeling of keys on the keyboard you are evaluating.',
             id: 'somatosensory-semantic-pairs',
             metrics: [
-                {   id: "somatosensory-texture",
-                    low: "Satin",
-                    high: "Course",
+                {   id: "somatosensory-smoothness",
+                    low: "Smooth",
+                    high: "Rough",
                     description: ""},
-                {   id: "somatosensory-hardness",
+                {   id: "somatosensory-stickiness",
+                    low: "Sticky",
+                    high: "Slippy",
+                    description: ""},
+                {   id: "somatosensory-softness",
                     low: "Soft",
                     high: "Hard",
                     description: ""},
-                {   id: "somatosensory-temperature",
+                {   id: "somatosensory-coldness",
                     low: "Cold",
                     high: "Warm",
                     description: ""},
@@ -314,54 +306,54 @@
                     high: "Rigid",
                     description: ""}
             ],
-            range: {min: 0, max: 100, value: 50}},
+            range: {min: -50, max: 50, value: 0}},
         {   header: 'Design and Aesthetics',
-            introduction: 'Next we want to get a sense of your perception of the design and aesthetics of the keyboard you are evaluating.',
+            introduction: 'Then finally, we want to get a sense of your perception of the <b>design and aesthetics</b> of this keyboard.',
             instructions: 'Select using the sliders below the rating you consider the most appropriate for the keyboard you are evaluating.',
             id: 'hedonistic-pragmatic-usability',
             metrics: [
-                {   id: "hedonistic-pragmatic-usability-simplicity-p",
-                    low: "Simple",
-                    high: "Complicated",
+                {   id: "attrakdiff-p-simple",
+                    low: "Complicated",
+                    high: "Simple",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-attractiveness-a",
+                {   id: "attrakdiff-a-attractive",
                     low: "Ugly",
                     high: "Attractive",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-practicality-p",
-                    low: "Practical",
-                    high: "Impractical",
+                {   id: "attrakdiff-p-practical",
+                    low: "Impractical",
+                    high: "Practical",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-stylishness-h",
-                    low: "Stylish",
-                    high: "Tacky",
+                {   id: "attrakdiff-h-stylish",
+                    low: "Tacky",
+                    high: "Stylish",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-predictability-p",
-                    low: "Predictable",
-                    high: "Unpredictable",
+                {   id: "attrakdiff-p-predictable",
+                    low: "Unpredictable",
+                    high: "Predictable",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-luxury-h",
+                {   id: "attrakdiff-h-premiumn",
                     low: "Cheap",
                     high: "Premium",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-creativity-h",
+                {   id: "attrakdiff-h-creative",
                     low: "Unimaginative",
                     high: "Creative",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-quality-a",
-                    low: "Good",
-                    high: "Bad",
+                {   id: "attrakdiff-a-good",
+                    low: "Bad",
+                    high: "Good",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-clarity-p",
+                {   id: "attrakdiff-p-structure",
                     low: "Confusing",
                     high: "Clearly Structured",
                     description: ""},
-                {   id: "hedonistic-pragmatic-usability-dullness-h",
+                {   id: "attrakdiff-h-captivating",
                     low: "Dull",
                     high: "Captivating",
                     description: ""}
             ],
-            range: {min: 1, max: 7, value: 4}
+            range: {min: -3, max: 3, value: 0}
         }
     ]
     
@@ -370,7 +362,11 @@
         let container = document.createElement("div");
         container.id = section.id.toString();
         let progression = " (" + i + "/" + sections.length + ")";
-        container.innerHTML = "<h2>" + section.header + progression + "</h2><p>" + section.introduction + "</p><b>" + section.instructions + "</b><hr><br>";
+        container.innerHTML = 
+            "<h2>" + section.header + progression + "</h2>" +
+            "<p>" + section.introduction + "</p>" +
+            "<i>" + section.instructions + "</i>" +
+            "<br><br><hr><br>";
         
         section.metrics.forEach(metric =>{
             let element = document.createElement("div");
@@ -446,6 +442,8 @@
     }
     
     function submit(){
+        document.getElementById('metric-area').style.display = "none";
+        document.getElementById('finish-screen').style.display = "block";
         sessionStorage.setItem('evaluation-year', new Date().getUTCFullYear().toString());
         sessionStorage.setItem('evaluation-month', new Date().getUTCMonth().toString());
         sessionStorage.setItem('evaluation-day', new Date().getUTCDay().toString());
@@ -462,23 +460,50 @@
     
     function downloadData() {
         const data = sessionStorage;
-        const json = {};
-        Object.keys(data).forEach(key => {
-            json[key] = data[key];
-        });
-        
-        const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        
-        const placeholder = document.createElement("a");
-        
-        placeholder.href = url;
-        placeholder.download = fileName().toString();
-        document.body.appendChild(placeholder);
-        placeholder.click();
-        document.body.removeChild(placeholder);
-        URL.revokeObjectURL(url);
+        let stamp = Date.now().toString();
+        database.ref(stamp).set(data)
+            .then(function() {
+                console.log("JSON data stored in Firebase Realtime Database");
+                document.getElementById("finish-screen").innerHTML =
+                    "Thank you for particpating in this user test!\n" +
+                    "<br><br>\n" +
+                    "You may now close this window."
+            })
+            .catch(function(error) {
+                document.getElementById("finish-screen").innerHTML = 
+                    "Thank you for particpating in this user test!\n" +
+                    "<br><br>\n" +
+                    "Please download this .JSON file and send it to the facilitator."
+                console.error("Error storing JSON data: ", error);
+                const json = {};
+                Object.keys(data).forEach(key => {
+                    json[key] = data[key];
+                });
+                const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const placeholder = document.createElement("a");
+                placeholder.href = url;
+                placeholder.download = fileName().toString();
+                document.body.appendChild(placeholder);
+                placeholder.click();
+                document.body.removeChild(placeholder);
+                URL.revokeObjectURL(url);
+            });
     }
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyBHcsM5FMma12wQk7xS5XuBICIG2CBWCBs",
+        authDomain: "keyboard-evaluation.firebaseapp.com",
+        databaseURL: "https://keyboard-evaluation-default-rtdb.europe-west1.firebasedatabase.app/",
+        projectId: "keyboard-evaluation",
+        storageBucket: "keyboard-evaluation.appspot.com",
+        messagingSenderId: "193786963276",
+        appId: "1:193786963276:web:d3d44b912c7e15c9d09be9",
+        measurementId: "G-6EY84L3EPC"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    let database = firebase.database();
     
     function fileName(){
         let fileName = new Date().getUTCFullYear(); fileName += "-";
@@ -493,7 +518,6 @@
     function clamp(number, min, max) {
         return Math.min(Math.max(number, min), max);
     }
-    
     manageSection();
 </script>
 </body>

@@ -5,6 +5,14 @@ html, body {
 .current-char {
   color: white;
   background-color: black;
+  width: 1ch;
+}
+
+.current-newline-char {
+  color: white;
+  background-color: black;
+  width: 1ch;
+  display: inline-block;
 }
 
 .incorrect-char {
@@ -25,13 +33,13 @@ html, body {
   font-family: "Courier New", ui-monospace;
   font-weight: bold;
   font-size: large;
-  margin: 32px;
 }
 
 .evaluation-block {
-  width: 50%;
+  width: 600px;
+  left: 25%;
   font-family: sans-serif;
-  margin: 50px 25% 100px;
+  margin: 50px auto 100px;
 }
 
 .slider {

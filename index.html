@@ -9,8 +9,8 @@
     <h1>Getting Started</h1>
     <div id="introduction">
         <p>
-            Thank you very much for participating in this user study. 
-            <br>
+            Thank you very much for participating in this user study. This evaluation should take about <b>seven to ten minutes</b>.
+            <br><br>
                 This study is broken up into three sections:
             <ol>
                 <li>First we will ask you some basic questions about you</li>
@@ -87,10 +87,10 @@
                 <option value="iso" selected>ISO</option>
                 <option value="ansi">ANSI</option>
                 <option value="jis">JIS</option>
-            </select> layout
+            </select> <a href="https://support.apple.com/en-ie/HT201794" target="_blank">layout</a>
             <label for="keyboard-language">, and is in </label>
             <select id="keyboard-language">
-            </select>. For help identifying your layout, please see <a href="https://support.apple.com/en-ie/HT201794" target="_blank">this resource</a>.
+            </select>.
         </div>
         <div class="user-information-block">
             
@@ -202,17 +202,23 @@
         document.getElementById('keyboard-information').style.display = 'block';
     }
     function startEvaluation(){
-        sessionStorage.setItem('user-name', document.getElementById('user-name').value);
+        sessionStorage.setItem('user-name', santitisedString(document.getElementById('user-name').value));
         sessionStorage.setItem('user-hand-size', document.getElementById('user-hand-size').value);
         sessionStorage.setItem('user-technical-familiarity', document.getElementById('technical-familiarity').value);
         sessionStorage.setItem('user-keyboard-usage', document.getElementById('keyboard-usage').value);
-        sessionStorage.setItem('evaluated-keyboard-make', document.getElementById('evaluated-keyboard-make').value);
-        sessionStorage.setItem('evaluated-keyboard-model', document.getElementById('evaluated-keyboard-model').value);
+        sessionStorage.setItem('evaluated-keyboard-make', santitisedString(document.getElementById('evaluated-keyboard-make').value));
+        sessionStorage.setItem('evaluated-keyboard-model', santitisedString(document.getElementById('evaluated-keyboard-model').value));
         sessionStorage.setItem('evaluated-keyboard-layout', document.getElementById('keyboard-layout').value);
         sessionStorage.setItem('evaluated-keyboard-language', document.getElementById('keyboard-language').value);
         sessionStorage.setItem('benchmark-flag', document.getElementById('benchmark-flag').value);
         sessionStorage.setItem('palm-rest-flag', document.getElementById('palm-rest-flag').value);
     }
+    
+    function santitisedString(target){
+        let sanitised = target.replace(/\W+/g, "");
+        return sanitised.toLowerCase();
+    }
+    
     setInterval(function() {
         document.getElementById('continue-to-keyboard-data').disabled = document.getElementById('user-name').value.length === 0;
         document.getElementById('continue-to-evaluation').disabled 
