@@ -25,7 +25,7 @@ html, body {
 }
 
 .inactive-char {
-  color: lightgrey;
+  color: #949494;
 }
 
 .typing-visualiser {
