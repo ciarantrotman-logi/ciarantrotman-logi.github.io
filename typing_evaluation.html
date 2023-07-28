@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Typing Evaluation</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="evaluation-block">
   <h1>Typing Evaluation</h1>
@@ -544,8 +545,8 @@
 
     let paragraphs = [
       {id: "warm-up", phrases: 2},
-      {id: "practice", phrases: 6},
-      {id: "evaluation", phrases: 32}
+      {id: "practice", phrases: 2},
+      {id: "evaluation", phrases: 2}
     ];
     
     let phraseIndex = 0; 
@@ -587,8 +588,8 @@
       let generated = '';
       for (let j = 0; j < i; j++) {
         generated += mackenziePhrases[getRandomInt(0, mackenziePhrases.length - 1)];
-        if (j !== i ){
-          generated += terminations[getRandomInt(0, terminations.length - 1)];
+        generated += terminations[getRandomInt(0, terminations.length - 1)];
+        if (j < i - 1 ){
           generated += " ";
         }
       }
