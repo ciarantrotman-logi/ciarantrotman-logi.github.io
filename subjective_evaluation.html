@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="config.js"></script>
 </head>
 <body class="evaluation-block">
     <h1>Subjective Evaluation</h1>
@@ -409,7 +410,6 @@
         index++;
         index = clamp(index, 0, sections.length - 1);
         manageSection();
-        logMetrics();
     }
     function previousSection(){
         index--;
@@ -426,10 +426,6 @@
         for (let i = 0; i < sections.length; i++) {
             document.getElementById(sections[i].id).style.display = i === index ? "block" : "none";
         }
-    }
-
-    function logMetrics(){
-        
     }
     
     function submit(){
@@ -481,17 +477,6 @@
                 URL.revokeObjectURL(url);
             });
     }
-    
-    const firebaseConfig = {
-        apiKey: "AIzaSyBHcsM5FMma12wQk7xS5XuBICIG2CBWCBs",
-        authDomain: "keyboard-evaluation.firebaseapp.com",
-        databaseURL: "https://keyboard-evaluation-default-rtdb.europe-west1.firebasedatabase.app/",
-        projectId: "keyboard-evaluation",
-        storageBucket: "keyboard-evaluation.appspot.com",
-        messagingSenderId: "193786963276",
-        appId: "1:193786963276:web:d3d44b912c7e15c9d09be9",
-        measurementId: "G-6EY84L3EPC"
-    };
 
     firebase.initializeApp(firebaseConfig);
     let database = firebase.database();
