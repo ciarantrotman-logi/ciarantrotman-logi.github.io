@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON Splitter</title>
+</head>
+<body>
+    <h1>JSON Splitter</h1>
+    <h2>File Upload</h2>
+    <div>
+        <input type="file" id="fileInput" accept=".json" onchange="processJSON()">
+        <br><br>
+    </div>
+    <div id="outputLinks">
+        <h2>File Download</h2>
+    </div>
+    <script>
+        function createDownloadLink(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.innerText = `${filename}`;
+
+            return a;
+        }
+
+        function extractInnerData(jsonData) {
+            const dataList = [];
+            for (let key in jsonData) {
+                if (jsonData.hasOwnProperty(key)) {
+                    const innerData = jsonData[key];
+                    dataList.push({ [key]: innerData });
+                }
+            }
+            return dataList;
+        }
+
+        function processJSON() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const jsonData = JSON.parse(e.target.result);
+                        const dataList = extractInnerData(jsonData);
+                        const outputLinksDiv = document.getElementById('outputLinks');
+
+                        for (let i = 0; i < dataList.length; i++) {
+                            const item = dataList[i];
+                            const topLevelKey = Object.keys(item)[0];
+                            const data = item[topLevelKey];
+                            const downloadLink = createDownloadLink(data, `${topLevelKey}.json`);
+                            outputLinksDiv.appendChild(downloadLink);
+                            outputLinksDiv.appendChild(document.createElement('br'));
+                        }
+                    } catch (err) {
+                        alert('Error parsing JSON file.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+    </script>
+</body>
+</html>

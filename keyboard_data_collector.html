@@ -42,6 +42,10 @@
                 <option value="staggered" selected>staggered</option>
                 <option value="orthogonal">orthogonal</option>
                 <option value="ortholinear">ortholinear</option>
+            </select>
+            <select id="key-profile">
+                <option value="low" selected>low profile</option>
+                <option value="high">high profile</option>
             </select> keys
             <label for="keycap-material">made from </label>
             <select id="keycap-material">
@@ -103,6 +107,7 @@
             sessionStorage.setItem('keyboard-type', document.getElementById('keyboard-type').value);
             sessionStorage.setItem('keyboard-size', document.getElementById('keyboard-size').value);
             sessionStorage.setItem('keyboard-columns', document.getElementById('keyboard-columns').value);
+            sessionStorage.setItem('key-profile', document.getElementById('key-profile').value);
             sessionStorage.setItem('keycap-material', document.getElementById('keycap-material').value);
             sessionStorage.setItem('keyboard-backlighting-flag', document.getElementById('keyboard-backlighting-flag').value);
             sessionStorage.setItem('switch-operating-force', document.getElementById('switch-operating-force').value);
