@@ -31,7 +31,7 @@
             Below are a few different statements, please use the dropdown menus to select the option that most accurately
             reflects the truth for you:
         </p>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="user-hand-size">My hand size is </label>
             <select id="user-hand-size">
                 <option value="extra-small">extra small (<160mm)</option>
@@ -41,7 +41,7 @@
                 <option value="extra-large">extra large (>204mm)</option>
             </select> on the hand size chart when measured from palm to the tip of your middle finger.
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="technical-familiarity">I know </label>
             <select id="technical-familiarity">
                 <option value="unfamiliar">nothing</option>
@@ -49,7 +49,7 @@
                 <option value="very-familiar">a lot</option>
             </select> about how keyboards work.
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="keyboard-usage">I often use a keyboard in a </label>
             <select id="keyboard-usage">
                 <option value="gaming">gaming</option>
@@ -57,7 +57,7 @@
                 <option value="gaming-and-productivity">gaming and productivity</option>
             </select> context.
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="test-condition-flag">I am doing this evaluation </label>
             <select id="test-condition-flag">
                 <option value="true" selected>as part of an in person user test</option>
@@ -78,14 +78,14 @@
             Below are a few different statements, please use the dropdown menus and text fields to input the option that most accurately
             reflects the truth for you:
         </p>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="evaluated-keyboard-make">The keyboard brand being evaluated is </label><input type="text" id="evaluated-keyboard-make" placeholder="brand name">
             <label for="evaluated-keyboard-model">and the model is </label><input type="text" id="evaluated-keyboard-model" placeholder="model name">.
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="keyboard-layout">This keyboard has the </label>
             <select id="keyboard-layout">
                 <option value="iso" selected>ISO</option>
@@ -96,17 +96,17 @@
             <select id="keyboard-language">
             </select>.
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="benchmark-flag">This </label>
             <select id="benchmark-flag">
                 <option value="true" selected>is</option>
                 <option value="false">is not</option>
             </select> the keyboard or one of the keyboards that I normally use.
         </div>
-        <div class="user-information-block">
+        <div class="information-block">
             <label for="palm-rest-flag">I </label>
             <select id="palm-rest-flag">
                 <option value="true">am</option>
@@ -206,19 +206,19 @@
         document.getElementById('keyboard-information').style.display = 'block';
     }
     function startEvaluation(){
-        sessionStorage.setItem('user-name', santitisedString(document.getElementById('user-name').value));
+        sessionStorage.setItem('user-name', sanitisedString(document.getElementById('user-name').value));
         sessionStorage.setItem('user-hand-size', document.getElementById('user-hand-size').value);
         sessionStorage.setItem('user-technical-familiarity', document.getElementById('technical-familiarity').value);
         sessionStorage.setItem('user-keyboard-usage', document.getElementById('keyboard-usage').value);
-        sessionStorage.setItem('evaluated-keyboard-make', santitisedString(document.getElementById('evaluated-keyboard-make').value));
-        sessionStorage.setItem('evaluated-keyboard-model', santitisedString(document.getElementById('evaluated-keyboard-model').value));
+        sessionStorage.setItem('evaluated-keyboard-make', sanitisedString(document.getElementById('evaluated-keyboard-make').value));
+        sessionStorage.setItem('evaluated-keyboard-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
         sessionStorage.setItem('evaluated-keyboard-layout', document.getElementById('keyboard-layout').value);
         sessionStorage.setItem('evaluated-keyboard-language', document.getElementById('keyboard-language').value);
         sessionStorage.setItem('benchmark-flag', document.getElementById('benchmark-flag').value);
         sessionStorage.setItem('palm-rest-flag', document.getElementById('palm-rest-flag').value);
     }
     
-    function santitisedString(target){
+    function sanitisedString(target){
         let sanitised = target.replace(/\W+/g, "");
         return sanitised.toLowerCase();
     }

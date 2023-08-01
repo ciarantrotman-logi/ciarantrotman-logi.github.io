@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="config.jks"></script>
+    <script src="config.js"></script>
 </head>
 <body class="evaluation-block">
     <h1>Subjective Evaluation</h1>
@@ -450,7 +450,6 @@
         let stamp = Date.now().toString();
         database.ref(stamp).set(data)
             .then(function() {
-                console.log("JSON data stored in Firebase Realtime Database");
                 document.getElementById("finish-screen").innerHTML =
                     "Thank you for particpating in this user test!\n" +
                     "<br><br>\n" +
@@ -461,35 +460,28 @@
                     "Thank you for particpating in this user test!\n" +
                     "<br><br>\n" +
                     "Please download this .JSON file and send it to the facilitator."
-                console.error("Error storing JSON data: ", error);
-                const json = {};
-                Object.keys(data).forEach(key => {
-                    json[key] = data[key];
-                });
-                const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const placeholder = document.createElement("a");
-                placeholder.href = url;
-                placeholder.download = fileName().toString();
-                document.body.appendChild(placeholder);
-                placeholder.click();
-                document.body.removeChild(placeholder);
-                URL.revokeObjectURL(url);
+                manualDownload(data);
             });
+    }
+    
+    function manualDownload(data){
+        const json = {};
+        Object.keys(data).forEach(key => {
+            json[key] = data[key];
+        });
+        const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const placeholder = document.createElement("a");
+        placeholder.href = url;
+        placeholder.download = Date.now().toString();
+        document.body.appendChild(placeholder);
+        placeholder.click();
+        document.body.removeChild(placeholder);
+        URL.revokeObjectURL(url);
     }
 
     firebase.initializeApp(firebaseConfig);
     let database = firebase.database();
-    
-    function fileName(){
-        let fileName = new Date().getUTCFullYear(); fileName += "-";
-        fileName += new Date().getUTCMonth(); fileName += "-";
-        fileName += new Date().getUTCDay(); fileName += "-";
-        fileName += new Date().getUTCHours(); fileName += "-";
-        fileName += new Date().getUTCMinutes(); fileName += "-";
-        fileName += new Date().getUTCSeconds(); fileName += ".json";
-        return fileName;
-    }
 
     function clamp(number, min, max) {
         return Math.min(Math.max(number, min), max);

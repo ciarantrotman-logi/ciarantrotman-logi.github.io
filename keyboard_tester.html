@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Keyboard Tester</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body class="evaluation-block">
+  <h1>Keyboard Tester</h1>
+  <input type="checkbox" id="toggle">
+  <label for="toggle">Parsed Input</label>
+  <div id='debug-space'></div>
+  <script>
+    document.addEventListener('keydown', function(event) {
+      let element = document.createElement("div");
+      element.innerHTML = document.getElementById('toggle').checked ? event.key + "<br>" : event.code + "<br>";
+      document.getElementById('debug-space').appendChild(element);
+    });
+  </script>
+</body>
+</html>
