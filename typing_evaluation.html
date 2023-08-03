@@ -668,6 +668,7 @@
           finished = true;
           calculatePerformance();
           cacheMetrics();
+          submitted = true;
           window.location.href = 'subjective_evaluation.html';
         }
       }
@@ -953,6 +954,16 @@
         console.log(metric.id, ":", metric.value)
       })
     }
+    
+    let submitted = false;
+
+    window.addEventListener('beforeunload', function (event) {
+      if (!submitted) {
+        let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
+        event.returnValue = warningMessage;
+        return warningMessage;
+      }
+    });
     
     inputElement.addEventListener('input', onInputChange);
     inputElement.addEventListener('focus', startListening);

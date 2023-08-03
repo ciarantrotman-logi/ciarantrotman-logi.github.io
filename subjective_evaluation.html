@@ -444,6 +444,8 @@
         })
         downloadData();
     }
+
+    let submitted = false;
     
     function downloadData() {
         const data = sessionStorage;
@@ -451,17 +453,14 @@
         database.ref(stamp).set(data)
             .then(function() {
                 document.getElementById("finish-screen").innerHTML =
-                    "Thank you for particpating in this user test!\n" +
-                    "<br><br>\n" +
-                    "You may now close this window."
+                    "Thank you for participating in this user test! You may now close this window."
             })
             .catch(function(error) {
                 document.getElementById("finish-screen").innerHTML = 
-                    "Thank you for particpating in this user test!\n" +
-                    "<br><br>\n" +
-                    "Please download this .JSON file and send it to the facilitator."
+                    "Thank you for participating in this user test, please download this .JSON file and send it to the facilitator.";
                 manualDownload(data);
             });
+        submitted = true;
     }
     
     function manualDownload(data){
@@ -479,6 +478,15 @@
         document.body.removeChild(placeholder);
         URL.revokeObjectURL(url);
     }
+
+    window.addEventListener('beforeunload', function (event) {
+        if (!submitted) {
+            let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
+            event.returnValue = warningMessage;
+            return warningMessage;
+        }
+    });
+
 
     firebase.initializeApp(firebaseConfig);
     let database = firebase.database();

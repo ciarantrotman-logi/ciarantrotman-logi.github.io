@@ -220,6 +220,7 @@
         sessionStorage.setItem('evaluated-keyboard-language', document.getElementById('keyboard-language').value);
         sessionStorage.setItem('benchmark-flag', document.getElementById('benchmark-flag').value);
         sessionStorage.setItem('palm-rest-flag', document.getElementById('palm-rest-flag').value);
+        submitted = true;
     }
     
     function sanitisedString(target){
@@ -233,5 +234,15 @@
             = document.getElementById('evaluated-keyboard-make').value.length === 0
             || document.getElementById('evaluated-keyboard-model').value.length === 0;
     })
+    
+    let submitted = false;
+
+    window.addEventListener('beforeunload', function (event) {
+        if (!submitted) {
+            let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
+            event.returnValue = warningMessage;
+            return warningMessage;
+        }
+    });
 </script>
 </html>
