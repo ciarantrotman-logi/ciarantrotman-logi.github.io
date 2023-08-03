@@ -26,7 +26,7 @@
     </div>
     <div id="user-information" style="display: none">
         <h2>Evaluation Details</h2>
-        <label for="user-name">What is your full name? </label><input type="text" id="user-name" placeholder="">
+        <label for="user-name">What is your first name? </label><input type="text" id="user-name" placeholder="">
         <p>
             Below are a few different statements, please use the dropdown menus to select the option that most accurately
             reflects the truth for you:
@@ -193,6 +193,9 @@
                 break;
         }
     }
+
+    let url = new URL(window.location.href);
+    let userIndex = url.searchParams.get('userID');
     
     populateKeyboardLanguageOptions();
     
@@ -206,6 +209,7 @@
         document.getElementById('keyboard-information').style.display = 'block';
     }
     function startEvaluation(){
+        sessionStorage.setItem('user-id', userIndex);
         sessionStorage.setItem('user-name', sanitisedString(document.getElementById('user-name').value));
         sessionStorage.setItem('user-hand-size', document.getElementById('user-hand-size').value);
         sessionStorage.setItem('user-technical-familiarity', document.getElementById('technical-familiarity').value);
