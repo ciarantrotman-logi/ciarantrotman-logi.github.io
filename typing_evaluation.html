@@ -586,7 +586,7 @@
     function generateParagraph(i){
       let generated = '';
       for (let j = 0; j < i; j++) {
-        generated += mackenziePhrases[getRandomInt(0, mackenziePhrases.length - 1)];
+        generated += sentenceCase(mackenziePhrases[getRandomInt(0, mackenziePhrases.length - 1)]);
         generated += terminations[getRandomInt(0, terminations.length - 1)];
         if (j < i - 1 ){
           generated += " ";
@@ -823,6 +823,10 @@
         }
       });
     });
+    
+    function sentenceCase(string){
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
     function calculateKeystrokeDurationVariance() {
       let sum = 0;
