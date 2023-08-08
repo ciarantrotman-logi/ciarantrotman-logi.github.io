@@ -25,8 +25,11 @@
   <div id="input-area" style="display: none">
     <div id="evaluation-area">
     </div>
+    <div id="caps-lock-warning" class="warning-box" style="display: none">
+        <b>Heads up, caps lock is on!</b>
+    </div>
     <div id="input-field">
-      <label for="input"></label><textarea id="input" placeholder="" class="hidden-input"></textarea>
+      <label for="input"></label><textarea id="input" placeholder="" class="hidden-input""></textarea>
     </div>
   </div>
   <script>
@@ -673,6 +676,14 @@
         }
       }
     }
+    
+    function checkCapsLock(event){
+      let capsLock = event.getModifierState && event.getModifierState('CapsLock');
+      document.getElementById('caps-lock-warning').style.display 
+        = capsLock
+          ? 'block'
+          : 'none';
+    }
 
     function calculatePerformance(){
       evaluateTypingPerformance();
@@ -780,6 +791,7 @@
     let keyEvents = [];
 
     document.addEventListener('keydown', function(event) {
+      checkCapsLock(event);
       if (!started || finished) return;
       if (event.key.length === 1) {
         totalTypedCharacters++;
@@ -811,6 +823,7 @@
       }
     });
     document.addEventListener('keyup', function(event) {
+      checkCapsLock(event);
       let pressed = '';
       keyEvents.forEach(key => {
         if (key.active === true) {
