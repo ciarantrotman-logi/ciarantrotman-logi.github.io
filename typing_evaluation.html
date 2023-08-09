@@ -5,6 +5,9 @@
   <title>Typing Evaluation</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" type="image/png" href="favicon.png">
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="config.js"></script>
 </head>
 <body class="evaluation-block">
   <h1>Typing Evaluation</h1>
@@ -29,8 +32,8 @@
         <b>Heads up, caps lock is on!</b>
     </div>
     <div id="input-field">
-      <label for="input"></label><textarea id="input" placeholder="" class="hidden-input""></textarea>
-    </div>
+      <label for="input"></label><textarea id="input" placeholder="" class="hidden-input"></textarea>
+    </div> 
   </div>
   <script>
     function start(){
@@ -545,10 +548,15 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    let paragraphs = [
-      {id: "warm-up", phrases: 2},
+    /*let paragraphs = [
+      {id: "warm-up", phrases: 3},
       {id: "practice", phrases: 6},
-      {id: "evaluation", phrases: 32}
+      {id: "evaluation", phrases: 24}
+    ];*/
+    
+    let paragraphs = [
+      {id: "practice", phrases: 1},
+      {id: "evaluation", phrases: 1}
     ];
     
     let phraseIndex = 0; 
@@ -652,12 +660,13 @@
       {
         if (currentInput !== currentPhrase.slice(0, currentInput.length)) {
           mistakes++;
+          keyEvents[keyEvents.length - 2].correct = false;
         }
         currentInput = inputElement.value;
         calculatePerformance();
         visualiseCharacterValidity();
       }
-      if (currentInput.length === currentPhrase.length)
+      if (currentInput.length >= currentPhrase.length)
       {
         phraseIndex++;
         if (phraseIndex < paragraphs.length){
@@ -669,12 +678,16 @@
         }
         else {
           finished = true;
-          calculatePerformance();
-          cacheMetrics();
-          submitted = true;
-          window.location.href = 'subjective_evaluation.html';
+          logKeystrokeData();
         }
       }
+    }
+    
+    function proceed(){
+      calculatePerformance();
+      cacheMetrics();
+      submitted = true;
+      window.location.href = 'subjective_evaluation.html';
     }
     
     function checkCapsLock(event){
@@ -700,6 +713,8 @@
 
       accuracy = 100;
       mistakes = 0;
+
+      keyEvents.length = 0;
 
       totalKeysPressed = 0;
       totalTypedCharacters = 0;
@@ -785,7 +800,11 @@
       keystrokeSpacing: 0,
       keyTransitionDuration: 0,
       keyCode: '',
-      active: false
+      active: false,
+      userID: '',
+      userName: '',
+      evaluatedKeyboardModel: '',
+      evaluatedKeyboardMake: ''
     }
     
     let keyEvents = [];
@@ -808,7 +827,14 @@
       }
       if (started && !finished) {
         totalKeysPressed++;
-        keyEvents.push({index: totalKeysPressed, keydownTime: new Date(), keyupTime: 0, keyCode: event.code, active: true});
+        keyEvents.push({
+          index: totalKeysPressed, 
+          keydownTime: new Date(), 
+          keyupTime: null, 
+          keyCode: event.code, 
+          active: true,
+          correct: true
+        });
         if (totalKeysPressed > 1){
           let i = keyEvents.length - 1;
           let keystrokeSpacing = keyEvents[i].keydownTime - keyEvents[i - 1].keydownTime;
@@ -977,6 +1003,44 @@
         return warningMessage;
       }
     });
+
+    firebase.initializeApp(firebaseConfig);
+    let database = firebase.database();
+    
+    function logKeystrokeData() {
+      let data = [];
+      keyEvents.forEach(key =>{
+        let cleaned = {
+          "key-code": key.keyCode,
+          "correct-key": key.correct,
+          "user-id": sessionStorage.getItem('user-id'),
+          "user-name": sessionStorage.getItem('user-name'),
+          "evaluated-keyboard-make": sessionStorage.getItem('evaluated-keyboard-make'),
+          "evaluated-keyboard-model": sessionStorage.getItem('evaluated-keyboard-model'),
+          "evaluated-keyboard-layout": sessionStorage.getItem('evaluated-keyboard-layout'),
+          "evaluated-keyboard-language": sessionStorage.getItem('evaluated-keyboard-language'),
+          "keystroke-duration": key.hasOwnProperty('keystrokeDuration') ? key.keystrokeDuration : null,
+          "keystroke-spacing": key.hasOwnProperty('keystrokeSpacing') ? key.keystrokeSpacing : null,
+          "key-transition-duration": key.hasOwnProperty('keyTransitionDuration') ? key.keyTransitionDuration : null
+        }
+        data.push(cleaned);
+      });
+      
+      let json = {};
+      Object.keys(data).forEach(key => {
+        json[key] = data[key];
+      });
+      
+      let stamp = "heatmap-" + Date.now().toString();
+      database.ref(stamp).set(json)
+              .then(function() {
+                proceed();
+              })
+              .catch(function(error) {
+                proceed();
+                console.error("Error:", error);
+              });
+    }
     
     inputElement.addEventListener('input', onInputChange);
     inputElement.addEventListener('focus', startListening);
