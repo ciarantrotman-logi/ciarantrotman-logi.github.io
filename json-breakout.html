@@ -1,32 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>JSON Splitter</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
 <body class="evaluation-block">
     <h1>JSON Splitter</h1>
-    <h2>File Upload</h2>
+    <p>Upload combined data from a Firebase Realtime Database and get a zipped folder containing each broken out file.</p>
     <div>
         <input type="file" id="fileInput" accept=".json" onchange="processJSON()">
-        <br><br>
-    </div>
-    <div id="outputLinks">
-        <h2>File Download</h2>
     </div>
     <script>
-        function createDownloadLink(data, filename) {
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.innerText = `${filename}`;
-
-            return a;
-        }
 
         function extractInnerData(jsonData) {
             const dataList = [];
@@ -45,27 +32,33 @@
 
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = async function (e) {
                     try {
                         const jsonData = JSON.parse(e.target.result);
+                        console.log(e.target.result);
                         const dataList = extractInnerData(jsonData);
-                        const outputLinksDiv = document.getElementById('outputLinks');
-
+                        const zip = new JSZip();
+                        
                         for (let i = 0; i < dataList.length; i++) {
                             const item = dataList[i];
                             const topLevelKey = Object.keys(item)[0];
-                            const data = item[topLevelKey];
-                            const downloadLink = createDownloadLink(data, `${topLevelKey}.json`);
-                            outputLinksDiv.appendChild(downloadLink);
-                            outputLinksDiv.appendChild(document.createElement('br'));
+                            zip.file(`${topLevelKey}.json`, JSON.stringify(item));
                         }
+
+                        const blob = await zip.generateAsync({ type: "blob" });
+                        const downloadLink = document.createElement("a");
+                        downloadLink.href = URL.createObjectURL(blob);
+                        downloadLink.download = "zipped-data.zip";
+                        downloadLink.click();
                     } catch (err) {
+                        console.error('Error parsing JSON:', err);
                         alert('Error parsing JSON file.');
                     }
                 };
                 reader.readAsText(file);
             }
         }
+        
     </script>
 </body>
 </html>
