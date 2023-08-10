@@ -42,13 +42,14 @@
                         for (let i = 0; i < dataList.length; i++) {
                             const item = dataList[i];
                             const topLevelKey = Object.keys(item)[0];
-                            zip.file(`${topLevelKey}.json`, JSON.stringify(item));
+                            const blob = new Blob([JSON.stringify(item)], { type: "application/json" });
+                            zip.file(`${topLevelKey}.json`, blob);
                         }
 
                         const blob = await zip.generateAsync({ type: "blob" });
                         const downloadLink = document.createElement("a");
                         downloadLink.href = URL.createObjectURL(blob);
-                        downloadLink.download = "zipped-data.zip";
+                        downloadLink.download = `${Date.now().toString()}.zip`;
                         downloadLink.click();
                     } catch (err) {
                         console.error('Error parsing JSON:', err);

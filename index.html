@@ -10,7 +10,6 @@
     <h1>Keyboard Evaluation</h1>
     <div id="introduction">
         <p>
-            <h2>Introduction</h2>
             Thank you very much for participating in this user study. This evaluation should take about <b>seven to ten minutes</b>.
             <br><br>
                 This study is broken up into three sections:
@@ -25,24 +24,37 @@
         <button class = "full-width" onclick="inputUserInformation()">I understand and consent</button>
     </div>
     <div id="user-information" style="display: none">
-        <h2>Evaluation Details</h2>
-        <label for="user-name">What is your first name? </label><input type="text" id="user-name" placeholder="">
         <p>
-            Below are a few different statements, please use the dropdown menus to select the option that most accurately
-            reflects the truth for you:
+            The following are a set of different questions about you and how you generally use keyboards, please answer as accuractly as you can.
         </p>
+        <h2>General Details</h2>
         <div class="information-block">
-            <label for="user-hand-size">My hand size is </label>
+            <label for="user-name">My first name is </label><input type="text" id="user-name" placeholder="">.
+        </div>
+        <div class="information-block">
+            <label for="user-handedness">I am </label>
+            <select id="user-handedness">
+                <option value="right" selected>right handed</option>
+                <option value="left">left handed</option>
+                <option value="ambidextrous">ambidextrous</option>
+            </select>,
+            <label for="user-hand-size"> and my hand is </label>
             <select id="user-hand-size">
                 <option value="extra-small">extra small (<160mm)</option>
                 <option value="small">small  (160mm - 174mm)</option>
                 <option value="medium" selected>medium (175mm - 189mm)</option>
                 <option value="large">large (190mm - 204mm)</option>
                 <option value="extra-large">extra large (>204mm)</option>
-            </select> on the hand size chart when measured from palm to the tip of your middle finger.
+            </select> when measured from the bottom of my palm to the tip of my middle finger.
         </div>
         <div class="information-block">
-            <label for="technical-familiarity">I know </label>
+            <label for="keyboard-usage">I mainly use a keyboard for </label>
+            <select id="keyboard-usage">
+                <option value="gaming">gaming</option>
+                <option value="productivity" selected>working</option>
+                <option value="gaming-and-productivity">gaming and working</option>
+            </select>,
+            <label for="technical-familiarity"> and I know </label>
             <select id="technical-familiarity">
                 <option value="unfamiliar">nothing</option>
                 <option value="somewhat-familiar" selected>a little</option>
@@ -50,40 +62,52 @@
             </select> about how keyboards work.
         </div>
         <div class="information-block">
-            <label for="keyboard-usage">I often use a keyboard in a </label>
-            <select id="keyboard-usage">
-                <option value="gaming">gaming</option>
-                <option value="productivity" selected>productivity</option>
-                <option value="gaming-and-productivity">gaming and productivity</option>
-            </select> context.
-        </div>
-        <div class="information-block">
             <label for="test-condition-flag">I am doing this evaluation </label>
             <select id="test-condition-flag">
                 <option value="true" selected>as part of an in person user test</option>
                 <option value="false">on my own</option>
             </select>,
-            <label for="ergonomic-flag"> </label>
+            <label for="ergonomic-flag"> and </label>
             <select id="ergonomic-flag">
                 <option value="true" selected>in a test environment</option>
                 <option value="false">in an informal setting</option>
+            </select>.
+        </div>
+        <div class="information-block">
+            <label for="usage-environment">I normally use a keyboard in </label>
+            <select id="usage-environment">
+                <option value="private" selected>a private environment</option>
+                <option value="shared">in a shared space</option>
+            </select>,
+            <label for="workspace-type"> and I typically work </label>
+            <select id="workspace-type">
+                <option value="dedicated" selected>at a dediated workspace</option>
+                <option value="pop-up">at a pop-up workspace</option>
+                <option value="mobile">anywhere and everywhere</option>
             </select>.
         </div>
         <br>
         <button onclick="inputKeyboardInformation()" id="continue-to-keyboard-data" class="full-width" >Continue to keyboard information</button></a>
     </div>
     <div id="keyboard-information" style="display: none">
-        <h2>Keyboard Details</h2>
         <p>
             Below are a few different statements, please use the dropdown menus and text fields to input the option that most accurately
-            reflects the truth for you:
+            reflects the truth for you.
         </p>
+        <h2>Keyboard Details</h2>
         <div class="information-block">
-            <label for="evaluated-keyboard-make">The keyboard brand being evaluated is </label><input type="text" id="evaluated-keyboard-make" placeholder="brand name">
+            <label for="evaluated-keyboard-make">The keyboard brand I am evaluating is </label><input type="text" id="evaluated-keyboard-make" placeholder="brand name">
             <label for="evaluated-keyboard-model">and the model is </label><input type="text" id="evaluated-keyboard-model" placeholder="model name">.
         </div>
         <div class="information-block">
-            
+            <label for="mechanical-flag">This keyboard is a </label>
+            <select id="mechanical-flag">
+                <option value="false" selected>non-mechanical</option>
+                <option value="true">mechanical</option>
+            </select> keyboard. <div id="switch-type-div">
+                <label for="switch-make">The switches in this keyboard are </label><input type="text" id="switch-make" placeholder="switch brand name">
+                <label for="switch-model"></label><input type="text" id="switch-model" placeholder="switch colour">.
+            </div>
         </div>
         <div class="information-block">
             <label for="keyboard-layout">This keyboard has the </label>
@@ -95,9 +119,6 @@
             <label for="keyboard-language">, and is in </label>
             <select id="keyboard-language">
             </select>.
-        </div>
-        <div class="information-block">
-            
         </div>
         <div class="information-block">
             <label for="benchmark-flag">This </label>

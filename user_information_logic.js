@@ -91,16 +91,32 @@ function inputKeyboardInformation(){
 function startEvaluation(){
     sessionStorage.setItem('user-id', userIndex);
     sessionStorage.setItem('user-name', sanitisedString(document.getElementById('user-name').value));
+    
+    sessionStorage.setItem('user-handedness', document.getElementById('user-handedness').value);
     sessionStorage.setItem('user-hand-size', document.getElementById('user-hand-size').value);
-    sessionStorage.setItem('user-technical-familiarity', document.getElementById('technical-familiarity').value);
+    
     sessionStorage.setItem('user-keyboard-usage', document.getElementById('keyboard-usage').value);
+    sessionStorage.setItem('user-technical-familiarity', document.getElementById('technical-familiarity').value);
+
+    sessionStorage.setItem('test-condition-flag', document.getElementById('test-condition-flag').value);
+    sessionStorage.setItem('ergonomic-flag', document.getElementById('ergonomic-flag').value);
+    
+    sessionStorage.setItem('usage-environment', document.getElementById('usage-environment').value);
+    sessionStorage.setItem('workspace-type', document.getElementById('workspace-type').value);
+    
     sessionStorage.setItem('evaluated-keyboard-make', sanitisedString(document.getElementById('evaluated-keyboard-make').value));
     sessionStorage.setItem('evaluated-keyboard-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
+
+    sessionStorage.setItem('mechanical-flag', document.getElementById('mechanical-flag').value);
+    sessionStorage.setItem('switch-make', sanitisedString(document.getElementById('switch-make').value));
+    sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('switch-model').value));
+    
     sessionStorage.setItem('evaluated-keyboard-layout', document.getElementById('keyboard-layout').value);
     sessionStorage.setItem('evaluated-keyboard-language', document.getElementById('keyboard-language').value);
+    
     sessionStorage.setItem('benchmark-flag', document.getElementById('benchmark-flag').value);
     sessionStorage.setItem('palm-rest-flag', document.getElementById('palm-rest-flag').value);
-    sessionStorage.setItem('test-condition-flag', document.getElementById('test-condition-flag').value);
+    
     submitted = true;
 }
 
@@ -110,10 +126,15 @@ function sanitisedString(target){
 }
 
 setInterval(function() {
-    document.getElementById('continue-to-keyboard-data').disabled = document.getElementById('user-name').value.length === 0;
+    document.getElementById('continue-to-keyboard-data').disabled 
+        = document.getElementById('user-name').value.length === 0;
     document.getElementById('continue-to-evaluation').disabled
         = document.getElementById('evaluated-keyboard-make').value.length === 0
         || document.getElementById('evaluated-keyboard-model').value.length === 0;
+    document.getElementById('switch-type-div').style.display 
+        = document.getElementById('mechanical-flag').value === 'true'
+            ? 'inline'
+            : 'none';
 })
 
 let submitted = false;
