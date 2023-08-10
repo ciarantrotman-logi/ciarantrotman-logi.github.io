@@ -13,53 +13,6 @@
     <div>
         <input type="file" id="fileInput" accept=".json" onchange="processJSON()">
     </div>
-    <script>
-
-        function extractInnerData(jsonData) {
-            const dataList = [];
-            for (let key in jsonData) {
-                if (jsonData.hasOwnProperty(key)) {
-                    const innerData = jsonData[key];
-                    dataList.push({ [key]: innerData });
-                }
-            }
-            return dataList;
-        }
-
-        function processJSON() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = async function (e) {
-                    try {
-                        const jsonData = JSON.parse(e.target.result);
-                        console.log(e.target.result);
-                        const dataList = extractInnerData(jsonData);
-                        const zip = new JSZip();
-                        
-                        for (let i = 0; i < dataList.length; i++) {
-                            const item = dataList[i];
-                            const topLevelKey = Object.keys(item)[0];
-                            const blob = new Blob([JSON.stringify(item)], { type: "application/json" });
-                            zip.file(`${topLevelKey}.json`, blob);
-                        }
-
-                        const blob = await zip.generateAsync({ type: "blob" });
-                        const downloadLink = document.createElement("a");
-                        downloadLink.href = URL.createObjectURL(blob);
-                        downloadLink.download = `${Date.now().toString()}.zip`;
-                        downloadLink.click();
-                    } catch (err) {
-                        console.error('Error parsing JSON:', err);
-                        alert('Error parsing JSON file.');
-                    }
-                };
-                reader.readAsText(file);
-            }
-        }
-        
-    </script>
+    <script src="json_parser.js"></script>
 </body>
 </html>
