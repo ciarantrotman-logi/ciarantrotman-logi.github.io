@@ -639,7 +639,7 @@ function onInputChange() {
         }
         else {
             finished = true;
-            logKeystrokeData();
+            proceed();
         }
     }
 }
