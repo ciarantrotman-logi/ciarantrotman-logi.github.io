@@ -1,6 +1,20 @@
+const inputElement = document.getElementById('input');
+inputElement.addEventListener('input', onInputChange);
+inputElement.addEventListener('focus', startListening);
+document.addEventListener('DOMContentLoaded', function() {
+    resetListeners();
+});
+function restartEvaluation(){
+    resetListeners();
+    submitted = true;
+    window.location.href = 'typing_evaluation.html';
+}
 function start(){
     document.getElementById('introduction').style.display = "none";
     document.getElementById('input-area').style.display = "block";
+}
+function startListening() {
+    listening = true;
 }
 
 let mackenziePhrases = [
@@ -516,10 +530,10 @@ let paragraphs = [
     {id: "evaluation", phrases: 24}
 ];
 
-/*let paragraphs = [
-  {id: "practice", phrases: 1},
-  {id: "evaluation", phrases: 1}
-];*/
+// let paragraphs = [
+//   {id: "practice", phrases: 1},
+//   {id: "evaluation", phrases: 1}
+// ];
 
 let phraseIndex = 0;
 let phrases = [];
@@ -568,7 +582,9 @@ function generateParagraph(i){
     return generated;
 }
 
-const inputElement = document.getElementById('input');
+function sentenceCase(string){
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 let startTime;
 let endTime;
@@ -580,8 +596,8 @@ let currentInput = '';
 let accuracy = 100;
 let mistakes = 0;
 
-let totalKeysPressed = 0;
-let totalTypedCharacters = 0;
+let totalKeys = 0;
+let totalCharacters = 0;
 
 let wordsPerMinute = 0;
 let charactersPerMinute = 0;
@@ -597,13 +613,13 @@ let totalKeystrokeDuration = 0;
 let totalKeystrokeSpacing = 0;
 let totalKeyTransitionDuration = 0;
 
-let meanKeystrokeDuration = 0;
-let meanKeystrokeSpacing = 0;
-let meanKeyTransitionTiming = 0;
+let durationMean = 0;
+let spacingMean = 0;
+let transitionMean = 0;
 
-let keystrokeDurationVariance = 0;
-let keystrokeSpacingVariance = 0;
-let keyTransitionTimingVariance = 0;
+let durationVariance = 0;
+let spacingVariance = 0;
+let timingVariance = 0;
 
 let listening = false;
 let started = false;
@@ -633,7 +649,7 @@ function onInputChange() {
         phraseIndex++;
         if (phraseIndex < paragraphs.length){
             calculatePerformance();
-            logMetrics();
+            parseMetrics();
             resetListeners();
             choosePhrase();
         }
@@ -646,7 +662,7 @@ function onInputChange() {
 
 function proceed(){
     calculatePerformance();
-    cacheMetrics();
+    parseMetrics(true);
     submitted = true;
     window.location.href = 'subjective_evaluation.html';
 }
@@ -678,8 +694,8 @@ function resetListeners(){
 
     keyEvents.length = 0;
 
-    totalKeysPressed = 0;
-    totalTypedCharacters = 0;
+    totalKeys = 0;
+    totalCharacters = 0;
 
     wordsPerMinute = 0;
     charactersPerMinute = 0;
@@ -695,17 +711,17 @@ function resetListeners(){
     totalKeystrokeSpacing = 0;
     totalKeyTransitionDuration = 0;
 
-    meanKeystrokeDuration = 0;
-    meanKeystrokeSpacing = 0;
-    meanKeyTransitionTiming = 0;
+    durationMean = 0;
+    spacingMean = 0;
+    transitionMean = 0;
 
-    keystrokeDurationVariance = 0;
-    keystrokeSpacingVariance = 0;
-    keyTransitionTimingVariance = 0;
+    durationVariance = 0;
+    spacingVariance = 0;
+    timingVariance = 0;
 }
 
+
 function visualiseCharacterValidity(){
-    inputElement.placeholder = currentPhrase;
     let visualiser = document.getElementById(phrases[phraseIndex].id);
     visualiser.textContent = null;
     currentPhrase.split('').forEach(char => {
@@ -717,166 +733,175 @@ function visualiseCharacterValidity(){
         }
         visualiser.appendChild(charSpan);
     })
-
-    let i = inputElement.value;
-    let referenceCharacter = i.split('');
-
+    let referenceCharacter = inputElement.value.split('');
     let quoteSpanArray = visualiser.querySelectorAll('span');
     quoteSpanArray.forEach((char, index) => {
         let checkedCharacter = referenceCharacter[index]
         if (checkedCharacter == null) {
-            char.classList.remove('correct-char');
-            char.classList.remove('incorrect-char');
-            char.classList.remove('current-char');
+            resetCharacter(char);
             if (index === inputElement.value.length) {
-                char.classList.add('current-char');
-                char.classList.remove('inactive-char');
+                currentCharacter(char);
             }
-            else{
-                char.classList.remove('current-char');
-                char.classList.add('inactive-char');
+            else {
+                inactiveCharacter(char);
             }
         } else if (checkedCharacter === char.innerText) {
-            char.classList.add('correct-char');
-            char.classList.remove('incorrect-char');
-
+            correctCharacter(char);
         } else {
-            char.classList.add('incorrect-char');
-            char.classList.remove('correct-char');
-            char.classList.remove('current-char');
+            incorrectCharacter(char);
         }
     })
 }
-
-function calculateVariance() {
-    calculateKeystrokeDurationVariance();
-    calculateKeystrokeSpacingVariance();
-    calculateKeyTransitionVariance();
+function resetCharacter(char){
+    char.classList.remove('correct-char');
+    char.classList.remove('incorrect-char');
+    char.classList.remove('current-char');
 }
-
-const keyEvent = {
-    index: 0,
-    keydownTime: 0,
-    keyupTime: 0,
-    keystrokeDuration: 0,
-    keystrokeSpacing: 0,
-    keyTransitionDuration: 0,
-    keyCode: '',
-    active: false,
-    userID: '',
-    userName: '',
-    evaluatedKeyboardModel: '',
-    evaluatedKeyboardMake: ''
+function currentCharacter(char){
+    char.classList.add('current-char');
+    char.classList.remove('inactive-char');
+}
+function inactiveCharacter(char){
+    char.classList.remove('current-char');
+    char.classList.add('inactive-char');
+}
+function correctCharacter(char){
+    char.classList.add('correct-char');
+    char.classList.remove('incorrect-char');
+}
+function incorrectCharacter(char){
+    char.classList.add('incorrect-char');
+    char.classList.remove('correct-char');
+    char.classList.remove('current-char');
 }
 
 let keyEvents = [];
 
 document.addEventListener('keydown', function(event) {
     checkCapsLock(event);
-    if (!started || finished) return;
+    inputElement.focus();
+    let i = inputElement.value.length;
+    inputElement.setSelectionRange(i, i);
+    if (!finished){
+        characterCheck(event);
+        keydownAnalysis(event);
+    }
+});
+function characterCheck(event){
+    totalKeys++;
     if (event.key.length === 1) {
-        totalTypedCharacters++;
+        totalCharacters++;
     }
     if (event.key === 'Backspace') {
         deletedCharacterCount++;
     }
-});
-document.addEventListener('keydown', function(event) {
-    if (!finished) {
-        inputElement.focus();
-        let i = inputElement.value.length;
-        inputElement.setSelectionRange(i, i);
+}
+function keydownAnalysis(event){
+    if (event.key.length === 1){
+        let previous = keyEvents[keyEvents.length-1];
+        logKey(event, previous);
+        spacing(previous);
+        transition(previous);
     }
-    if (started && !finished) {
-        totalKeysPressed++;
-        keyEvents.push({
-            index: totalKeysPressed,
-            keydownTime: new Date(),
-            keyupTime: null,
-            keyCode: event.code,
-            active: true,
-            correct: true
-        });
-        if (totalKeysPressed > 1){
-            let i = keyEvents.length - 1;
-            let keystrokeSpacing = keyEvents[i].keydownTime - keyEvents[i - 1].keydownTime;
-            keyEvents[i].keystrokeSpacing = keystrokeSpacing;
-            totalKeystrokeSpacing += keystrokeSpacing;
-            if (!keyEvents[i - 1].active){
-                let keyTransitionDuration = keyEvents[i].keydownTime - keyEvents[i - 1].keyupTime;
-                keyEvents[i].keyTransitionDuration = keyTransitionDuration;
-                totalKeyTransitionDuration += keyTransitionDuration;
-            }
-        }
+}
+function logKey(event, previous){
+    let target = currentPhrase.charAt(inputElement.value.length);
+    keyEvents.push({
+        keydown: event,
+        keyup: null,
+        target: target,
+        correct: target === event.key,
+        duration: 0,
+        spacing: 0,
+        transition: 0,
+        previous: previous
+    });
+}
+function spacing(previous){
+    if (previous === undefined || 
+        previous.previous === undefined){
+        return;
     }
-});
+    previous.spacing = calculateSpacing(previous);
+    totalKeystrokeSpacing += previous.spacing;
+}
+function transition(previous){
+    if (previous === undefined || 
+        previous.previous === undefined || 
+        previous.previous.keyup === null){
+        return;
+    }
+    previous.transition = calculateTransition(previous);
+    totalKeyTransitionDuration += previous.transition;
+}
 document.addEventListener('keyup', function(event) {
     checkCapsLock(event);
-    let pressed = '';
-    keyEvents.forEach(key => {
-        if (key.active === true) {
-            pressed += key.keyCode + ' ';
-            if (key.keyCode === event.code){
-                key.keyupTime = new Date();
-                key.active = false;
-                key.keystrokeDuration = key.keyupTime - key.keydownTime;
-                totalKeystrokeDuration += key.keystrokeDuration;
-            }
-        }
-    });
+    duration(event);
 });
-
-function sentenceCase(string){
-    return string.charAt(0).toUpperCase() + string.slice(1);
+function duration(event){
+    let active = keyEvents.filter(key => 
+        (key.keyup === null) && 
+        (key.keydown.code === event.code));
+    active.forEach(key => {
+        key.keyup = event;
+        key.duration = calculateDuration(key);
+        totalKeystrokeDuration += key.duration;
+    });
 }
-
-function calculateKeystrokeDurationVariance() {
+function calculateDuration(event){
+    return event.keyup.timeStamp - event.keydown.timeStamp;
+}
+function calculateSpacing(event){
+    return event.keydown.timeStamp - event.previous.keydown.timeStamp;
+}
+function calculateTransition(event){
+    return event.keydown.timeStamp - event.previous.keyup.timeStamp;
+}
+function calculateVariance() {
+    calculateDurationVariance();
+    calculateSpacingVariance();
+    calculateTransitionVariance();
+}
+function calculateDurationVariance() {
     let sum = 0;
     keyEvents.forEach(key => {
-        if(!isNaN(key.keystrokeDuration)) {
-            let diff = (key.keystrokeDuration - meanKeystrokeDuration);
+        if(!isNaN(key.duration)) {
+            let diff = (key.duration - durationMean);
             sum += (diff * diff);
         }
     })
-    keystrokeDurationVariance = sum / (totalKeysPressed - 1);
+    durationVariance = sum / (totalCharacters - 1);
 }
-function calculateKeystrokeSpacingVariance() {
+function calculateSpacingVariance() {
     let sum = 0;
     keyEvents.forEach(key => {
-        if (!isNaN(key.keystrokeSpacing)) {
-            let diff = (key.keystrokeSpacing - meanKeystrokeSpacing);
+        if (!isNaN(key.spacing)) {
+            let diff = (key.spacing - spacingMean);
             sum += (diff * diff);
         }
     })
-    keystrokeSpacingVariance = sum / (totalKeysPressed - 1);
+    spacingVariance = sum / (totalCharacters - 1);
 }
-function calculateKeyTransitionVariance() {
+function calculateTransitionVariance() {
     let sum = 0;
     keyEvents.forEach(key => {
-        if(!isNaN(key.keyTransitionDuration)) {
-            let diff = (key.keyTransitionDuration - meanKeyTransitionTiming);
+        if(!isNaN(key.transition)) {
+            let diff = (key.transition - transitionMean);
             sum += (diff * diff);
         }
     })
-    keyTransitionTimingVariance = sum / (totalKeysPressed - 1);
+    timingVariance = sum / (totalCharacters - 1);
 }
-
-function startListening() {
-    listening = true;
-}
-
 function evaluateEfficiency() {
-    let typingInefficiency = (totalTypedCharacters / currentInput.length) * 100.0;
+    let typingInefficiency = (totalCharacters / currentInput.length) * 100.0;
     typingEfficiency = 100.0 - Math.abs((typingInefficiency) - 100.0);
     correctionEfficiency = (correctedErrorCount / deletedCharacterCount) * 100.0;
 }
-
 function evaluateTypingPerformance() {
     wordsPerMinute = Math.round(((currentInput.length / charactersToWords) / timeTaken) * secondsToMinutes);
     charactersPerMinute = Math.round((currentInput.length / timeTaken) * secondsToMinutes);
     accuracy = checkAccuracy(currentPhrase, currentInput);
 }
-
 function checkAccuracy(toReference, toCheck) {
     let errors = 0;
     for (let i = 0; i < toCheck.length; i++) {
@@ -890,69 +915,41 @@ function checkAccuracy(toReference, toCheck) {
     previousErrorCount = errors;
     return 100.0 - ((errors / toCheck.length) * 100.0);
 }
-
 setInterval(function() {
     if (!finished && started){
         endTime = new Date();
         timeTaken = ((endTime - startTime) / millisecondsToSeconds);
-        meanKeystrokeDuration = totalKeystrokeDuration / totalKeysPressed;
-        meanKeystrokeSpacing = totalKeystrokeSpacing / totalKeysPressed;
-        meanKeyTransitionTiming = totalKeyTransitionDuration / totalKeysPressed;
+        durationMean = totalKeystrokeDuration / totalKeys;
+        spacingMean = totalKeystrokeSpacing / totalKeys;
+        transitionMean = totalKeyTransitionDuration / totalKeys;
     }
 })
-
-function logMetrics(){
+function parseMetrics(store = false){
     let metrics = [
-        {id: 'target-phrase', value: currentPhrase},
-        {id: 'entered-phrase', value: currentInput},
-        {id: 'time-taken', value: timeTaken},
-        {id: 'words-per-minute', value: wordsPerMinute},
-        {id: 'characters-per-minute', value: charactersPerMinute},
-        {id: 'total-characters-typed', value: totalTypedCharacters},
-        {id: 'total-keys-pressed', value: totalKeysPressed},
-        {id: 'corrected-error-count', value: correctedErrorCount},
-        {id: 'deleted-character-count', value: deletedCharacterCount},
-        {id: 'accuracy', value: accuracy},
-        {id: 'typing-efficiency', value: typingEfficiency},
-        {id: 'correction-efficiency', value: correctionEfficiency},
-        {id: 'mean-keystroke-duration', value: meanKeystrokeDuration},
-        {id: 'mean-keystroke-spacing', value: meanKeystrokeSpacing},
-        {id: 'mean-key-transition', value: meanKeyTransitionTiming},
-        {id: 'keystroke-duration-variance', value: keystrokeDurationVariance},
-        {id: 'keystroke-spacing-variance', value: keystrokeSpacingVariance},
-        {id: 'key-transition-variance', value: keyTransitionTimingVariance}
+        {id: 'target-phrase',               value: currentPhrase},
+        {id: 'entered-phrase',              value: currentInput},
+        {id: 'time-taken',                  value: timeTaken},
+        {id: 'words-per-minute',            value: wordsPerMinute},
+        {id: 'characters-per-minute',       value: charactersPerMinute},
+        {id: 'total-characters-typed',      value: totalCharacters},
+        {id: 'total-keys-pressed',          value: totalKeys},
+        {id: 'corrected-error-count',       value: correctedErrorCount},
+        {id: 'deleted-character-count',     value: deletedCharacterCount},
+        {id: 'accuracy',                    value: accuracy},
+        {id: 'typing-efficiency',           value: typingEfficiency},
+        {id: 'correction-efficiency',       value: correctionEfficiency},
+        {id: 'mean-keystroke-duration',     value: durationMean},
+        {id: 'mean-keystroke-spacing',      value: spacingMean},
+        {id: 'mean-key-transition',         value: transitionMean},
+        {id: 'keystroke-duration-variance', value: durationVariance},
+        {id: 'keystroke-spacing-variance',  value: spacingVariance},
+        {id: 'key-transition-variance',     value: timingVariance}
     ]
-
     metrics.forEach(metric => {
         console.log(metric.id, ":", metric.value)
-    })
-}
-
-function cacheMetrics(){
-    let metrics = [
-        {id: 'target-phrase', value: currentPhrase},
-        {id: 'entered-phrase', value: currentInput},
-        {id: 'time-taken', value: timeTaken},
-        {id: 'words-per-minute', value: wordsPerMinute},
-        {id: 'characters-per-minute', value: charactersPerMinute},
-        {id: 'total-characters-typed', value: totalTypedCharacters},
-        {id: 'total-keys-pressed', value: totalKeysPressed},
-        {id: 'corrected-error-count', value: correctedErrorCount},
-        {id: 'deleted-character-count', value: deletedCharacterCount},
-        {id: 'accuracy', value: accuracy},
-        {id: 'typing-efficiency', value: typingEfficiency},
-        {id: 'correction-efficiency', value: correctionEfficiency},
-        {id: 'mean-keystroke-duration', value: meanKeystrokeDuration},
-        {id: 'mean-keystroke-spacing', value: meanKeystrokeSpacing},
-        {id: 'mean-key-transition', value: meanKeyTransitionTiming},
-        {id: 'keystroke-duration-variance', value: keystrokeDurationVariance},
-        {id: 'keystroke-spacing-variance', value: keystrokeSpacingVariance},
-        {id: 'key-transition-variance', value: keyTransitionTimingVariance}
-    ]
-
-    metrics.forEach(metric => {
-        sessionStorage.setItem(metric.id, metric.value);
-        console.log(metric.id, ":", metric.value)
+        if (store){
+            sessionStorage.setItem(metric.id, metric.value);
+        }
     })
 }
 
@@ -966,55 +963,4 @@ window.addEventListener('beforeunload', function (event) {
     }
 });
 
-firebase.initializeApp(firebaseConfig);
-let database = firebase.database();
-
-function logKeystrokeData() {
-    let data = [];
-    keyEvents.forEach(key =>{
-        let cleaned = {
-            "key-code": key.keyCode,
-            "correct-key": key.correct,
-            "user-id": sessionStorage.getItem('user-id'),
-            "user-name": sessionStorage.getItem('user-name'),
-            "evaluated-keyboard-make": sessionStorage.getItem('evaluated-keyboard-make'),
-            "evaluated-keyboard-model": sessionStorage.getItem('evaluated-keyboard-model'),
-            "evaluated-keyboard-layout": sessionStorage.getItem('evaluated-keyboard-layout'),
-            "evaluated-keyboard-language": sessionStorage.getItem('evaluated-keyboard-language'),
-            "keystroke-duration": key.hasOwnProperty('keystrokeDuration') ? key.keystrokeDuration : null,
-            "keystroke-spacing": key.hasOwnProperty('keystrokeSpacing') ? key.keystrokeSpacing : null,
-            "key-transition-duration": key.hasOwnProperty('keyTransitionDuration') ? key.keyTransitionDuration : null
-        }
-        data.push(cleaned);
-    });
-
-    let json = {};
-    Object.keys(data).forEach(key => {
-        json[key] = data[key];
-    });
-
-    let stamp = "heatmap-" + Date.now().toString();
-    database.ref(stamp).set(json)
-        .then(function() {
-            proceed();
-        })
-        .catch(function(error) {
-            proceed();
-            console.error("Error:", error);
-        });
-}
-
-inputElement.addEventListener('input', onInputChange);
-inputElement.addEventListener('focus', startListening);
-
 choosePhrase();
-
-document.addEventListener('DOMContentLoaded', function() {
-   resetListeners();
-});
-
-function restartEvaluation(){
-    resetListeners();
-    submitted = true;
-    window.location.href = 'typing_evaluation.html';
-}

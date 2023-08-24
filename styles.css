@@ -97,5 +97,6 @@ html, body {
   border-radius: 8px;
   padding: 10px;
   margin-top: 10px;
+  margin-bottom: 24px;
   display: flex;
 }
