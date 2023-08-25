@@ -176,10 +176,10 @@ let sections = [
                 low: "Beautiful",
                 high: "Ugly",
                 description: ""},
-            {   id: "timbre-keyboard-crispiness",
+            /*{   id: "timbre-keyboard-crispiness",
                 low: "Crispy",
                 high: "Thocky",
-                description: ""},
+                description: ""},*/
             {   id: "timbre-keyboard-premiumness",
                 low: "Premium",
                 high: "Basic",
