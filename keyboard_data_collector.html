@@ -43,7 +43,20 @@
                 <option value="orthogonal">orthogonal</option>
                 <option value="ortholinear">ortholinear</option>
             </select>
-            <select id="key-profile">
+            <label for="key-shape"></label>, <select id="key-shape">
+            <option value="square" selected>square</option>
+            <option value="rounded">rounded</option>
+            <option value="circular">circular</option>
+            <option value="squircle">squircular</option>
+            <option value="other">other</option>
+            </select>
+            <label for="key-dishing"></label>, <select id="key-dishing">
+            <option value="dished" selected>dished</option>
+            <option value="flat">flat</option>
+            <option value="domed">domed</option>
+            <option value="other">other</option>
+        </select>
+            <label for="key-profile"></label><select id="key-profile">
                 <option value="low" selected>low profile</option>
                 <option value="high">high profile</option>
             </select> keys
@@ -107,6 +120,8 @@
             sessionStorage.setItem('keyboard-type', document.getElementById('keyboard-type').value);
             sessionStorage.setItem('keyboard-size', document.getElementById('keyboard-size').value);
             sessionStorage.setItem('keyboard-columns', document.getElementById('keyboard-columns').value);
+            sessionStorage.setItem('key-shape', document.getElementById('key-shape').value);
+            sessionStorage.setItem('key-dishing', document.getElementById('key-dishing').value);
             sessionStorage.setItem('key-profile', document.getElementById('key-profile').value);
             sessionStorage.setItem('keycap-material', document.getElementById('keycap-material').value);
             sessionStorage.setItem('keyboard-backlighting-flag', document.getElementById('keyboard-backlighting-flag').value);
