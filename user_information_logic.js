@@ -76,6 +76,7 @@ function populateKeyboardLanguageOptions(){
 
 let url = new URL(window.location.href);
 let userIndex = url.searchParams.get('userID');
+console.log(`User ID = ${userIndex}`);
 
 populateKeyboardLanguageOptions();
 
