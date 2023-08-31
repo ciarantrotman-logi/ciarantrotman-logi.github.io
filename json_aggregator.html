@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Aggregator</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+</head>
+<body class="evaluation-block">
+<h1>JSON Aggregator</h1>
+<p>Aggregates all user data related to specific keyboards and outputs aggregated files for each device.</p>
+<div>
+    <label for="json-key"></label><input type="text" id="json-key" placeholder="evaluated-keyboard-model">
+    <input type="file" id="file-input" accept=".json" multiple onchange="parse(event)">
+</div>
+<div id="parameter-selector">
+    <h2>Select Parameters</h2>
+</div>
+<div>
+    <br><button onclick="aggregate()">Aggregate Parameters</button>
+</div>
+<script src="json_aggregator.js"></script>
+</body>
+</html>

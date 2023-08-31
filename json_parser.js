@@ -12,7 +12,7 @@ function processJSON() {
                 for (let key in jsonData) {
                     if (jsonData.hasOwnProperty(key)) {
                         const innerData = jsonData[key];
-                        const blob = new Blob([JSON.stringify(innerData)], { type: "application/json" });
+                        const blob = new Blob([JSON.stringify(innerData, null, 2)], { type: "application/json" });
                         zip.file(`${key}.json`, blob);
                     }
                 }
