@@ -70,10 +70,8 @@ function aggregate(){
     })
     keyboards.forEach(keyboard =>{
         console.log(`${keyboard.name} has ${keyboard.data.length} instances.`);
-        let aggregated = [];
-        aggregated.push({
-            [key] : keyboard.name
-        })
+        let aggregated = {};
+        aggregated[key] = keyboard.name;
         keys.forEach(key =>{
             if (document.getElementById(key).checked){
                 let values = [];
@@ -82,12 +80,8 @@ function aggregate(){
                 });
                 let mean = values.reduce((acc, val) => acc + val, 0) / values.length;
                 let variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length;
-                aggregated.push({
-                    [`${key}-mean`] : mean
-                })
-                aggregated.push({
-                    [`${key}-variance`] : variance
-                })
+                aggregated[`${key}-mean`] = mean;
+                aggregated[`${key}-variance`] = variance;
             }
         })
         keyboard.aggregated = aggregated;
