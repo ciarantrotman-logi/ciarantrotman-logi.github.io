@@ -12,14 +12,22 @@
 <h1>JSON Aggregator</h1>
 <p>Aggregates all user data related to specific keyboards and outputs aggregated files for each device.</p>
 <div>
-    <label for="json-key"></label><input type="text" id="json-key" placeholder="evaluated-keyboard-model">
+    <br><label for="data-selection">I want to capture</label>
+    <select id="data-selection">
+        <option value="mean-and-variance" selected>mean and variance</option>
+        <option value="mean">just mean</option>
+        <option value="variance">just variance</option>
+    </select> data using the key 
+    <label for="json-key">"</label><input type="text" id="json-key" placeholder="evaluated-keyboard-model">"
+    <br><br>
     <input type="file" id="file-input" accept=".json" multiple onchange="parse(event)">
 </div>
-<div id="parameter-selector">
+<div id="parameter-selector" style="display: none">
     <h2>Select Parameters</h2>
-</div>
-<div>
-    <br><button onclick="aggregate()">Aggregate Parameters</button>
+    <div id="parameter-keys"></div>
+    <div>
+        <br><button onclick="aggregate()">Aggregate Parameters</button>
+    </div>
 </div>
 <script src="json_aggregator.js"></script>
 </body>
