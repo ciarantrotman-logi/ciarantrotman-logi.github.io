@@ -36,6 +36,12 @@
                 <option value="65">65%</option>
                 <option value="60">60%</option>
                 <option value="40">40%</option>
+            </select>
+            <label for="keyboard-usage"></label>
+            <select id="keyboard-usage">
+                <option value="productivity" selected>productivity</option>
+                <option value="gaming">gaming</option>
+                <option value="mobility">mobility</option>
             </select> keyboard,
             <label for="keyboard-columns">with </label>
             <select id="keyboard-columns">
@@ -67,8 +73,8 @@
                 <option value="pc">PC</option>
                 <option value="pom">POM</option>
                 <option value="pvs">PVS</option>
-            </select>
-            <label for="keyboard-backlighting-flag">and </label><select id="keyboard-backlighting-flag">
+            </select>,
+            <label for="keyboard-backlighting-flag">and are </label><select id="keyboard-backlighting-flag">
             <option value="true" selected>are</option>
             <option value="false">aren't</option>
         </select> backlit.
@@ -117,20 +123,25 @@
         function addSessionStorageData(){
             sessionStorage.setItem('evaluated-keyboard-make', sanitisedString(document.getElementById('evaluated-keyboard-make').value));
             sessionStorage.setItem('evaluated-keyboard-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
+            
             sessionStorage.setItem('keyboard-type', document.getElementById('keyboard-type').value);
             sessionStorage.setItem('keyboard-size', document.getElementById('keyboard-size').value);
+            sessionStorage.setItem('keyboard-usage', document.getElementById('keyboard-usage').value);
+            
             sessionStorage.setItem('keyboard-columns', document.getElementById('keyboard-columns').value);
             sessionStorage.setItem('key-shape', document.getElementById('key-shape').value);
             sessionStorage.setItem('key-dishing', document.getElementById('key-dishing').value);
             sessionStorage.setItem('key-profile', document.getElementById('key-profile').value);
             sessionStorage.setItem('keycap-material', document.getElementById('keycap-material').value);
             sessionStorage.setItem('keyboard-backlighting-flag', document.getElementById('keyboard-backlighting-flag').value);
+            
             sessionStorage.setItem('switch-operating-force', document.getElementById('switch-operating-force').value);
             sessionStorage.setItem('switch-actuation-force', document.getElementById('switch-actuation-force').value);
             sessionStorage.setItem('switch-pre-travel', document.getElementById('switch-pre-travel').value);
             sessionStorage.setItem('switch-total-travel', document.getElementById('switch-total-travel').value);
             sessionStorage.setItem('switch-type', document.getElementById('switch-type').value);
             sessionStorage.setItem('switch-average-loudness', document.getElementById('switch-average-loudness').value);
+            
             sessionStorage.setItem('keyboard-height', document.getElementById('keyboard-height').value);
             sessionStorage.setItem('keyboard-width', document.getElementById('keyboard-width').value);
             sessionStorage.setItem('keyboard-depth', document.getElementById('keyboard-depth').value);

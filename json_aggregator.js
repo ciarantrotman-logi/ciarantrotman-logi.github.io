@@ -44,7 +44,8 @@ function construct(){
         let keyboard = file[key];
         if (!keyboards.includes(keyboard)){
             keyboards.push({
-                name: keyboard,
+                model: file['evaluated-keyboard-model'],
+                make: file['evaluated-keyboard-make'],
                 data: [],
                 aggregated: []
             });
@@ -62,15 +63,16 @@ async function read(file){
 function aggregate(){
     keyboards.forEach(keyboard =>{
           data.forEach(object =>{
-              if(object[key] === keyboard.name){
+              if(object[key] === keyboard.model){
                   keyboard.data.push(object);
               }
           })
     })
     keyboards.forEach(keyboard =>{
-        console.log(`${keyboard.name} has ${keyboard.data.length} instances.`);
+        console.log(`${keyboard.model} has ${keyboard.data.length} instances.`);
         let aggregated = {};
-        aggregated["make"] = keyboard.name;
+        aggregated["model"] = keyboard.model;
+        aggregated["make"] = keyboard.make;
         keys.forEach(key =>{
             if (document.getElementById(key).checked){
                 let values = [];
@@ -101,7 +103,7 @@ async function download(){
     const zip = new JSZip();
     keyboards.forEach(keyboard =>{
         const blob = new Blob([JSON.stringify(keyboard.aggregated, null, 2)], { type: "application/json" });
-        zip.file(`${keyboard.name}.json`, blob);
+        zip.file(`${keyboard.model}.json`, blob);
     })
     const blob = await zip.generateAsync({ type: "blob" });
     const downloadLink = document.createElement("a");
