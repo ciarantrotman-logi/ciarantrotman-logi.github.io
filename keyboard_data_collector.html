@@ -112,12 +112,20 @@
                 <li><label for="keyboard-incline"></label>The <b>angle</b> of the keys is <input type="number" style="width: 40px;" id="keyboard-incline"/>º</li>
             </ol>
         </div>
-        <button id='submit-button' class = "full-width" onclick="submitData()">Submit</button>
+        <div class="progression-buttons">
+            <button id='submit-button' class = "progression-button" onclick="submitData()">Upload Data</button>
+            <button id='download-button' class = "progression-button" onclick="directDownload()">Download Data</button>
+        </div>
     </div>
     <script>
         function submitData(){
             addSessionStorageData();
             downloadData();
+        }
+
+        function directDownload(){
+            addSessionStorageData();
+            manualDownload(sessionStorage);
         }
         
         function addSessionStorageData(){
