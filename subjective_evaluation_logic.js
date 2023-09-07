@@ -5,7 +5,8 @@ function onContinue(){
 
 let evaluationArea = document.getElementById('evaluation-area');
 
-fetch('./locales/en-us.json')
+let locale = 'zh-tw';
+let localised = fetch(`./locales/${locale}.json`)
     .then(response => response.json())
     .then(data => console.log(data))
 
@@ -16,29 +17,29 @@ let sections = [
         id: 'task-load-index',
         metrics: [
             {   id: "tlx-mental-demand",
-                low: "Not at all",
-                high: "Very much",
-                description: "How mentally demanding was performing the typing task when using this keyboard?"},
+                low: localised['tlx-mental-demand-low'],
+                high: localised['tlx-mental-demand-high'],
+                description: localised['tlx-mental-demand-description']},
             {   id: "tlx-physical-demand",
-                low: "Not at all",
-                high: "Very much",
-                description: "How physically demanding was performing the typing task when using this keyboard?"},
+                low: localised['tlx-physical-demand-low'],
+                high: localised['tlx-physical-demand-high'],
+                description: localised['tlx-physical-demand-description']},
             {   id: "tlx-temporal-demand",
-                low: "Not at all",
-                high: "Very much",
-                description: "How rushed did you feel when performing the typing task when using this keyboard?"},
+                low: localised['tlx-temporal-demand-low'],
+                high: localised['tlx-temporal-demand-high'],
+                description: localised['tlx-temporal-demand-description']},
             {   id: "tlx-performance",
-                low: "Not at all",
-                high: "Very much",
-                description: "How successful did you feel you were when performing the typing task when using this keyboard?"},
+                low: localised['tlx-performance-low'],
+                high: localised['tlx-performance-high'],
+                description: localised['tlx-performance-description']},
             {   id: "tlx-effort",
-                low: "Not at all",
-                high: "Very much",
-                description: "How hard did you have to work when performing the typing task when using this keyboard?"},
+                low: localised['tlx-effort-low'],
+                high: localised['tlx-effort-high'],
+                description: localised['tlx-effort-description']},
             {   id: "tlx-frustration",
-                low: "Not at all",
-                high: "Very much",
-                description: "How frustrated or irritated did you feel when performing the typing task when using this keyboard?"}
+                low: localised['tlx-frustration-low'],
+                high: localised['tlx-frustration-high'],
+                description: localised['tlx-frustration-description']},
         ],
         range: {min: -10, max: 10, value: 0}},
     {   header: 'Usability',
