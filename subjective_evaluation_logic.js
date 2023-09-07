@@ -5,6 +5,10 @@ function onContinue(){
 
 let evaluationArea = document.getElementById('evaluation-area');
 
+fetch('./locales/en-us.json')
+    .then(response => response.json())
+    .then(data => console.log(data))
+
 let sections = [
     {   header: 'Cognitive Load',
         introduction: 'This first section is focused on understanding how <b>easy or difficult you found the evaluation task</b> with this keyboard.',
