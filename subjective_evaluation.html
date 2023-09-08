@@ -17,6 +17,12 @@
     <script src="config.js"></script>
 </head>
 <body class="evaluation-block">
+<label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
+    <option value="en-us" selected>English</option>
+    <option value="zh-cn">简化字</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+</select>
     <h1>Subjective Evaluation</h1>
     <div id="introduction"> 
         This is the last section of the keyboard evaluation! Thank you again for your participation.

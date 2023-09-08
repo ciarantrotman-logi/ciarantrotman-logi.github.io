@@ -8,6 +8,10 @@ html, body {
   width: 1ch;
 }
 
+.locale-selector {
+  float: right;
+}
+
 .current-newline-char {
   color: white;
   background-color: black;
