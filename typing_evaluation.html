@@ -14,12 +14,13 @@
   <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="evaluation-block">
-<label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
-  <option id="en-us" value="en-us" selected>English</option>
-  <option id="zh-cn" value="zh-cn">简化字</option>
-  <option id="fr" value="fr">Français</option>
-  <option id="de" value="de">Deutsch</option>
-</select>
+<div id="localised-block" style="display: none">
+  <label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
+    <option id="en-us" value="en-us" selected>English</option>
+    <option id="zh-cn" value="zh-cn">简化字</option>
+    <option id="fr" value="fr">Français</option>
+    <option id="de" value="de">Deutsch</option>
+  </select> 
   <h1 id="typing-evaluation-header"></h1>
   <div id="introduction">
     <p id="typing-evaluation-introduction"></p>
@@ -33,14 +34,15 @@
   <div id="input-area" style="display: none">
     <div id="evaluation-area"></div>
     <div id="caps-lock-warning" class="warning-box" style="display: none">
-        <b id="caps-lock-warning-label"></b>
+      <b id="caps-lock-warning-label"></b>
     </div>
     <button class = "full-width" id="restart-typing-evaluation" onclick="restartEvaluation()"></button>
     <div id="input-field">
       <label for="input"></label><textarea id="input" placeholder="" class="hidden-input"></textarea>
-    </div> 
+    </div>
   </div>
   <script src="typing_evaluation_logic.js"></script>
   <script src="localisation.js"></script>
+</div>
 </body>
 </html>

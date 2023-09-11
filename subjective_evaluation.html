@@ -17,39 +17,35 @@
     <script src="config.js"></script>
 </head>
 <body class="evaluation-block">
-<label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
-    <option value="en-us" selected>English</option>
-    <option value="zh-cn">简化字</option>
-    <option value="fr">Français</option>
-    <option value="de">Deutsch</option>
-</select>
+<div id="localised-block" style="display: none">
+    <label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
+        <option value="en-us" selected>English</option>
+        <option value="zh-cn">简化字</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+    </select>
     <h1 id="subjective-evaluation-header">Subjective Evaluation</h1>
-    <div id="introduction"> 
-        <p id="subjective-evaluation-welcome">
-            This is the last section of the keyboard evaluation! Thank you again for your participation.
-        </p>
-        <p id="subjective-evaluation-introduction">
-            Now you will be asked to rate your thoughts and impressions of the keyboard you are evaluating across seven different categories.
-        </p>
-        <p id="subjective-evaluation-duration">
-            This should take around five minutes.
-        </p>
+    <div id="introduction">
+        <p id="subjective-evaluation-welcome"></p>
+        <p id="subjective-evaluation-introduction"></p>
+        <p id="subjective-evaluation-duration"></p>
         <div class="progression-buttons">
-            <button class = "full-width" id="subjective-evaluation-continue" onclick="onContinue()">I understand</button>
+            <button class = "full-width" id="subjective-evaluation-continue" onclick="onContinue()"></button>
         </div>
     </div>
     <div id="metric-area" style="display: none">
         <div id="evaluation-area"></div><hr><br>
         <div class="progression-buttons">
-            <button class = "progression-button" id="subjective-evaluation-previous-section" onclick="previousSection()">Previous Section</button>
-            <button class = "progression-button" id="subjective-evaluation-next-section" onclick="nextSection()">Next Section</button>
+            <button class = "progression-button" id="subjective-evaluation-previous-section" onclick="previousSection()"></button>
+            <button class = "progression-button" id="subjective-evaluation-next-section" onclick="nextSection()"></button>
         </div><br>
         <div class="progression-buttons">
-            <button class = "full-width" id="subjective-evaluation-submit" onclick="submit()">Finish user test</button>
+            <button class = "full-width" id="subjective-evaluation-submit" onclick="submit()"></button>
         </div>
     </div>
     <div id="finish-screen" style="display: none">
     </div>
+</div>
 <script src="subjective_evaluation_logic.js"></script>
 <script src="localisation.js"></script>
 </body>

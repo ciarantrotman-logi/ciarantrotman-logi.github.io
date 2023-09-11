@@ -5,7 +5,7 @@ function localisation(){
     if (locale === null){
         localise(document.getElementById('locale').value);
     }
-    else{
+    else {
         localise(locale);
     }
 }
@@ -23,5 +23,6 @@ function localise(locale){
                 element.innerHTML = data[key]
             }
         }
+        document.getElementById('localised-block').style.display = 'block';
     })
 }

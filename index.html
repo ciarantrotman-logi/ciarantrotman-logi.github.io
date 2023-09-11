@@ -14,12 +14,13 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="evaluation-block">
-<label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
-    <option value="en-us" selected>English</option>
-    <option value="zh-cn">简化字</option>
-    <option value="fr">Français</option>
-    <option value="de">Deutsch</option>
-</select>
+<div id="localised-block" style="display: none">
+    <label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
+        <option value="en-us" selected>English</option>
+        <option value="zh-cn">简化字</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+    </select>
     <h1 id="keyboard-evaluation-header"></h1>
     <div id="introduction">
         <p id="keyboard-evaluation-welcome"></p>
@@ -175,5 +176,6 @@
     </div>
     <script src="user_information_logic.js"></script>
     <script src="localisation.js"></script>
+</div>
 </body>
 </html>
