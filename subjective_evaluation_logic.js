@@ -187,25 +187,9 @@ function constructPage(){
     })
 }
 
-localise(document.getElementById('locale').value);
-
-function localise(locale){
-    sessionStorage.setItem('locale', locale);
-    fetch(`./locales/${locale}.json`)
-        .then(response => response.json())
-        .then(data =>{
-            for (const key in data){
-                let element = document.getElementById(key);
-                if (element !== null){
-                    element.innerHTML = data[key]
-                }
-            }
-        })
-}
-
-let previousButton = document.getElementById('previous-section');
-let nextButton = document.getElementById('next-section');
-let submitButton = document.getElementById('submit');
+let previousButton = document.getElementById('subjective-evaluation-previous-section');
+let nextButton = document.getElementById('subjective-evaluation-next-section');
+let submitButton = document.getElementById('subjective-evaluation-submit');
 
 let index = 0;
 

@@ -14,31 +14,38 @@
   <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="evaluation-block">
-  <h1>Typing Evaluation</h1>
+<label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
+  <option value="en-us" selected>English</option>
+  <option value="zh-cn">简化字</option>
+  <option value="fr">Français</option>
+  <option value="de">Deutsch</option>
+</select>
+  <h1 id="typing-evaluation-header">Typing Evaluation</h1>
   <div id="introduction">
-    <p>
+    <p id="typing-evaluation-introduction">
       This section of the evaluation is focused on seeing how easy this keyboard is to use.
       When you start, you will see a paragraph appear – your goal is to type this paragraph out as you see it. 
     </p>
-    <p>
-      You can type normally, and can use the <b>backspace key</b> in order to delete any mistakes you might make.
+    <p id="typing-evaluation-backspace-explainer">
+      You can type normally, and can use the backspace key in order to delete any mistakes you might make.
     </p>
     <br>
     <div class="progression-buttons">
-      <button class = "full-width" id="begin" onclick="start()">Start the evaluation</button>
+      <button class = "full-width" id="typing-evaluation-begin" onclick="start()">Start the evaluation</button>
     </div>
     <br>
   </div>
   <div id="input-area" style="display: none">
     <div id="evaluation-area"></div>
     <div id="caps-lock-warning" class="warning-box" style="display: none">
-        <b>CAPS LOCK IS ON</b>
+        <b id="caps-lock-warning-label">CAPS LOCK IS ON</b>
     </div>
-    <button class = "full-width" onclick="restartEvaluation()">Restart typing evaluation</button>
+    <button class = "full-width" id="restart-typing-evaluation" onclick="restartEvaluation()">Restart typing evaluation</button>
     <div id="input-field">
       <label for="input"></label><textarea id="input" placeholder="" class="hidden-input"></textarea>
     </div> 
   </div>
   <script src="typing_evaluation_logic.js"></script>
+  <script src="localisation.js"></script>
 </body>
 </html>

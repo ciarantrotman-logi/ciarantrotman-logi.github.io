@@ -14,136 +14,181 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="evaluation-block">
-    <h1>Keyboard Evaluation</h1>
+<label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
+    <option value="en-us" selected>English</option>
+    <option value="zh-cn">简化字</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+</select>
+    <h1 id="keyboard-evaluation-header">Keyboard Evaluation</h1>
     <div id="introduction">
-        <p>
-            Thank you very much for participating in this user study. This evaluation should take about <b>seven to ten minutes</b>.
-            <br><br>
-                This study is broken up into three sections:
-            <ol>
-                <li>First we will ask you some basic questions about you</li>
-                <li>Then you will be asked to use the keyboard that you're evaluating</li>
-                <li>Lastly you'll be asked for your feedback on your thoughts</li>
-            </ol>
-            Temporary cookies will be stored in your browser to record some data related to the evaluation and 
-            will be cleared when you close the browser. The data you submit will be processed and analysed.
+        <p id="keyboard-evaluation-welcome">
+            Thank you very much for participating in this user study! This evaluation should take about seven to ten minutes.
         </p>
-        <button class = "full-width" onclick="inputUserInformation()">I understand and consent</button>
+        <p id="keyboard-evaluation-section-preamble">
+            This study is broken up into three sections:
+        </p>
+        <ol>
+            <li id="evaluation-stage-explainer-introduction">
+                First we will ask you some basic questions about you
+            </li>
+            <li id="evaluation-stage-explainer-typing-evaluation">
+                Then you will be asked to use the keyboard that you're evaluating
+            </li>
+            <li id="evaluation-stage-explainer-subjective-evaluation">
+                Lastly you'll be asked for your feedback on your thoughts
+            </li>
+        </ol>
+        <p id="privacy-consent-explainer">
+            Temporary cookies will be stored in your browser to record some data related to the evaluation and will be cleared when you close the browser. The data you submit will be processed and analysed.
+        </p>
+        <button class = "full-width" id="privacy-consent-agreement" onclick="inputUserInformation()">I understand and consent</button>
     </div>
-    <div id="user-information" style="display: none">
-        <p>
+    <div id="user-information" style="display: block">
+        <p id="user-information-explanation">
             The following are a set of different questions about you and how you generally use keyboards, please answer as accuractly as you can.
         </p>
-        <h2>General Details</h2>
-        <div class="information-block">
-            <label for="user-name">My first name is </label><input type="text" id="user-name" placeholder="">.
-        </div>
-        <div class="information-block">
-            <label for="user-handedness">I am </label>
-            <select id="user-handedness">
-                <option value="right" selected>right handed</option>
-                <option value="left">left handed</option>
-                <option value="ambidextrous">ambidextrous</option>
-            </select>,
-            <label for="user-hand-size"> and my hand is </label>
-            <select id="user-hand-size">
-                <option value="extra-small">extra small (<160mm)</option>
-                <option value="small">small  (160mm - 174mm)</option>
-                <option value="medium" selected>medium (175mm - 189mm)</option>
-                <option value="large">large (190mm - 204mm)</option>
-                <option value="extra-large">extra large (>204mm)</option>
-            </select> when measured from the bottom of my palm to the tip of my middle finger.
-        </div>
-        <div class="information-block">
-            <label for="keyboard-usage">I mainly use a keyboard for </label>
-            <select id="keyboard-usage">
-                <option value="gaming">gaming</option>
-                <option value="productivity" selected>working</option>
-                <option value="gaming-and-productivity">gaming and working</option>
-            </select>,
-            <label for="technical-familiarity"> and I know </label>
-            <select id="technical-familiarity">
-                <option value="unfamiliar">nothing</option>
-                <option value="somewhat-familiar" selected>a little</option>
-                <option value="very-familiar">a lot</option>
-            </select> about how keyboards work.
-        </div>
-        <div class="information-block">
-            <label for="test-condition-flag">I am doing this evaluation </label>
-            <select id="test-condition-flag">
-                <option value="true" selected>as part of an in person user test</option>
-                <option value="false">on my own</option>
-            </select>,
-            <label for="ergonomic-flag"> and </label>
-            <select id="ergonomic-flag">
-                <option value="true" selected>in a test environment</option>
-                <option value="false">in an informal setting</option>
-            </select>.
-        </div>
-        <div class="information-block">
-            <label for="usage-environment">I normally use a keyboard in </label>
-            <select id="usage-environment">
-                <option value="private" selected>a private environment</option>
-                <option value="shared">in a shared space</option>
-            </select>,
-            <label for="workspace-type"> and I typically work </label>
-            <select id="workspace-type">
-                <option value="dedicated" selected>at a dedicated workspace</option>
-                <option value="pop-up">at a pop-up workspace</option>
-                <option value="mobile">anywhere and everywhere</option>
-            </select>.
-        </div>
+        <h3 id="user-information-header-user-details">About You</h3>
+        <ol>
+            <li>
+                <label for="user-name" id="user-information-user-name-label">What is your first name? </label><input type="text" id="user-name" placeholder="">
+            </li>
+            <li>
+                <label for="user-handedness" id="user-information-user-handedness-label">Which is your dominant hand?</label>
+                <select id="user-handedness">
+                    <option value="right" id="user-information-user-handedness-option-right" selected>Right Hand</option>
+                    <option value="left" id="user-information-user-handedness-option-left">Left Hand</option>
+                    <option value="ambidextrous" id="user-information-user-handedness-option-ambidextrous">Both Hands</option>
+                </select>
+            </li>
+            <li>
+                <label for="user-hand-size" id="user-information-hand-size-label">What is your hand size? (from palm to middle finger tip)</label>
+                <select id="user-hand-size">
+                    <option value="extra-small" id="user-information-hand-size-extra-small">Extra Small (<160mm)</option>
+                    <option value="small" id="user-information-hand-size-small">Small  (160mm - 174mm)</option>
+                    <option value="medium" id="user-information-hand-size-medium" selected>Medium (175mm - 189mm)</option>
+                    <option value="large" id="user-information-hand-size-large">Large (190mm - 204mm)</option>
+                    <option value="extra-large" id="user-information-hand-size-extra-large">Extra Large (>204mm)</option>
+                </select>
+            </li>
+        </ol>
+        <h3 id="user-information-header-keyboard-usage">Additional Details</h3>
+        <ol>
+            <li>
+                <label for="keyboard-usage" id="user-information-keyboard-usage-label">What do you use a keyboard for?</label>
+                <select id="keyboard-usage">
+                    <option value="gaming" id="user-information-keyboard-usage-gaming">Gaming</option>
+                    <option value="productivity" id="user-information-keyboard-usage-working" selected>Working</option>
+                    <option value="gaming-and-productivity" id="user-information-keyboard-usage-gaming-and-working">Gaming and Working</option>
+                </select>
+            </li>
+            <li>
+                <label for="technical-familiarity" id="user-information-technical-familiarity-label">How familiar are you with how keyboards work?</label>
+                <select id="technical-familiarity">
+                    <option value="unfamiliar" id="user-information-technical-familiarity-unfamiliar">Unfamiliar</option>
+                    <option value="somewhat-familiar" id="user-information-technical-familiarity-somewhat-familiar" selected>Somewhat Familiar</option>
+                    <option value="very-familiar" id="user-information-technical-familiarity-very-familiar">Very Familiar</option>
+                </select>
+            </li>
+            <li>
+                <label for="test-condition-flag" id="test-condition-flag-label">How are you completing this evaluation?</label>
+                <select id="test-condition-flag">
+                    <option value="true" id="test-condition-flag-true" selected>With an in person facilitator</option>
+                    <option value="false" id="test-condition-flag-false">On my own</option>
+                </select>
+            </li>
+            <li>
+                <label for="ergonomic-flag" id="ergonomic-flag-flag-label">Where are you completing this evaluation?</label>
+                <select id="ergonomic-flag">
+                    <option value="true" id="ergonomic-flag-flag-true" selected>In a test environment</option>
+                    <option value="false" id="ergonomic-flag-flag-false">In an informal setting</option>
+                </select>
+            </li>
+            <li>
+                <label for="usage-environment" id="user-information-usage-environment-label">Where do you normally use a keyboard?</label>
+                <select id="usage-environment">
+                    <option value="private" id="user-information-usage-environment-private" selected>In a private environment</option>
+                    <option value="shared" id="user-information-usage-environment-shared">In a shared space</option>
+                </select>
+            </li>
+            <li>
+                <label for="workspace-type" id="user-information-workspace-type-label">What kind of environment do you normally work in?</label>
+                <select id="workspace-type">
+                    <option value="dedicated" id="user-information-workspace-type-dedicated" selected>At a dedicated workspace</option>
+                    <option value="pop-up" id="user-information-workspace-type-pop-up">At a pop-up workspace</option>
+                    <option value="mobile" id="user-information-workspace-type-mobile">Anywhere and everywhere</option>
+                </select>
+            </li>
+        </ol>
         <br>
-        <button onclick="inputKeyboardInformation()" id="continue-to-keyboard-data" class="full-width" >Continue to keyboard information</button></a>
+        <button onclick="inputKeyboardInformation()" id="continue-to-keyboard-data" class="full-width" >Next Section</button></a>
     </div>
-    <div id="keyboard-information" style="display: none">
-        <p>
-            Below are a few different statements, please use the dropdown menus and text fields to input the option that most accurately
-            reflects the truth for you.
+    <div id="keyboard-information" style="display: block">
+        <p id="keyboard-information-introduction">
+            Below are a few different statements, please use the dropdown menus and text fields to input the option that most accurately reflects the truth for you.
         </p>
-        <h2>Keyboard Details</h2>
-        <div class="information-block">
-            <label for="evaluated-keyboard-make">The keyboard brand I am evaluating is </label><input type="text" id="evaluated-keyboard-make" placeholder="brand name">
-            <label for="evaluated-keyboard-model">and the model is </label><input type="text" id="evaluated-keyboard-model" placeholder="model name">.
-        </div>
-        <div class="information-block">
-            <label for="mechanical-flag">This keyboard is a </label>
-            <select id="mechanical-flag">
-                <option value="false" selected>non-mechanical</option>
-                <option value="true">mechanical</option>
-            </select> keyboard. <div id="switch-type-div">
-                <label for="switch-make">The switches in this keyboard are </label><input type="text" id="switch-make" placeholder="switch brand name">
-                <label for="switch-model"></label><input type="text" id="switch-model" placeholder="switch colour">.
+        <h3 id="keyboard-information-header">Keyboard Details</h3>
+        <ol>
+            <li>
+                <label for="evaluated-keyboard-make" id="keyboard-information-keyboard-make">What is the brand of keyboard you are evaluating?</label>
+                <input type="text" id="evaluated-keyboard-make" placeholder="">
+            </li>
+            <li>
+                <label for="evaluated-keyboard-model" id="keyboard-information-keyboard-model">What is the model of keyboard you are evaluating?</label>
+                <input type="text" id="evaluated-keyboard-model" placeholder="">.
+            </li>
+            <li>
+                <label for="benchmark-flag" id="keyboard-information-benchmark-flag">Is this keyboard one that you use regularly?</label>
+                <select id="benchmark-flag">
+                    <option value="true" id="keyboard-information-benchmark-true" selected>Yes</option>
+                    <option value="false" id="keyboard-information-benchmark-false">No</option>
+                </select>
+            </li>
+            <li>
+                <label for="palm-rest-flag" id="keyboard-information-palm-rest-flag">Are you using a palmrest for this evaluation?</label>
+                <select id="palm-rest-flag">
+                    <option value="true" id="keyboard-information-palm-rest-true">Yes</option>
+                    <option value="false" id="keyboard-information-palm-rest-false" selected>No</option>
+                </select>
+            </li>
+            <li>
+                <label for="mechanical-flag" id="keyboard-information-mechanical-flag-label">Are you evaluating a mechanical or non-mechanical keyboard?</label>
+                <select id="mechanical-flag">
+                    <option value="false" id="keyboard-information-mechanical-flag-false" selected>Non-Mechanical</option>
+                    <option value="true" id="keyboard-information-mechanical-flag-true">Mechanical</option>
+                    <option value="unknown" id="keyboard-information-mechanical-flag-unknown">I don't know</option>
+                </select>
+            </li>
+            <div id="switch-type-div">
+                <ol>
+                    <li>
+                        <label for="switch-make" id="keyboard-information-switch-make-label">What brand of switches are you using?</label>
+                        <input type="text" id="switch-make" placeholder="">
+                    </li>
+                    <li>
+                        <label for="switch-model" id="keyboard-information-switch-model-label">What colour of switches are you using?</label>
+                        <input type="text" id="switch-model" placeholder="">.
+                    </li>
+                </ol>
             </div>
-        </div>
-        <div class="information-block">
-            <label for="keyboard-layout">This keyboard has the </label>
-            <select id="keyboard-layout">
-                <option value="iso" selected>ISO</option>
-                <option value="ansi">ANSI</option>
-                <option value="jis">JIS</option>
-            </select> <a href="https://support.apple.com/en-ie/HT201794" target="_blank">layout</a>
-            <label for="keyboard-language">, and is in </label>
-            <select id="keyboard-language">
-            </select>.
-        </div>
-        <div class="information-block">
-            <label for="benchmark-flag">This </label>
-            <select id="benchmark-flag">
-                <option value="true" selected>is</option>
-                <option value="false">is not</option>
-            </select> the keyboard or one of the keyboards that I normally use.
-        </div>
-        <div class="information-block">
-            <label for="palm-rest-flag">I </label>
-            <select id="palm-rest-flag">
-                <option value="true">am</option>
-                <option value="false" selected>am not</option>
-            </select> using a palm rest during this evaluation.
-        </div>
+            <li>
+                <label for="keyboard-layout" id="keyboard-information-keyboard-layout-label">What layout keyboard are you evaluating?</label>
+                <select id="keyboard-layout">
+                    <option value="iso" id="keyboard-information-keyboard-layout-iso" selected>ISO</option>
+                    <option value="ansi" id="keyboard-information-keyboard-layout-ansi">ANSI</option>
+                    <option value="jis" id="keyboard-information-keyboard-layout-jis">JIS</option>
+                </select> <a href="https://support.apple.com/en-ie/HT201794" target="_blank" id="keyboard-layout-information">(Layout Identification Guide)</a>
+            </li>
+            <li>
+                <label for="keyboard-language" id="keyboard-information-keyboard-language-label">What language is your keyboard in?</label>
+                <select id="keyboard-language">
+                </select>
+            </li>
+        </ol>
         <br>
-        <a href="typing_evaluation.html"><button onclick="startEvaluation()" id="continue-to-evaluation" class="full-width" >Continue to typing evaluation</button></a>
+        <a href="typing_evaluation.html"><button onclick="startEvaluation()" id="continue-to-evaluation" class="full-width" >Continue to Evaluation</button></a>
     </div>
     <script src="user_information_logic.js"></script>
+    <script src="localisation.js"></script>
 </body>
 </html>

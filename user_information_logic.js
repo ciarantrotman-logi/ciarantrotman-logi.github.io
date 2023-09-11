@@ -3,38 +3,38 @@ let ansi = [
     {id:'chinese-pinyin', label: 'Chinese (Pinyin)'},
     {id:'chinese-zhuyin', label: 'Chinese (Zhuyin)'},
     {id:'thai', label: 'Thai'},
-    {id:'korean', label: 'korean'}
+    {id:'korean', label: 'Korean'}
 ]
 let iso = [
-    {layout: 'iso', id: "english-international", label: "International English" },
-    {layout: 'iso', id: "british-irish", label: "British / Irish" },
-    {layout: 'iso', id: "arabic", label: "Arabic" },
-    {layout: 'iso', id: "bulgarian", label: "Bulgarian" },
-    {layout: 'iso', id: "french-belgian", label: "French / Belgian" },
-    {layout: 'iso', id: "french-canadian", label: "Canadian French" },
-    {layout: 'iso', id: "greek", label: "Greek" },
-    {layout: 'iso', id: "hebrew", label: "Hebrew" },
-    {layout: 'iso', id: "turkish-f", label: "Turkish (F)" },
-    {layout: 'iso', id: "turkish-q", label: "Turkish (Q)" },
-    {layout: 'iso', id: "croatian-slovenian", label: "Croatian / Slovenian" },
-    {layout: 'iso', id: "czech", label: "Czech" },
-    {layout: 'iso', id: "danish", label: "Danish" },
-    {layout: 'iso', id: "italian", label: "Italian" },
-    {layout: 'iso', id: "norwegian", label: "Norwegian" },
-    {layout: 'iso', id: "portuguese", label: "Portuguese" },
-    {layout: 'iso', id: "slovak", label: "Slovak" },
-    {layout: 'iso', id: "spanish-standard", label: "Spanish" },
-    {layout: 'iso', id: "spanish-latin", label: "Latin American Spanish" },
-    {layout: 'iso', id: "swiss", label: "Swiss" },
-    {layout: 'iso', id: "german-austrian", label: "German / Austrian" },
-    {layout: 'iso', id: "hungarian", label: "Hungarian" },
-    {layout: 'iso', id: "icelandic", label: "Icelandic" },
-    {layout: 'iso', id: "swedish-finnish", label: "Swedish / Finnish" },
-    {layout: 'iso', id: "dutch", label: "Dutch" },
-    {layout: 'iso', id: "romanian", label: "Romanian" }
+    {id: "english-international", label: "International English" },
+    {id: "british-irish", label: "British / Irish" },
+    {id: "arabic", label: "Arabic" },
+    {id: "bulgarian", label: "Bulgarian" },
+    {id: "french-belgian", label: "French / Belgian" },
+    {id: "french-canadian", label: "Canadian French" },
+    {id: "greek", label: "Greek" },
+    {id: "hebrew", label: "Hebrew" },
+    {id: "turkish-f", label: "Turkish (F)" },
+    {id: "turkish-q", label: "Turkish (Q)" },
+    {id: "croatian-slovenian", label: "Croatian / Slovenian" },
+    {id: "czech", label: "Czech" },
+    {id: "danish", label: "Danish" },
+    {id: "italian", label: "Italian" },
+    {id: "norwegian", label: "Norwegian" },
+    {id: "portuguese", label: "Portuguese" },
+    {id: "slovak", label: "Slovak" },
+    {id: "spanish-standard", label: "Spanish" },
+    {id: "spanish-latin", label: "Latin American Spanish" },
+    {id: "swiss", label: "Swiss" },
+    {id: "german-austrian", label: "German / Austrian" },
+    {id: "hungarian", label: "Hungarian" },
+    {id: "icelandic", label: "Icelandic" },
+    {id: "swedish-finnish", label: "Swedish / Finnish" },
+    {id: "dutch", label: "Dutch" },
+    {id: "romanian", label: "Romanian" }
 ]
 let jis = [
-    {layout: 'jis', id: "japanese", label: "Japanese" }
+    {id: "japanese", label: "Japanese" }
 ]
 
 let layoutDropdown = document.getElementById('keyboard-layout');
@@ -51,6 +51,7 @@ function populateKeyboardLanguageOptions(){
             iso.forEach(language =>{
                 let option = document.createElement('option');
                 option.value = language.id;
+                option.id = language.id;
                 option.text = language.label;
                 languageDropdown.appendChild(option);
             })
@@ -59,6 +60,7 @@ function populateKeyboardLanguageOptions(){
             ansi.forEach(language =>{
                 let option = document.createElement('option');
                 option.value = language.id;
+                option.id = language.id;
                 option.text = language.label;
                 languageDropdown.appendChild(option);
             })
@@ -67,11 +69,13 @@ function populateKeyboardLanguageOptions(){
             jis.forEach(language =>{
                 let option = document.createElement('option');
                 option.value = language.id;
+                option.id = language.id;
                 option.text = language.label;
                 languageDropdown.appendChild(option);
             })
             break;
     }
+    applyLocalisation();
 }
 
 let url = new URL(window.location.href);
@@ -127,15 +131,16 @@ function sanitisedString(target){
 }
 
 setInterval(function() {
+    document.getElementById('switch-type-div').style.display
+        = document.getElementById('mechanical-flag').value === 'true'
+        ? 'block'
+        : 'none';
+    return;
     document.getElementById('continue-to-keyboard-data').disabled 
         = document.getElementById('user-name').value.length === 0;
     document.getElementById('continue-to-evaluation').disabled
         = document.getElementById('evaluated-keyboard-make').value.length === 0
         || document.getElementById('evaluated-keyboard-model').value.length === 0;
-    document.getElementById('switch-type-div').style.display 
-        = document.getElementById('mechanical-flag').value === 'true'
-            ? 'inline'
-            : 'none';
 })
 
 let submitted = false;
