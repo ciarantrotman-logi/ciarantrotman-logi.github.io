@@ -52,7 +52,6 @@ function populateKeyboardLanguageOptions(){
                 let option = document.createElement('option');
                 option.value = language.id;
                 option.id = language.id;
-                option.text = language.label;
                 languageDropdown.appendChild(option);
             })
             break;
@@ -61,7 +60,6 @@ function populateKeyboardLanguageOptions(){
                 let option = document.createElement('option');
                 option.value = language.id;
                 option.id = language.id;
-                option.text = language.label;
                 languageDropdown.appendChild(option);
             })
             break;
@@ -70,12 +68,10 @@ function populateKeyboardLanguageOptions(){
                 let option = document.createElement('option');
                 option.value = language.id;
                 option.id = language.id;
-                option.text = language.label;
                 languageDropdown.appendChild(option);
             })
             break;
     }
-    applyLocalisation();
 }
 
 let url = new URL(window.location.href);
@@ -135,8 +131,7 @@ setInterval(function() {
         = document.getElementById('mechanical-flag').value === 'true'
         ? 'block'
         : 'none';
-    return;
-    document.getElementById('continue-to-keyboard-data').disabled 
+    document.getElementById('continue-to-keyboard-data').disabled
         = document.getElementById('user-name').value.length === 0;
     document.getElementById('continue-to-evaluation').disabled
         = document.getElementById('evaluated-keyboard-make').value.length === 0

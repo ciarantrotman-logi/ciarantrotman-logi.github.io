@@ -15,32 +15,27 @@
 </head>
 <body class="evaluation-block">
 <label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
-  <option value="en-us" selected>English</option>
-  <option value="zh-cn">简化字</option>
-  <option value="fr">Français</option>
-  <option value="de">Deutsch</option>
+  <option id="en-us" value="en-us" selected>English</option>
+  <option id="zh-cn" value="zh-cn">简化字</option>
+  <option id="fr" value="fr">Français</option>
+  <option id="de" value="de">Deutsch</option>
 </select>
-  <h1 id="typing-evaluation-header">Typing Evaluation</h1>
+  <h1 id="typing-evaluation-header"></h1>
   <div id="introduction">
-    <p id="typing-evaluation-introduction">
-      This section of the evaluation is focused on seeing how easy this keyboard is to use.
-      When you start, you will see a paragraph appear – your goal is to type this paragraph out as you see it. 
-    </p>
-    <p id="typing-evaluation-backspace-explainer">
-      You can type normally, and can use the backspace key in order to delete any mistakes you might make.
-    </p>
+    <p id="typing-evaluation-introduction"></p>
+    <p id="typing-evaluation-backspace-explainer"></p>
     <br>
     <div class="progression-buttons">
-      <button class = "full-width" id="typing-evaluation-begin" onclick="start()">Start the evaluation</button>
+      <button class = "full-width" id="typing-evaluation-begin" onclick="start()"></button>
     </div>
     <br>
   </div>
   <div id="input-area" style="display: none">
     <div id="evaluation-area"></div>
     <div id="caps-lock-warning" class="warning-box" style="display: none">
-        <b id="caps-lock-warning-label">CAPS LOCK IS ON</b>
+        <b id="caps-lock-warning-label"></b>
     </div>
-    <button class = "full-width" id="restart-typing-evaluation" onclick="restartEvaluation()">Restart typing evaluation</button>
+    <button class = "full-width" id="restart-typing-evaluation" onclick="restartEvaluation()"></button>
     <div id="input-field">
       <label for="input"></label><textarea id="input" placeholder="" class="hidden-input"></textarea>
     </div> 
