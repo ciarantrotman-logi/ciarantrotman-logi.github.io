@@ -109,8 +109,14 @@ function startEvaluation(){
     sessionStorage.setItem('evaluated-keyboard-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
 
     sessionStorage.setItem('mechanical-flag', document.getElementById('mechanical-flag').value);
-    sessionStorage.setItem('switch-make', sanitisedString(document.getElementById('switch-make').value));
-    sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('switch-model').value));
+    if (document.getElementById('mechanical-flag').value === true){
+        sessionStorage.setItem('switch-make', sanitisedString(document.getElementById('switch-make').value));
+        sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('switch-model').value));
+    }
+    else {
+        sessionStorage.setItem('switch-make',  sanitisedString(document.getElementById('evaluated-keyboard-make').value));
+        sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
+    }
     
     sessionStorage.setItem('evaluated-keyboard-layout', document.getElementById('keyboard-layout').value);
     sessionStorage.setItem('evaluated-keyboard-language', document.getElementById('keyboard-language').value);

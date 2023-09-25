@@ -2,197 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Keyboard Tester</title>
+    <title>Keyboard Data Collector</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
 </head>
 <body class="evaluation-block">
     <h1>Keyboard Data Collector</h1>
-    <div id="keyboard-details">
-        <p>
-            This is a tool designed to gather data related to a keyboard that we are evaluating. You can use all of the
-            different fields to define the specifications related to the keyboard. Note that these are general level details,
-            and not specific to a given keyboard, such as layout or language. These are captured at the user level.
-        </p>
-        <h2>Keyboard Details</h2>
-        <div class="information-block" id="high-level-information">
-            <label for="evaluated-keyboard-make">The keyboard brand being logged is </label><input type="text" id="evaluated-keyboard-make" placeholder="brand name">
-            <label for="evaluated-keyboard-model">and the model is </label><input type="text" id="evaluated-keyboard-model" placeholder="model name">,
-            <label for="keyboard-type">which is a </label>
-            <select id="keyboard-type">
-                <option value="traditional" selected>traditional</option>
-                <option value="ergonomic">ergonomic</option>
-                <option value="split">split</option>
-            </select>
-            <label for="keyboard-size"></label>
-            <select id="keyboard-size">
-                <option value="100" selected>100%</option>
-                <option value="96">96%</option>
-                <option value="80">80%</option>
-                <option value="75">75%</option>
-                <option value="65">65%</option>
-                <option value="60">60%</option>
-                <option value="40">40%</option>
-            </select>
-            <label for="keyboard-usage"></label>
-            <select id="keyboard-usage">
-                <option value="productivity" selected>productivity</option>
-                <option value="gaming">gaming</option>
-                <option value="mobility">mobility</option>
-            </select> keyboard,
-            <label for="keyboard-columns">with </label>
-            <select id="keyboard-columns">
-                <option value="staggered" selected>staggered</option>
-                <option value="orthogonal">orthogonal</option>
-                <option value="ortholinear">ortholinear</option>
-            </select>,
-            <label for="key-shape"></label> <select id="key-shape">
-            <option value="square" selected>square</option>
-            <option value="rounded">rounded</option>
-            <option value="circular">circular</option>
-            <option value="squircle">squircular</option>
-            <option value="other">other</option>
-            </select>,
-            <label for="key-dishing"></label> <select id="key-dishing">
-            <option value="dished" selected>dished</option>
-            <option value="flat">flat</option>
-            <option value="domed">domed</option>
-            <option value="other">other</option>
-        </select>,
-            <label for="key-profile"></label><select id="key-profile">
-                <option value="low" selected>low profile</option>
-                <option value="high">high profile</option>
-            </select> keys
-            <label for="keycap-material">made from </label>
-            <select id="keycap-material">
-                <option value="pbt" selected>PBT</option>
-                <option value="abs">ABS</option>
-                <option value="pc">PC</option>
-                <option value="pom">POM</option>
-                <option value="pvs">PVS</option>
-            </select>,
-            <label for="keyboard-backlighting-flag">and are </label><select id="keyboard-backlighting-flag">
-            <option value="true" selected>are</option>
-            <option value="false">aren't</option>
-        </select> backlit.
-        </div>
-        <div class="information-block" id="switch-information">
-            <p>
-                Next, we need to catalogue the details related to the swtich in this keyboard:
-            </p>
-            <ol>
-                <li><label for="switch-operating-force"></label>The switch <b>operating force</b> is <input type="number" style="width: 40px;" id="switch-operating-force"/>gf</li>
-                <li><label for="switch-actuation-force"></label>The switch <b>actuation force</b> is <input type="number" style="width: 40px;" id="switch-actuation-force"/>gf</li>
-                <li><label for="switch-pre-travel"></label>The switch <b>pre-travel</b> is <input type="number" style="width: 40px;" id="switch-pre-travel"/>mm</li>
-                <li><label for="switch-total-travel"></label>The switch <b>total travel</b> is <input type="number" style="width: 40px;" id="switch-total-travel"/>mm</li>
-                <li><label for="switch-type">The <b>switch type</b> this keyboard has are </label><select id="switch-type">
-                    <option value="scissor" selected>scissor</option>
-                    <option value="membrane">membrane</option>
-                    <option value="dome">dome</option>
-                    <option value="capacitive">capacitive</option>
-                    <option value="buckling-spring">buckling spring</option>
-                    <option value="hall-effect">hall effect</option>
-                    <option value="mechanical">mechanical</option>
-                </select> switches</li>
-                <li><label for="switch-average-loudness"></label>The switches <b>average loudness</b> is <input type="number" style="width: 40px;" id="switch-average-loudness"/>dBA</li>
-            </ol>
-        </div>
-        <div class="information-block" id="shape-information">
-            <p>
-                Then lastly is defining the physical properties of the keyboard:
-            </p>
-            <ol>
-                <li><label for="keyboard-height"></label>The keyboard <b>height</b> is <input type="number" style="width: 40px;" id="keyboard-height"/>mm</li>
-                <li><label for="keyboard-width"></label>The keyboard <b>width</b> is <input type="number" style="width: 40px;" id="keyboard-width"/>mm</li>
-                <li><label for="keyboard-depth"></label>The keyboard <b>depth</b> is <input type="number" style="width: 40px;" id="keyboard-depth"/>mm</li>
-                <li><label for="keyboard-weight"></label>The keyboard <b>weight</b> is <input type="number" style="width: 40px;" id="keyboard-weight"/>g</li>
-                <li><label for="keyboard-incline"></label>The <b>angle</b> of the keys is <input type="number" style="width: 40px;" id="keyboard-incline"/>º</li>
-            </ol>
-        </div>
-        <div class="progression-buttons">
-            <button id='submit-button' class = "progression-button" onclick="submitData()">Upload Data</button>
-            <button id='download-button' class = "progression-button" onclick="directDownload()">Download Data</button>
-        </div>
-    </div>
-    <script>
-        function submitData(){
-            addSessionStorageData();
-            downloadData();
-        }
-
-        function directDownload(){
-            addSessionStorageData();
-            manualDownload(sessionStorage);
-        }
-        
-        function addSessionStorageData(){
-            sessionStorage.setItem('evaluated-keyboard-make', sanitisedString(document.getElementById('evaluated-keyboard-make').value));
-            sessionStorage.setItem('evaluated-keyboard-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
-            
-            sessionStorage.setItem('keyboard-type', document.getElementById('keyboard-type').value);
-            sessionStorage.setItem('keyboard-size', document.getElementById('keyboard-size').value);
-            sessionStorage.setItem('keyboard-usage', document.getElementById('keyboard-usage').value);
-            
-            sessionStorage.setItem('keyboard-columns', document.getElementById('keyboard-columns').value);
-            sessionStorage.setItem('key-shape', document.getElementById('key-shape').value);
-            sessionStorage.setItem('key-dishing', document.getElementById('key-dishing').value);
-            sessionStorage.setItem('key-profile', document.getElementById('key-profile').value);
-            sessionStorage.setItem('keycap-material', document.getElementById('keycap-material').value);
-            sessionStorage.setItem('keyboard-backlighting-flag', document.getElementById('keyboard-backlighting-flag').value);
-            
-            sessionStorage.setItem('switch-operating-force', document.getElementById('switch-operating-force').value);
-            sessionStorage.setItem('switch-actuation-force', document.getElementById('switch-actuation-force').value);
-            sessionStorage.setItem('switch-pre-travel', document.getElementById('switch-pre-travel').value);
-            sessionStorage.setItem('switch-total-travel', document.getElementById('switch-total-travel').value);
-            sessionStorage.setItem('switch-type', document.getElementById('switch-type').value);
-            sessionStorage.setItem('switch-average-loudness', document.getElementById('switch-average-loudness').value);
-            
-            sessionStorage.setItem('keyboard-height', document.getElementById('keyboard-height').value);
-            sessionStorage.setItem('keyboard-width', document.getElementById('keyboard-width').value);
-            sessionStorage.setItem('keyboard-depth', document.getElementById('keyboard-depth').value);
-            sessionStorage.setItem('keyboard-weight', document.getElementById('keyboard-weight').value);
-            sessionStorage.setItem('keyboard-incline', document.getElementById('keyboard-incline').value);
-        }
-
-        firebase.initializeApp(firebaseConfig);
-        let database = firebase.database();
-
-        function downloadData() {
-            const data = sessionStorage;
-            let stamp = sanitisedString(document.getElementById('evaluated-keyboard-model').value);
-            database.ref(stamp).set(data)
-                .then(function() {
-                    document.getElementById('keyboard-details').innerHTML = "Data for " + document.getElementById('evaluated-keyboard-model').value + " was transmitted successfully.";
-                })
-                .catch(function(error) {
-                    document.getElementById('keyboard-details').innerHTML = "Error transmitting data for " + document.getElementById('evaluated-keyboard-model').value + ", please manually download.";
-                    manualDownload(data);
-                });
-        }
-        
-        function manualDownload(data){
-            const json = {};
-            Object.keys(data).forEach(key => {
-                json[key] = data[key];
-            });
-            const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const placeholder = document.createElement("a");
-            placeholder.href = url;
-            placeholder.download = document.getElementById('evaluated-keyboard-model').value.toString();
-            document.body.appendChild(placeholder);
-            placeholder.click();
-            document.body.removeChild(placeholder);
-            URL.revokeObjectURL(url);
-        }
-
-        function sanitisedString(target){
-            let sanitised = target.replace(/\W+/g, "");
-            return sanitised.toLowerCase();
-        }
-    </script>
+    <p>
+        Upload the .csv of the full range of keyboard data and this tool will conver that to a zipped folder of JSON files for each keyboard.
+    </p>
+<div>
+    <input type="file" id="file" accept=".csv" onchange="downloadKeyboardData(event)">
+</div>
+<script src="keyboard_data_collector.js"></script>
 </body>
 </html>
