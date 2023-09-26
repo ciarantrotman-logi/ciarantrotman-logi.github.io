@@ -2,19 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Keyboard Data Collector</title>
+    <title>CSV Parser</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
 </head>
 <body class="evaluation-block">
-    <h1>Keyboard Data Collector</h1>
+    <h1>CSV Parser</h1>
     <p>
-        Upload the .csv of the full range of keyboard data and this tool will conver that to a zipped folder of JSON files for each keyboard.
+        Upload a .csv file full of data here and generate individual JSON files for each line of the .csv.
     </p>
 <div>
-    <input type="file" id="file" accept=".csv" onchange="downloadKeyboardData(event)">
+    <label for="context"></label>
+    <select id="context">
+        <option value="keyboard" selected>Keyboard</option>
+        <option value="switch">Switch</option>
+    </select>
+    <input type="file" id="file" accept=".csv" onchange="parse(event)">
 </div>
 <script src="keyboard_data_collector.js"></script>
 </body>
