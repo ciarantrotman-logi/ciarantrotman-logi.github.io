@@ -42,36 +42,32 @@ let languageDropdown = document.getElementById('keyboard-language');
 
 layoutDropdown.addEventListener('change', function (){
     populateKeyboardLanguageOptions();
-})
+});
 
 function populateKeyboardLanguageOptions(){
     languageDropdown.innerHTML = "";
     switch (layoutDropdown.value){
         case 'iso':
-            iso.forEach(language =>{
-                let option = document.createElement('option');
-                option.value = language.id;
-                option.id = language.id;
-                languageDropdown.appendChild(option);
-            })
+            generateLanguageOptions(iso);
             break;
         case 'ansi':
-            ansi.forEach(language =>{
-                let option = document.createElement('option');
-                option.value = language.id;
-                option.id = language.id;
-                languageDropdown.appendChild(option);
-            })
+            generateLanguageOptions(ansi);
             break;
         case 'jis':
-            jis.forEach(language =>{
-                let option = document.createElement('option');
-                option.value = language.id;
-                option.id = language.id;
-                languageDropdown.appendChild(option);
-            })
+            generateLanguageOptions(jis);
             break;
     }
+}
+
+
+
+function generateLanguageOptions(layout){
+    layout.forEach(language =>{
+        let option = document.createElement('option');
+        option.value = language.id;
+        option.id = language.id;
+        languageDropdown.appendChild(option);
+    })
 }
 
 let url = new URL(window.location.href);

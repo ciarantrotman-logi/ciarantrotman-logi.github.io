@@ -59,6 +59,18 @@ html, body {
   width: 100%;
 }
 
+.completed-section{
+  color: lightgrey;
+  font-weight: bold;
+}
+.current-section{
+  font-weight: bolder;
+}
+.uncompleted-section{
+  color: lightgrey;
+  font-weight: normal;
+}
+
 .progression-buttons {
   display: flex;
   justify-content: space-between;

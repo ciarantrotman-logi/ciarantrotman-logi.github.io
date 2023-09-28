@@ -103,8 +103,8 @@
   "typing-evaluation-introduction": "This section of the evaluation is focused on seeing how easy this keyboard is to use. When you start, you will see a paragraph appear – your goal is to type this paragraph out as you see it.",
   "typing-evaluation-backspace-explainer": "You can type normally, and can use the backspace key in order to delete any mistakes you might make.",
   "caps-lock-warning-label": "CAPS LOCK IS ENABLED",
-  "restart-typing-evaluation": "Restart typing evaluation",
-  "typing-evaluation-begin": "Start the evaluation",
+  "restart-typing-evaluation": "Restart Typing Evaluation",
+  "typing-evaluation-begin": "Start the Evaluation",
   "subjective-evaluation-header": "Subjective Evaluation",
   "subjective-evaluation-welcome": "This is the last section of the keyboard evaluation! Thank you again for your participation.",
   "subjective-evaluation-introduction": "Now you will be asked to rate your thoughts and impressions of the keyboard you are evaluating across seven different categories.",
@@ -112,7 +112,7 @@
   "subjective-evaluation-continue": "I understand",
   "subjective-evaluation-previous-section": "Previous Section",
   "subjective-evaluation-next-section": "Next Section",
-  "subjective-evaluation-submit": "Finish user test",
+  "subjective-evaluation-submit": "Finish Evaluation",
   "hedonistic-pragmatic-usability-header": "Design and Aesthetics",
   "hedonistic-pragmatic-usability-introduction": "Then finally, we want to get a sense of your perception of the design and aesthetics of this keyboard.",
   "hedonistic-pragmatic-usability-instruction": "Select using the sliders below the rating you consider the most appropriate for the keyboard you are evaluating.",
@@ -319,5 +319,12 @@
   "umux-p-easiness-low": "Strongly disagree",
   "umux-p-functionality-description": "This keyboard’s capabilities meet my requirements",
   "umux-p-functionality-high": "Strongly agree",
-  "umux-p-functionality-low": "Strongly disagree"
+  "umux-p-functionality-low": "Strongly disagree",
+  "task-load-index-indicator": "Section 1",
+  "keyboard-usability-score-indicator": "Section 2",
+  "flow-short-scale-indicator": "Section 3",
+  "timbre-semantic-pairs-indicator": "Section 4",
+  "haptic-semantic-pairs-indicator": "Section 5",
+  "somatosensory-semantic-pairs-indicator": "Section 6",
+  "hedonistic-pragmatic-usability-indicator": "Section 7"
 }

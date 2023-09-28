@@ -129,13 +129,19 @@ function constructElementWithID(tag, id){
 }
 
 function constructPage(){
+    let container = document.getElementById('progression-indicators');
+    sections.forEach(section => {
+        let marker = document.createElement("p");
+        let baseID = section.id.toString();
+        marker.id = `${baseID}-indicator`;
+        container.appendChild(marker);
+    })
+    
     let i = 1;
     sections.forEach(section =>{
         let container = document.createElement("div");
         let baseID = section.id.toString();
         container.id = baseID;
-        let progression = " (" + i + "/" + sections.length + ")";
-        // container.innerHTML = "<h2>" + section.header + progression + "</h2>";
         
         let header = constructElementWithID("h2", `${baseID}-header`);
         let introduction = constructElementWithID("p", `${baseID}-introduction`);
@@ -212,6 +218,22 @@ function manageSection(){
 
     for (let i = 0; i < sections.length; i++) {
         document.getElementById(sections[i].id).style.display = i === index ? "block" : "none";
+        let indicator = document.getElementById(`${sections[i].id.toString()}-indicator`);
+        if (i === index){
+            indicator.classList.add('current-section');
+            indicator.classList.remove('completed-section');
+            indicator.classList.remove('uncompleted-section');
+        }
+        else if (i < index){
+            indicator.classList.add('completed-section');
+            indicator.classList.remove('current-section');
+            indicator.classList.remove('uncompleted-section');
+        }
+        else {
+            indicator.classList.add('uncompleted-section');
+            indicator.classList.remove('completed-section');
+            indicator.classList.remove('current-section');
+        }
     }
 }
 
@@ -274,7 +296,6 @@ window.addEventListener('beforeunload', function (event) {
         return warningMessage;
     }
 });
-
 
 firebase.initializeApp(firebaseConfig);
 let database = firebase.database();
