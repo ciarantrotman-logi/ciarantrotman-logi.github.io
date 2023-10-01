@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Semantic Aggregator</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+</head>
+<body class="evaluation-block">
+<h1>Semantic Aggregator</h1>
+<p>Takes all the metrics for the semantic differential pairings and creates a logical field which allows for more visual data analysis.</p>
+<div>
+    <input type="file" id="file-input" accept=".json" multiple onchange="parse(event)">
+</div>
+<script src="semantic_aggregator.js"></script>
+</body>
+</html>

@@ -1,3 +1,34 @@
+/*
+<li>
+    <label for="evaluated-keyboard-make" id="keyboard-information-keyboard-make"></label>
+    <select id="evaluated-keyboard-make" onchange="localisation()">
+        <option value="apple" selected>Apple</option>
+        <option value="asus">ASUS</option>
+        <option value="corsair">Corsair</option>
+        <option value="hyperx">HyperX</option>
+        <option value="keychron">Keychron</option>
+        <option value="kinesis">Kinesis</option>
+        <option value="logitech">Logitech</option>
+        <option value="microsoft">Microsoft</option>
+        <option value="nuphy">Nuphy</option>
+        <option value="razer">Razer</option>
+        <option value="steelseries">SteelSeries</option>
+        <option value="vgn">VGN</option>
+        <option value="wooting">Wooting</option>
+        <option value="zsa">ZSA</option>
+    </select>
+    <!-- <label for="evaluated-keyboard-make" id="keyboard-information-keyboard-make"></label> -->
+    <!-- <input type="text" id="evaluated-keyboard-make" placeholder=""> -->
+    </li>
+    <li>
+    <label for="evaluated-keyboard-model" id="keyboard-information-keyboard-model"></label>
+    <select id="evaluated-keyboard-model"></select>
+    <!-- <label for="evaluated-keyboard-model" id="keyboard-information-keyboard-model"></label> -->
+    <!-- <input type="text" id="evaluated-keyboard-model" placeholder=""> -->
+</li>   
+*/
+
+
 let makeDropdown = document.getElementById('evaluated-keyboard-make');
 let modelDropdown = document.getElementById('evaluated-keyboard-model');
 let apple = [
