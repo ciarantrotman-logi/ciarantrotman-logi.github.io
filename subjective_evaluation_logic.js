@@ -306,7 +306,9 @@ function clamp(number, min, max) {
 manageSection();
 checkData();
 function checkData(){
-    if (sessionStorage.getItem('user-information-check') !== 'true'){
+    let check = sessionStorage.getItem('user-information-check');
+    console.log(`check is ${check}`);
+    if (check !== 'true'){
         submitted = true;
         window.location.href = "https://ciarantrotman-logi.github.io/";
     }

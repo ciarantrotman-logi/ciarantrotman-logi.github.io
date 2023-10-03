@@ -721,7 +721,7 @@ function resetListeners(){
 }
 
 
-function visualiseCharacterValidity(){
+/*function visualiseCharacterValidity(){
     let visualiser = document.getElementById(phrases[phraseIndex].id);
     visualiser.textContent = null;
     currentPhrase.split('').forEach(char => {
@@ -757,6 +757,51 @@ function resetCharacter(char){
     char.classList.remove('incorrect-char');
     char.classList.remove('current-char');
 }
+*/
+
+function visualiseCharacterValidity() {
+    const visualiser = document.getElementById(phrases[phraseIndex].id);
+    visualiser.textContent = null;
+
+    const fragment = document.createDocumentFragment(); // Use a document fragment for better performance
+
+    currentPhrase.split('').forEach(char => {
+        const charSpan = document.createElement('span');
+        if (char === '\n') {
+            charSpan.innerHTML = '<br>';
+        } else {
+            charSpan.textContent = char;
+        }
+        fragment.appendChild(charSpan);
+    });
+
+    visualiser.appendChild(fragment);
+
+    const referenceCharacter = inputElement.value.split('');
+    const quoteSpanArray = visualiser.querySelectorAll('span');
+
+    quoteSpanArray.forEach((char, index) => {
+        const checkedCharacter = referenceCharacter[index];
+
+        if (checkedCharacter == null) {
+            resetCharacter(char);
+            if (index === inputElement.value.length) {
+                currentCharacter(char);
+            } else {
+                inactiveCharacter(char);
+            }
+        } else if (checkedCharacter === char.innerText) {
+            correctCharacter(char);
+        } else {
+            incorrectCharacter(char);
+        }
+    });
+}
+function resetCharacter(char) {
+    char.classList.remove('correct-char');
+    char.classList.remove('incorrect-char');
+    char.classList.remove('current-char');
+}
 function currentCharacter(char){
     char.classList.add('current-char');
     char.classList.remove('inactive-char');
@@ -774,6 +819,7 @@ function incorrectCharacter(char){
     char.classList.remove('correct-char');
     char.classList.remove('current-char');
 }
+
 
 let keyEvents = [];
 
@@ -946,7 +992,6 @@ function parseMetrics(store = false){
         {id: 'key-transition-variance',     value: timingVariance}
     ]
     metrics.forEach(metric => {
-        console.log(metric.id, ":", metric.value)
         if (store){
             sessionStorage.setItem(metric.id, metric.value);
         }
@@ -967,7 +1012,9 @@ choosePhrase();
 checkData();
 
 function checkData(){
-    if (sessionStorage.getItem('user-information-check') !== 'true'){
+    let check = sessionStorage.getItem('user-information-check');
+    console.log(`check is ${check}`);
+    if (check !== 'true'){
         submitted = true;
         window.location.href = "https://ciarantrotman-logi.github.io/";
     }
