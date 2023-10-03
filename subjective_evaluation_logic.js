@@ -304,3 +304,10 @@ function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
 }
 manageSection();
+checkData();
+function checkData(){
+    if (sessionStorage.getItem('user-information-check') !== 'true'){
+        submitted = true;
+        window.location.href = "https://ciarantrotman-logi.github.io/";
+    }
+}

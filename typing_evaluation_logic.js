@@ -964,3 +964,11 @@ window.addEventListener('beforeunload', function (event) {
 });
 
 choosePhrase();
+checkData();
+
+function checkData(){
+    if (sessionStorage.getItem('user-information-check') !== 'true'){
+        submitted = true;
+        window.location.href = "https://ciarantrotman-logi.github.io/";
+    }
+}

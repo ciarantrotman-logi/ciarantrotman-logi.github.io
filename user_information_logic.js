@@ -120,6 +120,7 @@ function startEvaluation(){
     sessionStorage.setItem('benchmark-flag', document.getElementById('benchmark-flag').value);
     sessionStorage.setItem('palm-rest-flag', document.getElementById('palm-rest-flag').value);
     
+    sessionStorage.setItem('user-information-check', 'true');
     submitted = true;
 }
 

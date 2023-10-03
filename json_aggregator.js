@@ -83,7 +83,7 @@ function aggregate(){
                     aggregated[`${key}-mean`] = values.reduce((acc, val) => acc + val, 0) / values.length;
                 }
                 if (variance()){
-                    aggregated[`${key}-variance`] = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length;;
+                    aggregated[`${key}-variance`] = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length;
                 }
             }
         })
