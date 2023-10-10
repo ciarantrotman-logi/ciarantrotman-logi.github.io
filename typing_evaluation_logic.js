@@ -92,7 +92,7 @@ let mackenziePhrases = [
     "there will be some fog tonight",
     "I am allergic to bees and peanuts",
     "he is still on our team",
-    "the dow jones index has risen",
+    "the dow jones target_index has risen",
     "my preferred treat is chocolate",
     "the king sends you to the tower",
     "we are subjects and must obey",
@@ -735,11 +735,11 @@ function resetListeners(){
     })
     let referenceCharacter = inputElement.value.split('');
     let quoteSpanArray = visualiser.querySelectorAll('span');
-    quoteSpanArray.forEach((char, index) => {
-        let checkedCharacter = referenceCharacter[index]
+    quoteSpanArray.forEach((char, target_index) => {
+        let checkedCharacter = referenceCharacter[target_index]
         if (checkedCharacter == null) {
             resetCharacter(char);
-            if (index === inputElement.value.length) {
+            if (target_index === inputElement.value.length) {
                 currentCharacter(char);
             }
             else {

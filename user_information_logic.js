@@ -150,3 +150,8 @@ window.addEventListener('beforeunload', function (event) {
         return warningMessage;
     }
 });
+checkData();
+
+
+let check = sessionStorage.getItem('user-information-check');
+console.log(`check is ${check}`);

@@ -51,7 +51,7 @@ async function download(json){
 
 function name(json){
     let name = '';
-    if (document.getElementById('context').value === 'keyboard'){
+    if (document.getElementById('fitts_context').value === 'keyboard'){
         name = `${json['evaluated-keyboard-make']}-${json['evaluated-keyboard-model']}.json`;
         console.log(`generated ${name}`);
         return name;

@@ -44,6 +44,7 @@ html, body {
   left: 25%;
   font-family: sans-serif;
   margin: 50px auto 100px;
+  user-select: none;
 }
 
 .slider {
@@ -115,4 +116,8 @@ html, body {
   margin-top: 10px;
   margin-bottom: 24px;
   display: flex;
+}
+
+.canvas {
+  /*outline: 2px solid black;*/
 }
