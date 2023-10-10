@@ -12,7 +12,9 @@ let readout = document.getElementById('readout');
 
 let mouse_position = {x: 0, y: 0};
 let center = {x: 0, y: 0};
-let last_click_data = {x: 0, y: 0, timestamp: 0};
+let last_click_data = { 
+    position : { x: 0, y: 0,}, 
+    timestamp: 0};
 
 let random = false;
 
@@ -59,7 +61,7 @@ function click(event) {
 
     draw_line(debug_context, current_target(), get_mouse_position(), '#DDDDDD');
     draw_circle(debug_context, get_mouse_position(), 2, 'black');
-    draw_circle(debug_context, last_click_data, 2, '#DDDDDD');
+    draw_circle(debug_context, get_last_click_position(), 2, '#DDDDDD');
     
     let on_target = evaluate_click_accuracy();
     if (on_target && task_index > 0) {
@@ -82,7 +84,7 @@ function calculate_throughput() {
     let index_of_difficulty = Math.log2((amplitude / width) + 1);
     let throughput = index_of_difficulty / movement_time_s;
     
-    draw_line(debug_context, get_center(), convert_to_local_space(get_center(), normalised_local_position()), 'grey');
+    draw_line(debug_context, get_center(), convert_to_local_space(get_center(), normalised_local_position()), 'black');
     draw_circle(debug_context, convert_to_local_space(get_center(), normalised_local_position()).x, convert_to_local_space(get_center(), normalised_local_position()).y, 'black');
     
     let data = {
@@ -108,13 +110,15 @@ function calculate_throughput() {
 }
 function approach_vector(){
     return {
-        x: get_mouse_position().x - targets[target_index].x,
-        y: get_mouse_position().y - targets[target_index].y
+        x: targets[previous_target_index].x - targets[target_index].x,
+        y: targets[previous_target_index].y - targets[target_index].y
     };
-    // return {
-    //     x: targets[previous_target_index].x - targets[target_index].x,
-    //     y: targets[previous_target_index].y - targets[target_index].y
-    // };
+    /*
+    return {
+        x: get_last_click_position().x - targets[target_index].x,
+        y: get_last_click_position().y - targets[target_index].y
+    };
+     */
 }
 function evaluate_click_accuracy() {
     let any_target_clicked = false;
@@ -434,6 +438,15 @@ function normalised_vector(vector, length = 1) {
 function vector_magnitude(vector){
     return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
 }
+function calculate_normalised_local_position(point) {
+    let normalised = normalised_vector(approach_vector());
+    let perpendicular = normalised_vector(perpendicular_vector(approach_vector()));
+    let local_x = (point.x * normalised.x) + (point.y * normalised.y);
+    let local_y = (point.x * perpendicular.x) + (point.y * perpendicular.y);
+    return {
+        x: local_x,
+        y: local_y };
+}
 function normalised_local_position() {
     let normalised = normalised_vector(approach_vector());
     let perpendicular = normalised_vector(perpendicular_vector(approach_vector()));
@@ -473,6 +486,9 @@ function set_mouse_position(event){
 }
 function get_mouse_position(){
     return mouse_position;
+}
+function get_last_click_position(){
+    return last_click_data.position;
 }
 function convert_to_local_space(point, origin){
     return {
@@ -525,8 +541,10 @@ function distance(x_a, y_a, x_b, y_b){
     return Math.sqrt(x * x + y * y);
 }
 function cache_click_data(){
-    last_click_data.x = get_mouse_position().x;
-    last_click_data.y = get_mouse_position().y;
+    last_click_data.position = {
+        x: get_mouse_position().x,
+        y: get_mouse_position().y
+    }
     last_click_data.timestamp = new Date();
 }
 function initial_scaling(){
