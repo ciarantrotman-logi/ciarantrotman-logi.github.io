@@ -15,8 +15,14 @@ let center = {x: 0, y: 0};
 let last_click_data = { 
     position : { x: 0, y: 0,}, 
     timestamp: 0};
+let scroll_target_position = {x: 0, y: 0};
 
-let random = false;
+let evaluation_types = {
+    'reciprocal_targets': 'reciprocal_targets',
+    'random_targets': 'random_targets',
+    'scroll_targets': 'scroll_targets'
+}
+let evaluation_type = evaluation_types.scroll_targets;
 
 let dpr = 1;
 let size = 600;
@@ -38,46 +44,69 @@ let invisible_inactive_target_color = "#FFFFFF";
 
 fitts_canvas.addEventListener('mousemove', trace);
 fitts_canvas.addEventListener('mousedown', click);
+document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
 
-let sections = [
+let fitts_evaluation_sections = [
     { points: 15, radius: 100, size: 75 },
     { points: 15, radius: 125, size: 50 },
     { points: 15, radius: 150, size: 25 },
     { points: 15, radius: 250, size: 5 },
 ]
+let scroll_evaluation_sections = [
+    { tasks: 15, amplitude: 100, width: 75 }
+]
+/*
+------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
+*/
 function trace(event) {
     set_mouse_position(event);
+    /*
     readout.innerText = `
         mouse position: (${Math.ceil(get_mouse_position().x)}, ${Math.ceil(get_mouse_position().y)})
         cursor local position: (${local_cursor_position().x.toFixed(2)}, ${local_cursor_position().y.toFixed(2)})
-        
         target position (${target_index}): (${targets[target_index].x.toFixed(2)}, ${targets[target_index].y.toFixed(2)})
         normalised position: (${normalised_local_position().x.toFixed(2)}, ${normalised_local_position().y.toFixed(2)})
         `;
+     */
 }
 function click(event) {
     set_mouse_position(event);
-
+    switch (event.button){
+        case 0: on_left_click(); break;
+        case 1: on_middle_click(); break;
+        default: break;
+    }
+}
+function on_left_click() {
     draw_line(debug_context, current_target(), get_mouse_position(), '#DDDDDD');
     draw_circle(debug_context, get_mouse_position(), 2, 'black');
     draw_circle(debug_context, get_last_click_position(), 2, '#DDDDDD');
-    
+
     let on_target = evaluate_click_accuracy();
     if (on_target && task_index > 0) {
         calculate_throughput();
     }
-    
-    
+
     update_target_index();
     update_section_index();
-    
-    render_targets();
+
+    render_fitts_targets();
     cache_click_data();
 }
+function on_middle_click() {
+    draw_circle(debug_context, get_scroll_position(), 3, '#DDDDDD')
+}
+function scroll(event) {
+    update_scroll_position(event.deltaY);
+    render_scroll_cursor();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------CALCULATION TOWN
+*/
 function calculate_throughput() {
     let amplitude = distance_between_points(current_target(), previous_target());
-    let width = (sections[section_index].size * 2);
+    let width = (fitts_evaluation_sections[section_index].size * 2);
     let movement_time_ms = (new Date() - last_click_data.timestamp);
     let movement_time_s = movement_time_ms / 1000;
 
@@ -102,23 +131,10 @@ function calculate_throughput() {
         'perpendicular_vector': normalised_vector(perpendicular_vector(approach_vector())),
         'section_index': section_index,
         'action_index': action_index,
-        'task_type' : random_mode() ? 'random_position' : 'circular_points'
+        'task_type' : evaluation_type
     }
-    console.log(data);
     section_performance_data.push(data);
     action_index++;
-}
-function approach_vector(){
-    return {
-        x: targets[previous_target_index].x - targets[target_index].x,
-        y: targets[previous_target_index].y - targets[target_index].y
-    };
-    /*
-    return {
-        x: get_last_click_position().x - targets[target_index].x,
-        y: get_last_click_position().y - targets[target_index].y
-    };
-     */
 }
 function evaluate_click_accuracy() {
     let any_target_clicked = false;
@@ -146,57 +162,85 @@ function on_correct_target_not_clicked(target) {
 function was_correct_target_clicked(target){
     return target.index === target_index;
 }
+
 function generate_targets(){
     clear_canvas(fitts_context, fitts_canvas);
+    initialise_scroll_position();
     calculate_target_parameters();
-    render_targets();
+    render_fitts_targets();
 }
-
+/*
+------------------------------------------------------------------------------------------------------------------------FIRST FUNCTION CALLS
+*/
 initial_scaling();
 generate_targets();
 
+function initialise_scroll_position(){
+    scroll_target_position = center;
+}
+function update_scroll_position(delta){
+    scroll_target_position.y += (delta * .1);
+    scroll_target_position.y = clamp_number_in_range(scroll_target_position.y, 0, 600);
+}
+/*
+------------------------------------------------------------------------------------------------------------------------TARGET GENERATION
+*/
 function calculate_target_parameters(){
-    let section = sections[section_index];
+    let section = fitts_evaluation_sections[section_index];
     targets = [];
     
-    if (random_mode()) {
-        let size = section.size;
-        let border = {
-            x_max: fitts_canvas.width - size,
-            x_min: size,
-            y_max: fitts_canvas.height - size,
-            y_min: size
-        }
-        let start_point = generate_random_point_in_border(border);
-        targets.push({
-            x: start_point.x,
-            y: start_point.y,
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets:
+            generate_reciprocal_targets(section);
+            break;
+        case evaluation_types.random_targets:
+            generate_random_targets(section);
+            break;
+        case evaluation_types.scroll_targets:
+            generate_scroll_targets(section);
+            break;
+        default:
+            break;
+    }
+}
+function generate_reciprocal_targets(section){
+    for (let i = 0; i < section.points; i++) {
+        const angle = (i / section.points) * 2 * Math.PI;
+        let target = {
+            x: center.x + section.radius * Math.cos(angle),
+            y: center.y + section.radius * Math.sin(angle),
             size: section.size,
-            index: 0,
+            index: i,
+            color: visible_inactive_target_color};
+        targets.push(target);}
+}
+
+function generate_random_targets(section){
+    let size = section.size;
+    let border = {
+        x_max: fitts_canvas.width - size,
+        x_min: size,
+        y_max: fitts_canvas.height - size,
+        y_min: size
+    }
+    let start_point = generate_random_point_in_border(border);
+    targets.push({
+        x: start_point.x,
+        y: start_point.y,
+        size: section.size,
+        index: 0,
+        color: invisible_inactive_target_color});
+    for (let i = 1; i < section.points; i++) {
+        let seed = {
+            x: targets[i - 1].x,
+            y: targets[i - 1].y };
+        let point = generate_seeded_point_in_border(seed, section.radius, border)
+        targets.push({
+            x: point.x,
+            y: point.y,
+            size: section.size,
+            index: i,
             color: invisible_inactive_target_color});
-        for (let i = 1; i < section.points; i++) {
-            let seed = {
-                x: targets[i - 1].x, 
-                y: targets[i - 1].y };
-            let point = generate_seeded_point_in_border(seed, section.radius, border)
-            targets.push({
-                x: point.x,
-                y: point.y,
-                size: section.size,
-                index: i,
-                color: invisible_inactive_target_color});
-        }
-    } else {
-        for (let i = 0; i < section.points; i++) {
-            const angle = (i / section.points) * 2 * Math.PI;
-            let target = {
-                x: center.x + section.radius * Math.cos(angle),
-                y: center.y + section.radius * Math.sin(angle),
-                size: section.size,
-                index: i,
-                color: visible_inactive_target_color};
-            targets.push(target);
-        }
     }
 }
 function generate_random_point_in_border(border) {
@@ -218,24 +262,30 @@ function generate_seeded_point(start_point, magnitude) {
     let vector = { x: x, y: y };
     return vector_end_point(start_point, vector);
 }
-function get_random_int(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 function is_point_in_border(point, border) {
     let within_x = point.x > border.x_min && point.x < border.x_max;
     let within_y = point.y > border.y_min && point.y < border.y_max;
     return within_x && within_y;
 }
-function update_target_index(){
-    previous_target_index = target_index;
-    calculate_next_target_index();
+
+function generate_scroll_targets(section){
+    for (let i = 0; i < section.tasks; i++) {
+        const angle = (i / section.points) * 2 * Math.PI;
+        let target = {
+            x: center.x + section.radius * Math.cos(angle),
+            y: center.y + section.radius * Math.sin(angle),
+            size: section.size,
+            index: i,
+            color: visible_inactive_target_color};
+        targets.push(target);}
 }
+
 function update_section_index(){
     if (task_index < targets.length) return;
     calculate_two_dimensional_fitts_data();
     
     section_index++;
-    if (section_index >= sections.length) {
+    if (section_index >= fitts_evaluation_sections.length) {
         // todo handle the end of the evaluation properly
         random = !random;
         section_index = 0;
@@ -247,6 +297,9 @@ function update_section_index(){
     task_index = 0;
     generate_targets();
 }
+/*
+------------------------------------------------------------------------------------------------------------------------FITTS LAW CALCULATIONS
+*/
 function calculate_two_dimensional_fitts_data(){
     let mean_position = { x: 0, y: 0 };
     let mean_distance = { x: 0, y: 0 };
@@ -331,22 +384,50 @@ function calculate_two_dimensional_fitts_data(){
 function calculate_effective_throughput(effective_index_of_difficulty, movement_time) {
     return effective_index_of_difficulty / movement_time;
 }
+/*
+------------------------------------------------------------------------------------------------------------------------TARGET INDEX SELECTION
+*/
+function update_target_index(){
+    previous_target_index = target_index;
+    calculate_next_target_index();
+}
 function calculate_next_target_index(){
-    if (random_mode()){
-        target_index++;
-    } else {
-        let increment = Math.ceil(targets.length / 2);
-        let decrement = increment - 1;
-        if (task_index % 2 === 0){
-            target_index += increment;
-        }
-        else {
-            target_index -= decrement;
-        }   
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets:
+            get_next_reciprocal_index();
+            break;
+        case evaluation_types.random_targets:
+            get_next_linear_index();
+            break;
+        case evaluation_types.scroll_targets:
+            get_next_linear_index();
+            break;
+        default:
+            break;
     }
     task_index++;
 }
-function render_targets() {
+function get_next_reciprocal_index(){
+    let increment = Math.ceil(targets.length / 2);
+    let decrement = increment - 1;
+    if (task_index % 2 === 0){
+        target_index += increment;
+    }
+    else {
+        target_index -= decrement;
+    }
+}
+function get_next_linear_index(){
+    target_index++;
+}
+/*
+------------------------------------------------------------------------------------------------------------------------RENDERING FUNCTIONS
+*/
+function render_scroll_cursor() {
+    clear_canvas(fitts_context, fitts_canvas);
+    draw_circle(fitts_context, get_scroll_position(), 2, 'black', true, false);
+}
+function render_fitts_targets() {
     clear_canvas(fitts_context, fitts_canvas);
     for (let i = 0; i < targets.length; i++) {
         draw_circle(fitts_context, targets[i], targets[i].size,  targets[i].color, true, false);
@@ -363,9 +444,204 @@ function render_debug_lines(){
         draw_line(debug_context, current_target(), vector_end_point(current_target(), normalised_vector(perpendicular_vector(approach_vector()), current_target().size)), '#e6adbc');
     }
 }
-function random_mode(){
-    return random;
+/*
+------------------------------------------------------------------------------------------------------------------------VECTOR FUNCTIONS
+*/
+function approach_vector(){
+    return {
+        x: targets[previous_target_index].x - targets[target_index].x,
+        y: targets[previous_target_index].y - targets[target_index].y
+    };
 }
+function normalised_vector(vector, length = 1) {
+    let magnitude = vector_magnitude(vector);
+    if (magnitude > 0) {
+        return {
+            x: (vector.x /= magnitude) * length,
+            y: (vector.y /= magnitude) * length
+        }
+    }
+    else return { x: 0, y: 0 };
+}
+function vector_magnitude(vector){
+    return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
+}
+function normalised_local_position() {
+    let normalised = normalised_vector(approach_vector());
+    let perpendicular = normalised_vector(perpendicular_vector(approach_vector()));
+    let local_x = (local_cursor_position().x * normalised.x) + (local_cursor_position().y * normalised.y);
+    let local_y = (local_cursor_position().x * perpendicular.x) + (local_cursor_position().y * perpendicular.y);
+    return {
+        x: local_x,
+        y: local_y };
+}
+function perpendicular_vector(vector) {
+    return {
+        x: (vector.y) * -1, 
+        y: (vector.x) * 1 
+    };
+}
+function vector_end_point(start_point, vector){
+    return {
+        x: start_point.x + vector.x,
+        y: start_point.y + vector.y
+    }
+}
+/*
+------------------------------------------------------------------------------------------------------------------------REFERENCES
+*/
+function current_target() {
+    return targets[target_index];
+}
+function previous_target() {
+    return targets[previous_target_index];
+}
+function local_cursor_position() {
+    return convert_to_local_space(get_mouse_position(), { x: current_target().x, y: current_target().y})
+}
+function set_mouse_position(event){
+    mouse_position.x = event.clientX - fitts_rect.left;
+    mouse_position.y = event.clientY - fitts_rect.top;
+}
+function get_mouse_position(){
+    return mouse_position;
+}
+function get_scroll_position(){
+    return scroll_target_position;
+}
+function get_last_click_position(){
+    return last_click_data.position;
+}
+function cache_click_data(){
+    last_click_data.position = {
+        x: get_mouse_position().x,
+        y: get_mouse_position().y
+    }
+    last_click_data.timestamp = new Date();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------ALGEBRAIC FUNCTIONS
+*/
+function convert_to_local_space(point, origin){
+    return {
+        x: point.x - origin.x,
+        y: point.y - origin.y
+    };
+}
+function target_clicked(target){
+    return distance_from_mouse(target) <= target.size;
+}
+function distance_from_mouse(target){
+    return distance(
+        get_mouse_position().x,
+        get_mouse_position().y,
+        target.x,
+        target.y);
+}
+function distance_between_points(target_a, target_b){
+    return distance(target_a.x, target_a.y, target_b.x, target_b.y);
+}
+function distance(x_a, y_a, x_b, y_b){
+    let x = x_a - x_b;
+    let y = y_a - y_b;
+    return Math.sqrt(x * x + y * y);
+}
+function clamp_number_in_range(number, min, max) {
+    return Math.min(Math.max(number, min), max);
+}
+function get_random_int(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+/*
+------------------------------------------------------------------------------------------------------------------------GRAPHIC FUNCTIONS
+*/
+function draw_line(context, start_point, end_point, color) {
+    context.beginPath();
+    context.moveTo(
+        start_point.x,
+        start_point.y);
+    context.lineTo(
+        end_point.x,
+        end_point.y)
+    context.strokeStyle = color;
+    context.stroke();
+}
+function draw_circle(context, center, size, color, fill = false, stroke = true){
+    context.beginPath();
+    context.arc(center.x, center.y, size, 0, 2 * Math.PI);
+    if (fill){
+        context.fillStyle = color;
+        context.fill();
+    }
+    if (stroke){
+        context.strokeStyle = color;
+        context.stroke();
+    }
+}
+function clear_canvas(context, canvas){
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.beginPath();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------CANVAS SCALING
+*/
+function initial_scaling(){
+    dpr = window.devicePixelRatio || 1;
+    if (base_dpr() === null){
+        console.log(`set base dpr to ${dpr}`);
+        localStorage.setItem('dpr', dpr);
+    } else {
+        let factor = base_dpr() / dpr;
+        if (factor === 1) {
+            console.log('scales match')
+        } else {
+            scale_body();
+        }
+    }
+    console.log(`initial dpr: ${dpr}`);
+    
+    fitts_rect = scale_canvas(fitts_canvas, fitts_context);
+    debug_rect = scale_canvas(debug_canvas, debug_context);
+    calculate_center(dpr);
+}
+function scale_canvas(canvas, context) {
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
+
+    canvas.width = Math.floor(size * dpr);
+    canvas.height = Math.floor(size * dpr);
+    
+    context.scale(dpr, dpr);
+
+    return canvas.getBoundingClientRect();
+}
+function rescale(){
+    let previous = dpr;
+    dpr = window.devicePixelRatio || 1;
+    if (dpr === previous){
+        console.log(`resized, no dpr change`);
+    } else {
+        scale_body();
+    }
+}
+function scale_body(){
+    let factor = base_dpr() / dpr;
+    console.log(`scale factor: ${factor}`)
+    body.style.transform = `scale(${factor})`;
+}
+function calculate_center(dpr){
+    center.x = (fitts_canvas.width / dpr) * .5;
+    center.y = (fitts_canvas.height / dpr) * .5;
+}
+function get_center(){
+    return center;
+}
+function base_dpr(){
+    return localStorage.getItem('dpr');
+}
+/*
+------------------------------------------------------------------------------------------------------------------------DATA DOWNLOADING
+*/
 function generate_csv_data(){
     csv.push({
         'amplitude': 'amplitude',
@@ -422,190 +698,6 @@ function generate_csv_data(){
         })
     });
 }
-/*
-    VECTOR FUNCTIONS
-*/
-function normalised_vector(vector, length = 1) {
-    let magnitude = vector_magnitude(vector);
-    if (magnitude > 0) {
-        return {
-            x: (vector.x /= magnitude) * length,
-            y: (vector.y /= magnitude) * length
-        }
-    }
-    else return { x: 0, y: 0 };
-}
-function vector_magnitude(vector){
-    return Math.sqrt((vector.x * vector.x) + (vector.y * vector.y));
-}
-function calculate_normalised_local_position(point) {
-    let normalised = normalised_vector(approach_vector());
-    let perpendicular = normalised_vector(perpendicular_vector(approach_vector()));
-    let local_x = (point.x * normalised.x) + (point.y * normalised.y);
-    let local_y = (point.x * perpendicular.x) + (point.y * perpendicular.y);
-    return {
-        x: local_x,
-        y: local_y };
-}
-function normalised_local_position() {
-    let normalised = normalised_vector(approach_vector());
-    let perpendicular = normalised_vector(perpendicular_vector(approach_vector()));
-    let local_x = (local_cursor_position().x * normalised.x) + (local_cursor_position().y * normalised.y);
-    let local_y = (local_cursor_position().x * perpendicular.x) + (local_cursor_position().y * perpendicular.y);
-    return {
-        x: local_x,
-        y: local_y };
-}
-function perpendicular_vector(vector) {
-    return {
-        x: (vector.y) * -1, 
-        y: (vector.x) * 1 
-    };
-}
-function vector_end_point(start_point, vector){
-    return {
-        x: start_point.x + vector.x,
-        y: start_point.y + vector.y
-    }
-}
-/*
-    REFERENCES
-*/
-function current_target() {
-    return targets[target_index];
-}
-function previous_target() {
-    return targets[previous_target_index];
-}
-/*
-    GENERAL UTILITIES
-*/
-function set_mouse_position(event){
-    mouse_position.x = event.clientX - fitts_rect.left;
-    mouse_position.y = event.clientY - fitts_rect.top;
-}
-function get_mouse_position(){
-    return mouse_position;
-}
-function get_last_click_position(){
-    return last_click_data.position;
-}
-function convert_to_local_space(point, origin){
-    return {
-        x: point.x - origin.x,
-        y: point.y - origin.y
-    };
-}
-function local_cursor_position() {
-    return convert_to_local_space(get_mouse_position(), { x: current_target().x, y: current_target().y})
-}
-function draw_line(context, start_point, end_point, color) {
-    context.beginPath();
-    context.moveTo(
-        start_point.x,
-        start_point.y);
-    context.lineTo(
-        end_point.x,
-        end_point.y)
-    context.strokeStyle = color;
-    context.stroke();
-}
-function draw_circle(context, center, size, color, fill = false, stroke = true){
-    context.beginPath();
-    context.arc(center.x, center.y, size, 0, 2 * Math.PI);
-    if (fill){
-        context.fillStyle = color;
-        context.fill();
-    }
-    if (stroke){
-        context.strokeStyle = color;
-        context.stroke();
-    }
-}
-function target_clicked(target){
-    return distance_from_mouse(target) <= target.size;
-}
-function distance_from_mouse(target){
-    return distance(
-        get_mouse_position().x,
-        get_mouse_position().y,
-        target.x,
-        target.y);
-}
-function distance_between_points(target_a, target_b){
-    return distance(target_a.x, target_a.y, target_b.x, target_b.y);
-}
-function distance(x_a, y_a, x_b, y_b){
-    let x = x_a - x_b;
-    let y = y_a - y_b;
-    return Math.sqrt(x * x + y * y);
-}
-function cache_click_data(){
-    last_click_data.position = {
-        x: get_mouse_position().x,
-        y: get_mouse_position().y
-    }
-    last_click_data.timestamp = new Date();
-}
-function initial_scaling(){
-    dpr = window.devicePixelRatio || 1;
-    if (base_dpr() === null){
-        console.log(`set base dpr to ${dpr}`);
-        localStorage.setItem('dpr', dpr);
-    } else {
-        let factor = base_dpr() / dpr;
-        if (factor === 1) {
-            console.log('scales match')
-        } else {
-            scale_body();
-        }
-    }
-    console.log(`initial dpr: ${dpr}`);
-    
-    fitts_rect = scale_canvas(fitts_canvas, fitts_context);
-    debug_rect = scale_canvas(debug_canvas, debug_context);
-    calculate_center(dpr);
-}
-function scale_canvas(canvas, context) {
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size}px`;
-
-    canvas.width = Math.floor(size * dpr);
-    canvas.height = Math.floor(size * dpr);
-    
-    context.scale(dpr, dpr);
-
-    return canvas.getBoundingClientRect();
-}
-
-function rescale(){
-    let previous = dpr;
-    dpr = window.devicePixelRatio || 1;
-    if (dpr === previous){
-        console.log(`resized, no dpr change`);
-    } else {
-        scale_body();
-    }
-}
-function scale_body(){
-    let factor = base_dpr() / dpr;
-    console.log(`scale factor: ${factor}`)
-    body.style.transform = `scale(${factor})`;
-}
-function calculate_center(dpr){
-    center.x = (fitts_canvas.width / dpr) * .5;
-    center.y = (fitts_canvas.height / dpr) * .5;
-}
-function get_center(){
-    return center;
-}
-function clear_canvas(context, canvas){
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.beginPath();
-}
-function base_dpr(){
-    return localStorage.getItem('dpr');
-}
 async function download_all_performance_data(){
     let download = csv.map(row => Object.values(row).join(',')).join('\n');
     let blob = new Blob([download], { type: 'text/csv' });
@@ -615,8 +707,14 @@ async function download_all_performance_data(){
     link.setAttribute('download', 'all_performance_data.csv');
     link.click();
 }
+/*
+------------------------------------------------------------------------------------------------------------------------ERROR PREVENTION
+*/
 window.addEventListener('keydown', function(event) {
     if ((event.ctrlKey || event.metaKey) && (event.key === '+' || event.key === '=' || event.key === '-')) {
         event.preventDefault();
     }
 });
+document.addEventListener('wheel', function(event) {
+    event.preventDefault();
+}, { passive: false });
