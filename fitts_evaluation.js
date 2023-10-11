@@ -11,18 +11,18 @@ let debug_rect = debug_canvas.getBoundingClientRect();
 let readout = document.getElementById('readout');
 
 let mouse_position = {x: 0, y: 0};
-let center = {x: 0, y: 0};
 let last_click_data = { 
     position : { x: 0, y: 0,}, 
     timestamp: 0};
 let scroll_target_position = {x: 0, y: 0};
 
 let evaluation_types = {
-    'reciprocal_targets': 'reciprocal_targets',
-    'random_targets': 'random_targets',
-    'scroll_targets': 'scroll_targets'
+    'reciprocal_targets_two_dimensional':   'reciprocal_targets_two_dimensional',
+    'random_targets_two_dimensional':       'random_targets_two_dimensional',
+    'reciprocal_targets_one_dimensional':   'reciprocal_targets_one_dimensional',
+    'random_targets_one_dimensional':       'random_targets_one_dimensional'
 }
-let evaluation_type = evaluation_types.scroll_targets;
+let evaluation_type = evaluation_types.random_targets_one_dimensional;
 
 let dpr = 1;
 let size = 600;
@@ -38,75 +38,101 @@ let task_index = 0;
 let section_index = 0;
 let action_index = 0;
 
-let active_target_color = "#FF0000";
-let visible_inactive_target_color = "#DDDDDD";
-let invisible_inactive_target_color = "#FFFFFF";
+let active_target_color = "#fb7474";
+let visible_inactive_target_color = "#dddddd";
+let invisible_inactive_target_color = "#ffffff";
 
 fitts_canvas.addEventListener('mousemove', trace);
 fitts_canvas.addEventListener('mousedown', click);
 document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
 
-let fitts_evaluation_sections = [
+let two_dimensional_evaluation_sections = [
     { points: 15, radius: 100, size: 75 },
     { points: 15, radius: 125, size: 50 },
     { points: 15, radius: 150, size: 25 },
     { points: 15, radius: 250, size: 5 },
 ]
-let scroll_evaluation_sections = [
-    { tasks: 15, amplitude: 100, width: 75 }
+let one_dimensional_evaluation_sections = [
+    { tasks: 10, amplitude: 100, width: 40 },
+    { tasks: 10, amplitude: 150, width: 20 },
+    { tasks: 10, amplitude: 200, width: 10 },
+]
+let random_one_dimensional_evaluation_sections = [
+    { tasks: 10, amplitude_range: { min: 50, max: 100 }, width_range: { min: 40, max: 60 }},
+    { tasks: 10, amplitude_range: { min: 100, max: 150 }, width_range: { min: 20, max: 40 }},
+    { tasks: 10, amplitude_range: { min: 150, max: 200 }, width_range: { min: 10, max: 20 }},
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
 */
 function trace(event) {
-    set_mouse_position(event);
-    /*
-    readout.innerText = `
-        mouse position: (${Math.ceil(get_mouse_position().x)}, ${Math.ceil(get_mouse_position().y)})
-        cursor local position: (${local_cursor_position().x.toFixed(2)}, ${local_cursor_position().y.toFixed(2)})
-        target position (${target_index}): (${targets[target_index].x.toFixed(2)}, ${targets[target_index].y.toFixed(2)})
-        normalised position: (${normalised_local_position().x.toFixed(2)}, ${normalised_local_position().y.toFixed(2)})
-        `;
-     */
+    set_cursor_position(event);
 }
 function click(event) {
-    set_mouse_position(event);
-    switch (event.button){
-        case 0: on_left_click(); break;
-        case 1: on_middle_click(); break;
-        default: break;
+    set_cursor_position(event);
+    
+    if (event.button === 0 && two_dimensional_evaluation_task()) {
+        on_left_click();
+    }
+    if (event.button === 1 && one_dimensional_evaluation_task()) {
+        on_middle_click();
     }
 }
 function on_left_click() {
-    draw_line(debug_context, current_target(), get_mouse_position(), '#DDDDDD');
-    draw_circle(debug_context, get_mouse_position(), 2, 'black');
-    draw_circle(debug_context, get_last_click_position(), 2, '#DDDDDD');
+    draw_line(debug_context, current_target(), get_user_input_position(), '#dddddd');
+    draw_circle(debug_context, get_user_input_position(), 2, '#dddddd', false, true);
+    draw_circle(debug_context, get_last_click_position(), 2, '#ffffff', false, true);
 
-    let on_target = evaluate_click_accuracy();
+    let on_target = evaluate_two_dimensional_click_accuracy();
     if (on_target && task_index > 0) {
         calculate_throughput();
     }
 
     update_target_index();
     update_section_index();
-
-    render_fitts_targets();
-    cache_click_data();
+    render_targets();
+    cache_input_location_data();
 }
 function on_middle_click() {
-    draw_circle(debug_context, get_scroll_position(), 3, '#DDDDDD')
+    draw_line(debug_context, current_target(), get_user_input_position(), '#dddddd');
+    draw_circle(debug_context, get_user_input_position(), 2, '#dddddd', false, true);
+    draw_circle(debug_context, get_last_click_position(), 2, '#ffffff', false, true);
+
+    let on_target = evaluate_one_dimensional_click_accuracy();
+    if (on_target && task_index > 0) {
+        calculate_throughput();
+    }
+
+    update_target_index();
+    update_section_index();
+    render_targets();
+    cache_input_location_data();
 }
 function scroll(event) {
     update_scroll_position(event.deltaY);
-    render_scroll_cursor();
+    render_targets();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------DEBUG READOUT
+*/
+// setInterval(update_debug_readout);
+function update_debug_readout(){
+    readout.innerText = `
+        mouse position: (${Math.ceil(get_user_input_position().x)}, ${Math.ceil(get_user_input_position().y)})
+        scroll position: (${Math.ceil(get_scroll_position().x)}, ${Math.ceil(get_scroll_position().y)})
+        cached click: (${Math.ceil(get_last_click_position().x)}, ${Math.ceil(get_last_click_position().y)}) at ${last_click_data.timestamp};
+        cursor local position: (${input_position_relative_to_current_target().x.toFixed(2)}, ${input_position_relative_to_current_target().y.toFixed(2)})
+        target position (${target_index}): (${targets[target_index].x.toFixed(2)}, ${targets[target_index].y.toFixed(2)})
+        normalised position: (${normalised_local_position().x.toFixed(2)}, ${normalised_local_position().y.toFixed(2)})
+        `;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------CALCULATION TOWN
 */
 function calculate_throughput() {
     let amplitude = distance_between_points(current_target(), previous_target());
-    let width = (fitts_evaluation_sections[section_index].size * 2);
+    let width = (two_dimensional_evaluation_sections[section_index].size * 2);
     let movement_time_ms = (new Date() - last_click_data.timestamp);
     let movement_time_s = movement_time_ms / 1000;
 
@@ -114,7 +140,7 @@ function calculate_throughput() {
     let throughput = index_of_difficulty / movement_time_s;
     
     draw_line(debug_context, get_center(), convert_to_local_space(get_center(), normalised_local_position()), 'black');
-    draw_circle(debug_context, convert_to_local_space(get_center(), normalised_local_position()).x, convert_to_local_space(get_center(), normalised_local_position()).y, 'black');
+    draw_circle(debug_context, convert_to_local_space(get_center(), normalised_local_position()), 3, 'black');
     
     let data = {
         'amplitude': amplitude,
@@ -124,8 +150,8 @@ function calculate_throughput() {
         'index_of_difficulty': index_of_difficulty,
         'throughput': throughput,
         'target': current_target(),
-        'global_cursor_position': get_mouse_position(),
-        'local_cursor_position': local_cursor_position(),
+        'global_cursor_position': get_user_input_position(),
+        'local_cursor_position': input_position_relative_to_current_target(),
         'relative_cursor_position': normalised_local_position(),
         'approach_vector': normalised_vector(approach_vector()),
         'perpendicular_vector': normalised_vector(perpendicular_vector(approach_vector())),
@@ -136,11 +162,28 @@ function calculate_throughput() {
     section_performance_data.push(data);
     action_index++;
 }
-function evaluate_click_accuracy() {
+function evaluate_two_dimensional_click_accuracy() {
     let any_target_clicked = false;
     let correct_target_clicked = false;
     targets.forEach(target =>{
-        if (target_clicked(target)) {
+        if (target_clicked_with_cursor(target)) {
+            any_target_clicked = true;
+            if (was_correct_target_clicked(target)){
+                correct_target_clicked = true;
+                on_correct_target_clicked(target);
+            }
+        }
+    })
+    if (!any_target_clicked || !correct_target_clicked){
+        on_correct_target_not_clicked(targets[target_index]);
+    }
+    return correct_target_clicked;
+}
+function evaluate_one_dimensional_click_accuracy(){
+    let any_target_clicked = false;
+    let correct_target_clicked = false;
+    targets.forEach(target =>{
+        if (target_clicked_with_scroll(target)) {
             any_target_clicked = true;
             if (was_correct_target_clicked(target)){
                 correct_target_clicked = true;
@@ -154,20 +197,21 @@ function evaluate_click_accuracy() {
     return correct_target_clicked;
 }
 function on_correct_target_clicked(target){
-    // target.color = successful_target_color;
+    //console.log('yeet')
+    //target.color = 'green';
 }
 function on_correct_target_not_clicked(target) {
-    // target.color = unsuccessful_target_color;
+    //console.log('neet')
+    //target.color = 'red';
 }
 function was_correct_target_clicked(target){
     return target.index === target_index;
 }
-
 function generate_targets(){
     clear_canvas(fitts_context, fitts_canvas);
     initialise_scroll_position();
     calculate_target_parameters();
-    render_fitts_targets();
+    render_targets();
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------FIRST FUNCTION CALLS
@@ -176,46 +220,48 @@ initial_scaling();
 generate_targets();
 
 function initialise_scroll_position(){
-    scroll_target_position = center;
+    scroll_target_position = get_center();
 }
 function update_scroll_position(delta){
-    scroll_target_position.y += (delta * .1);
+    scroll_target_position.y += (delta * .01);
     scroll_target_position.y = clamp_number_in_range(scroll_target_position.y, 0, 600);
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------TARGET GENERATION
 */
 function calculate_target_parameters(){
-    let section = fitts_evaluation_sections[section_index];
     targets = [];
     
     switch (evaluation_type){
-        case evaluation_types.reciprocal_targets:
-            generate_reciprocal_targets(section);
+        case evaluation_types.reciprocal_targets_two_dimensional:
+            generate_reciprocal_two_dimensional_targets(two_dimensional_evaluation_sections[section_index]);
             break;
-        case evaluation_types.random_targets:
-            generate_random_targets(section);
+        case evaluation_types.random_targets_two_dimensional:
+            generate_random_two_dimensional_targets(two_dimensional_evaluation_sections[section_index]);
             break;
-        case evaluation_types.scroll_targets:
-            generate_scroll_targets(section);
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            generate_reciprocal_one_dimensional_targets(one_dimensional_evaluation_sections[section_index]);
+            break;
+        case evaluation_types.random_targets_one_dimensional:
+            generate_random_one_dimensional_targets(random_one_dimensional_evaluation_sections[section_index]);
             break;
         default:
             break;
     }
 }
-function generate_reciprocal_targets(section){
+
+function generate_reciprocal_two_dimensional_targets(section){
     for (let i = 0; i < section.points; i++) {
         const angle = (i / section.points) * 2 * Math.PI;
         let target = {
-            x: center.x + section.radius * Math.cos(angle),
-            y: center.y + section.radius * Math.sin(angle),
+            x: get_center().x + section.radius * Math.cos(angle),
+            y: get_center().y + section.radius * Math.sin(angle),
             size: section.size,
             index: i,
             color: visible_inactive_target_color};
         targets.push(target);}
 }
-
-function generate_random_targets(section){
+function generate_random_two_dimensional_targets(section){
     let size = section.size;
     let border = {
         x_max: fitts_canvas.width - size,
@@ -268,26 +314,101 @@ function is_point_in_border(point, border) {
     return within_x && within_y;
 }
 
-function generate_scroll_targets(section){
+function generate_reciprocal_one_dimensional_targets(section) {
+    initialise_scroll_position();
     for (let i = 0; i < section.tasks; i++) {
-        const angle = (i / section.points) * 2 * Math.PI;
+        let y_position = get_center().y;
+        if (i % 2 === 0){
+            y_position += section.amplitude / 2;
+        } else {
+            y_position -= section.amplitude / 2;
+        }
         let target = {
-            x: center.x + section.radius * Math.cos(angle),
-            y: center.y + section.radius * Math.sin(angle),
-            size: section.size,
+            x: get_center().x,
+            y: y_position,
+            size: section.width,
             index: i,
             color: visible_inactive_target_color};
         targets.push(target);}
 }
-
+function generate_random_one_dimensional_targets(section) {
+    initialise_scroll_position();
+    let start_point_parameters = generate_randomised_point(section);
+    targets.push({
+        x: get_center().x,
+        y: generate_point_in_limits(start_point_parameters),
+        size: start_point_parameters.width,
+        index: 0,
+        color: invisible_inactive_target_color});
+    for (let i = 1; i < section.tasks; i++) {
+        let seed = targets[i - 1].y;
+        let point_parameters = generate_randomised_point(section);
+        targets.push({
+            x: get_center().x,
+            y: generate_seeded_point_in_limits(seed, point_parameters),
+            size: point_parameters.width,
+            index: i,
+            color: invisible_inactive_target_color});
+    }
+}
+function generate_randomised_point(section){
+    return { 
+        width : get_random_int(section.width_range.min, section.width_range.max), 
+        amplitude : get_random_int(section.amplitude_range.min, section.amplitude_range.max)}
+}
+function generate_point_in_limits(point_parameters) {
+    let actual_width = point_parameters.width * 2;
+    let limits = {
+        min: actual_width,
+        max: (fitts_canvas.height - actual_width)
+    }
+    return get_random_int(limits.min, limits.max);
+}
+function generate_seeded_point_in_limits(seed, point_parameters) {
+    let actual_width = point_parameters.width * 2;
+    let limits = {
+        min: actual_width,
+        max: (fitts_canvas.height - actual_width)
+    }
+    let target_points = {
+        upwards_point: seed + point_parameters.amplitude,
+        downwards_point: seed - point_parameters.amplitude
+    }
+    let flipper = get_random_int(0, 9) % 2 === 0;
+    let upwards_valid = is_point_in_limits(target_points.upwards_point, limits);
+    let downwards_valid = is_point_in_limits(target_points.downwards_point, limits);
+    if (flipper) {
+        if (upwards_valid) {
+            return target_points.upwards_point;
+        } else {
+            return target_points.downwards_point;
+        }
+    } else {
+        if (downwards_valid) {
+            return target_points.downwards_point;
+        } else {
+            return target_points.upwards_point;
+        }
+    }
+}
+function is_point_in_limits(point, limits){
+    return point > limits.min && point < limits.max;
+}
+/*
+------------------------------------------------------------------------------------------------------------------------INDEX CALCULATION
+*/
 function update_section_index(){
     if (task_index < targets.length) return;
-    calculate_two_dimensional_fitts_data();
+    calculate_effective_parameters();
+    // todo tidy this
     
     section_index++;
-    if (section_index >= fitts_evaluation_sections.length) {
+    clear_canvas(debug_context, debug_canvas);
+    
+    // todo wrong length - locked to fitts
+    if (section_index >= two_dimensional_evaluation_sections.length) {
         // todo handle the end of the evaluation properly
-        random = !random;
+        evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
         section_index = 0;
         generate_csv_data();
         download_all_performance_data();
@@ -300,7 +421,7 @@ function update_section_index(){
 /*
 ------------------------------------------------------------------------------------------------------------------------FITTS LAW CALCULATIONS
 */
-function calculate_two_dimensional_fitts_data(){
+function calculate_effective_parameters(){
     let mean_position = { x: 0, y: 0 };
     let mean_distance = { x: 0, y: 0 };
     let mean_square_difference = { x: 0, y: 0 };
@@ -390,16 +511,20 @@ function calculate_effective_throughput(effective_index_of_difficulty, movement_
 function update_target_index(){
     previous_target_index = target_index;
     calculate_next_target_index();
+    console.log(current_target());
 }
 function calculate_next_target_index(){
     switch (evaluation_type){
-        case evaluation_types.reciprocal_targets:
+        case evaluation_types.reciprocal_targets_two_dimensional:
             get_next_reciprocal_index();
             break;
-        case evaluation_types.random_targets:
+        case evaluation_types.random_targets_two_dimensional:
             get_next_linear_index();
             break;
-        case evaluation_types.scroll_targets:
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            get_next_linear_index();
+            break;
+        case evaluation_types.random_targets_one_dimensional:
             get_next_linear_index();
             break;
         default:
@@ -423,21 +548,57 @@ function get_next_linear_index(){
 /*
 ------------------------------------------------------------------------------------------------------------------------RENDERING FUNCTIONS
 */
-function render_scroll_cursor() {
-    clear_canvas(fitts_context, fitts_canvas);
-    draw_circle(fitts_context, get_scroll_position(), 2, 'black', true, false);
+function render_targets() {
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            render_one_dimensional_targets();
+            debug_render_one_dimensional_targets();
+            break;
+        case evaluation_types.random_targets_one_dimensional:
+            render_one_dimensional_targets();
+            debug_render_one_dimensional_targets();
+            break;
+        case evaluation_types.reciprocal_targets_two_dimensional:
+            render_two_dimensional_targets();
+            debug_render_two_dimensional_targets();
+            break;
+        case evaluation_types.random_targets_two_dimensional:
+            render_two_dimensional_targets();
+            debug_render_two_dimensional_targets();
+            break;
+        default:
+            break;
+    }
 }
-function render_fitts_targets() {
+function render_two_dimensional_targets() {
     clear_canvas(fitts_context, fitts_canvas);
     for (let i = 0; i < targets.length; i++) {
         draw_circle(fitts_context, targets[i], targets[i].size,  targets[i].color, true, false);
     }
     draw_circle(fitts_context, current_target(), current_target().size,  active_target_color, true, false);
-    render_debug_lines();
 }
-function render_debug_lines(){
+function debug_render_two_dimensional_targets(){
+        for (let i = 0; i < targets.length; i++) {
+            draw_circle(debug_context, targets[i], targets[i].size,  '#eeeeee', false, true);
+        }
+        if (task_index > 0) {
+            draw_line(debug_context, current_target(), vector_end_point(current_target(), normalised_vector(approach_vector(), current_target().size)), '#add8e6');
+            draw_line(debug_context, current_target(), vector_end_point(current_target(), normalised_vector(perpendicular_vector(approach_vector()), current_target().size)), '#e6adbc');
+        }
+}
+function render_one_dimensional_targets() {
+    let width = 595;
+    clear_canvas(fitts_context, fitts_canvas);
     for (let i = 0; i < targets.length; i++) {
-        draw_circle(debug_context, targets[i], targets[i].size,  '#EEEEEE', false, true);
+        let target = targets[i];
+        draw_rectangle(fitts_context, target, target.size * 2,  width, target.color, true, false);
+    }
+    draw_rectangle(fitts_context, current_target(), current_target().size * 2,  width, active_target_color, true, false);
+    draw_rectangle(fitts_context, get_scroll_position(), 2, width, 'black', true, true);
+}
+function debug_render_one_dimensional_targets() {
+    for (let i = 0; i < targets.length; i++) {
+        draw_circle(debug_context, targets[i], targets[i].size,  '#eeeeee', false, true);
     }
     if (task_index > 0) {
         draw_line(debug_context, current_target(), vector_end_point(current_target(), normalised_vector(approach_vector(), current_target().size)), '#add8e6');
@@ -469,8 +630,8 @@ function vector_magnitude(vector){
 function normalised_local_position() {
     let normalised = normalised_vector(approach_vector());
     let perpendicular = normalised_vector(perpendicular_vector(approach_vector()));
-    let local_x = (local_cursor_position().x * normalised.x) + (local_cursor_position().y * normalised.y);
-    let local_y = (local_cursor_position().x * perpendicular.x) + (local_cursor_position().y * perpendicular.y);
+    let local_x = (input_position_relative_to_current_target().x * normalised.x) + (input_position_relative_to_current_target().y * normalised.y);
+    let local_y = (input_position_relative_to_current_target().x * perpendicular.x) + (input_position_relative_to_current_target().y * perpendicular.y);
     return {
         x: local_x,
         y: local_y };
@@ -496,15 +657,26 @@ function current_target() {
 function previous_target() {
     return targets[previous_target_index];
 }
-function local_cursor_position() {
-    return convert_to_local_space(get_mouse_position(), { x: current_target().x, y: current_target().y})
+function input_position_relative_to_current_target() {
+    return convert_to_local_space(get_user_input_position(), { x: current_target().x, y: current_target().y})
 }
-function set_mouse_position(event){
+function set_cursor_position(event){
     mouse_position.x = event.clientX - fitts_rect.left;
     mouse_position.y = event.clientY - fitts_rect.top;
 }
-function get_mouse_position(){
-    return mouse_position;
+function get_user_input_position(){
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets_two_dimensional:
+            return mouse_position;
+        case evaluation_types.random_targets_two_dimensional:
+            return mouse_position;
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            return scroll_target_position;
+        case evaluation_types.random_targets_one_dimensional:
+            return scroll_target_position;
+        default:
+            break;
+    }
 }
 function get_scroll_position(){
     return scroll_target_position;
@@ -512,12 +684,18 @@ function get_scroll_position(){
 function get_last_click_position(){
     return last_click_data.position;
 }
-function cache_click_data(){
+function cache_input_location_data(){
     last_click_data.position = {
-        x: get_mouse_position().x,
-        y: get_mouse_position().y
+        x: get_user_input_position().x,
+        y: get_user_input_position().y
     }
     last_click_data.timestamp = new Date();
+}
+function two_dimensional_evaluation_task(){
+    return evaluation_type === evaluation_types.reciprocal_targets_two_dimensional || evaluation_type === evaluation_types.random_targets_two_dimensional;
+}
+function one_dimensional_evaluation_task(){
+    return evaluation_type === evaluation_types.reciprocal_targets_one_dimensional || evaluation_type === evaluation_types.random_targets_one_dimensional;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------ALGEBRAIC FUNCTIONS
@@ -528,13 +706,23 @@ function convert_to_local_space(point, origin){
         y: point.y - origin.y
     };
 }
-function target_clicked(target){
+function target_clicked_with_cursor(target){
     return distance_from_mouse(target) <= target.size;
+}
+function target_clicked_with_scroll(target){
+    return distance_from_scroll_target(target) <= target.size;
 }
 function distance_from_mouse(target){
     return distance(
-        get_mouse_position().x,
-        get_mouse_position().y,
+        get_user_input_position().x,
+        get_user_input_position().y,
+        target.x,
+        target.y);
+}
+function distance_from_scroll_target(target){
+    return distance(
+        get_scroll_position().x,
+        get_scroll_position().y,
         target.x,
         target.y);
 }
@@ -565,18 +753,37 @@ function draw_line(context, start_point, end_point, color) {
         end_point.y)
     context.strokeStyle = color;
     context.stroke();
+    context.closePath();
 }
-function draw_circle(context, center, size, color, fill = false, stroke = true){
+function draw_circle(context, center, size, color, fill, stroke){
     context.beginPath();
-    context.arc(center.x, center.y, size, 0, 2 * Math.PI);
     if (fill){
         context.fillStyle = color;
+        context.arc(center.x, center.y, size, 0, 2 * Math.PI);
         context.fill();
     }
     if (stroke){
         context.strokeStyle = color;
+        context.arc(center.x, center.y, size, 0, 2 * Math.PI);
         context.stroke();
     }
+    context.closePath();
+}
+function draw_rectangle(context, center_point, height, width, color, fill, stroke){
+    context.beginPath();
+    let top_left_x = center_point.x - (width / 2);
+    let top_left_y = center_point.y - (height / 2);
+    if (fill){
+        context.fillStyle = color;
+        context.fillRect(top_left_x, top_left_y, width, height);
+        context.fill();
+    }
+    if (stroke){
+        context.strokeStyle = color;
+        context.strokeRect(top_left_x, top_left_y, width, height);
+        context.stroke();
+    }
+    context.closePath();
 }
 function clear_canvas(context, canvas){
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -602,7 +809,6 @@ function initial_scaling(){
     
     fitts_rect = scale_canvas(fitts_canvas, fitts_context);
     debug_rect = scale_canvas(debug_canvas, debug_context);
-    calculate_center(dpr);
 }
 function scale_canvas(canvas, context) {
     canvas.style.width = `${size}px`;
@@ -629,12 +835,11 @@ function scale_body(){
     console.log(`scale factor: ${factor}`)
     body.style.transform = `scale(${factor})`;
 }
-function calculate_center(dpr){
-    center.x = (fitts_canvas.width / dpr) * .5;
-    center.y = (fitts_canvas.height / dpr) * .5;
-}
 function get_center(){
-    return center;
+    return {
+        x: (fitts_canvas.width / dpr) * .5,
+        y: (fitts_canvas.height / dpr) * .5
+    };
 }
 function base_dpr(){
     return localStorage.getItem('dpr');
