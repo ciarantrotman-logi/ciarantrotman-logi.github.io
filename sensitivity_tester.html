@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>sensitivity tester</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="evaluation-block" id="body">
+    <input id="input" type="range" class="slider" min="0" max="1000">
+    <br><br>
+    <input id="output" type="range" class="slider" min="0" max="1000">
+    <br><br><br><br>
+    <input id="midpoint" type="range" class="slider" min="0" max="1000">
+    <br><br>
+    <input id="steepness" type="range" class="slider" min="0" max="10">
+</body>
+<script>
+    let input = document.getElementById('input');
+    let output = document.getElementById('output');
+    let midpoint = document.getElementById('midpoint');
+    let steepness = document.getElementById('steepness');
+    
+    setInterval(function(){
+        output.value = adjust_parameter(input.value);
+        console.log(`${input.value} > ${adjust_parameter(input.value)}`);
+    })
+    
+    function adjust_parameter(input_value){
+        let mid_point = midpoint.value;
+        let steep = steepness.value / 100;
+        let sensitivity = 1 / (1 + Math.exp(-steep * (input_value - mid_point)));
+        let adjusted = sensitivity * Math.pow(input_value, 2);
+        return Math.round(adjusted);
+    }
+</script>
+</html>

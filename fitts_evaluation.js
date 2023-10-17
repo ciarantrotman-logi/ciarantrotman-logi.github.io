@@ -8,8 +8,6 @@ let debug_canvas = document.getElementById('debug-canvas');
 let debug_context = debug_canvas.getContext('2d');
 let debug_rect = debug_canvas.getBoundingClientRect();
 
-let readout = document.getElementById('readout');
-
 let mouse_position = {x: 0, y: 0};
 let last_click_data = { 
     position : { x: 0, y: 0,}, 
@@ -22,6 +20,7 @@ let evaluation_types = {
     'reciprocal_targets_one_dimensional':   'reciprocal_targets_one_dimensional',
     'random_targets_one_dimensional':       'random_targets_one_dimensional'
 }
+
 let evaluation_type = evaluation_types.random_targets_one_dimensional;
 
 let dpr = 1;
@@ -48,20 +47,18 @@ document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
 
 let two_dimensional_evaluation_sections = [
-    { points: 15, radius: 100, size: 75 },
-    { points: 15, radius: 125, size: 50 },
-    { points: 15, radius: 150, size: 25 },
-    { points: 15, radius: 250, size: 5 },
+    { points: 11, radius: 100, size: 75 },
+    { points: 11, radius: 125, size: 50 },
+    { points: 11, radius: 150, size: 25 },
+    { points: 11, radius: 200, size: 15 },
+    { points: 11, radius: 250, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 10, amplitude: 100, width: 40 },
-    { tasks: 10, amplitude: 150, width: 20 },
-    { tasks: 10, amplitude: 200, width: 10 },
-]
-let random_one_dimensional_evaluation_sections = [
-    { tasks: 10, amplitude_range: { min: 50, max: 100 }, width_range: { min: 40, max: 60 }},
-    { tasks: 10, amplitude_range: { min: 100, max: 150 }, width_range: { min: 20, max: 40 }},
-    { tasks: 10, amplitude_range: { min: 150, max: 200 }, width_range: { min: 10, max: 20 }},
+    { tasks: 10, amplitude: 150, width: 30 },
+    { tasks: 10, amplitude: 200, width: 20 },
+    { tasks: 10, amplitude: 300, width: 10 },
+    { tasks: 10, amplitude: 400, width: 5 }
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -112,20 +109,6 @@ function on_middle_click() {
 function scroll(event) {
     update_scroll_position(event.deltaY);
     render_targets();
-}
-/*
-------------------------------------------------------------------------------------------------------------------------DEBUG READOUT
-*/
-// setInterval(update_debug_readout);
-function update_debug_readout(){
-    readout.innerText = `
-        mouse position: (${Math.ceil(get_user_input_position().x)}, ${Math.ceil(get_user_input_position().y)})
-        scroll position: (${Math.ceil(get_scroll_position().x)}, ${Math.ceil(get_scroll_position().y)})
-        cached click: (${Math.ceil(get_last_click_position().x)}, ${Math.ceil(get_last_click_position().y)}) at ${last_click_data.timestamp};
-        cursor local position: (${input_position_relative_to_current_target().x.toFixed(2)}, ${input_position_relative_to_current_target().y.toFixed(2)})
-        target position (${target_index}): (${targets[target_index].x.toFixed(2)}, ${targets[target_index].y.toFixed(2)})
-        normalised position: (${normalised_local_position().x.toFixed(2)}, ${normalised_local_position().y.toFixed(2)})
-        `;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------CALCULATION TOWN
@@ -197,12 +180,10 @@ function evaluate_one_dimensional_click_accuracy(){
     return correct_target_clicked;
 }
 function on_correct_target_clicked(target){
-    //console.log('yeet')
-    //target.color = 'green';
+    //console.log(`${target} was clicked successfully`)
 }
 function on_correct_target_not_clicked(target) {
-    //console.log('neet')
-    //target.color = 'red';
+    //console.log(`${target} was not clicked successfully`)
 }
 function was_correct_target_clicked(target){
     return target.index === target_index;
@@ -231,7 +212,6 @@ function update_scroll_position(delta){
 */
 function calculate_target_parameters(){
     targets = [];
-    
     switch (evaluation_type){
         case evaluation_types.reciprocal_targets_two_dimensional:
             generate_reciprocal_two_dimensional_targets(two_dimensional_evaluation_sections[section_index]);
@@ -243,7 +223,7 @@ function calculate_target_parameters(){
             generate_reciprocal_one_dimensional_targets(one_dimensional_evaluation_sections[section_index]);
             break;
         case evaluation_types.random_targets_one_dimensional:
-            generate_random_one_dimensional_targets(random_one_dimensional_evaluation_sections[section_index]);
+            generate_random_one_dimensional_targets(one_dimensional_evaluation_sections[section_index]);
             break;
         default:
             break;
@@ -264,9 +244,9 @@ function generate_reciprocal_two_dimensional_targets(section){
 function generate_random_two_dimensional_targets(section){
     let size = section.size;
     let border = {
-        x_max: fitts_canvas.width - size,
+        x_max: (fitts_canvas.width / dpr) - size,
         x_min: size,
-        y_max: fitts_canvas.height - size,
+        y_max: (fitts_canvas.height / dpr) - size,
         y_min: size
     }
     let start_point = generate_random_point_in_border(border);
@@ -339,7 +319,7 @@ function generate_random_one_dimensional_targets(section) {
         y: generate_point_in_limits(start_point_parameters),
         size: start_point_parameters.width,
         index: 0,
-        color: invisible_inactive_target_color});
+        color: '#ffffff'});
     for (let i = 1; i < section.tasks; i++) {
         let seed = targets[i - 1].y;
         let point_parameters = generate_randomised_point(section);
@@ -348,13 +328,15 @@ function generate_random_one_dimensional_targets(section) {
             y: generate_seeded_point_in_limits(seed, point_parameters),
             size: point_parameters.width,
             index: i,
-            color: invisible_inactive_target_color});
+            color: '#ffffff'});
     }
 }
 function generate_randomised_point(section){
+    let width_range = Math.round(section.width / 2);
+    let amplitude_range = Math.round(section.amplitude / 2);
     return { 
-        width : get_random_int(section.width_range.min, section.width_range.max), 
-        amplitude : get_random_int(section.amplitude_range.min, section.amplitude_range.max)}
+        width : get_random_int(section.width - width_range, section.width + width_range), 
+        amplitude : get_random_int(section.amplitude - amplitude_range, section.amplitude + amplitude_range)}
 }
 function generate_point_in_limits(point_parameters) {
     let actual_width = point_parameters.width * 2;
@@ -377,6 +359,10 @@ function generate_seeded_point_in_limits(seed, point_parameters) {
     let flipper = get_random_int(0, 9) % 2 === 0;
     let upwards_valid = is_point_in_limits(target_points.upwards_point, limits);
     let downwards_valid = is_point_in_limits(target_points.downwards_point, limits);
+    let invalid_parameters = !(upwards_valid || downwards_valid);    
+    if (invalid_parameters) {
+        return generate_point_in_limits(point_parameters);
+    }
     if (flipper) {
         if (upwards_valid) {
             return target_points.upwards_point;
@@ -399,28 +385,74 @@ function is_point_in_limits(point, limits){
 */
 function update_section_index(){
     if (task_index < targets.length) return;
-    calculate_effective_parameters();
-    // todo tidy this
-    
+    cache_performance_data();
     section_index++;
     clear_canvas(debug_context, debug_canvas);
     
-    // todo wrong length - locked to fitts
-    if (section_index >= two_dimensional_evaluation_sections.length) {
-        // todo handle the end of the evaluation properly
-        evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
+    if (section_index >= current_evaluation_type_length()) {
         section_index = 0;
-        generate_csv_data();
-        download_all_performance_data();
+        get_next_evaluation_type();
     }
 
     target_index = 0;
     task_index = 0;
     generate_targets();
 }
+function cache_performance_data(){
+    if (one_dimensional_evaluation_task()) {
+        cache_one_dimensional_parameters();
+    } else if (two_dimensional_evaluation_task()) {
+        calculate_effective_parameters();
+    }
+}
+function current_evaluation_type_length(){
+    if (one_dimensional_evaluation_task()) {
+        return one_dimensional_evaluation_sections.length;
+    } else return two_dimensional_evaluation_sections.length;
+}
+function get_next_evaluation_type() {
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets_two_dimensional:
+            evaluation_type = evaluation_types.random_targets_two_dimensional;
+            break;
+        case evaluation_types.random_targets_two_dimensional:
+            evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
+            break;
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            evaluation_type = evaluation_types.random_targets_one_dimensional;
+            break;
+        case evaluation_types.random_targets_one_dimensional:
+            generate_csv_data();
+            download_all_performance_data();
+            break;
+        default:
+            break;
+    }
+}
 /*
 ------------------------------------------------------------------------------------------------------------------------FITTS LAW CALCULATIONS
 */
+function cache_one_dimensional_parameters(){
+    section_performance_data.forEach(data => {
+        all_performance_data.push({
+            'amplitude': data.amplitude,
+            'width': data.width,
+            'index_of_difficulty': data.index_of_difficulty,
+            'throughput': data.throughput,
+            'movement_time_ms': data.movement_time_ms,
+            'target': data.target,
+            'global_cursor_position': data.global_cursor_position,
+            'local_cursor_position': data.local_cursor_position,
+            'relative_cursor_position': data.relative_cursor_position,
+            'approach_vector': data.approach_vector,
+            'perpendicular_vector': data.perpendicular_vector,
+            'section_index': data.section_index,
+            'action_index': data.action_index,
+            'task_type' : data.task_type
+        });
+    });
+    section_performance_data = [];
+}
 function calculate_effective_parameters(){
     let mean_position = { x: 0, y: 0 };
     let mean_distance = { x: 0, y: 0 };
@@ -444,7 +476,6 @@ function calculate_effective_parameters(){
         }
         mean_distance.x += distance.x;
         mean_distance.y += distance.y;
-
         data.distance = distance;
     })
     mean_distance.x /= mean_length;
@@ -499,7 +530,7 @@ function calculate_effective_parameters(){
             'action_index': data.action_index,
             'task_type' : data.task_type
         });
-    })
+    });
     section_performance_data = [];
 }
 function calculate_effective_throughput(effective_index_of_difficulty, movement_time) {
@@ -511,7 +542,6 @@ function calculate_effective_throughput(effective_index_of_difficulty, movement_
 function update_target_index(){
     previous_target_index = target_index;
     calculate_next_target_index();
-    console.log(current_target());
 }
 function calculate_next_target_index(){
     switch (evaluation_type){
@@ -743,7 +773,7 @@ function get_random_int(min, max) {
 /*
 ------------------------------------------------------------------------------------------------------------------------GRAPHIC FUNCTIONS
 */
-function draw_line(context, start_point, end_point, color) {
+function draw_line(context, start_point, end_point, color, width = 1) {
     context.beginPath();
     context.moveTo(
         start_point.x,
@@ -751,6 +781,7 @@ function draw_line(context, start_point, end_point, color) {
     context.lineTo(
         end_point.x,
         end_point.y)
+    context.strokeWidth = width;
     context.strokeStyle = color;
     context.stroke();
     context.closePath();
