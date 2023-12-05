@@ -44,7 +44,7 @@ let key_frequencies = [
     {key_name: "F",             key_code: "KeyF",           key_frequency: .3},
 ]
 
-let evaluation_step_count= 5;
+let evaluation_step_count= 25;
 let evaluation_steps= [];
 
 let task_index = 0;
@@ -87,10 +87,11 @@ function progress_evaluation_task(){
 function on_task_completed(){
     task_completed = true;
     calculate_task_performance();
+    download_generated_data(output_data);
 }
 function create_evaluation_steps(){
     for (let i = 0; i < evaluation_step_count; i++) {
-        evaluation_steps.push(generate_target_key());
+        evaluation_steps.push(generate_target_keys());
     }
 }
 /*
@@ -103,10 +104,25 @@ function calculate_task_performance(){
         output_data.push({
             input_target: current_input.event.code,
             input_duration: current_input.event.timeStamp - previous_input.event.timeStamp,
+            previous_input: previous_input.event.code,
             correct_input: current_input.correct_input
         });
     }
-    console.log(output_data);
+}
+function download_generated_data (data){
+    const json = {};
+    Object.keys(data).forEach(key => {
+        json[key] = data[key];
+    });
+    const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const placeholder = document.createElement("a");
+    placeholder.href = url;
+    placeholder.download = Date.now().toString();
+    document.body.appendChild(placeholder);
+    placeholder.click();
+    document.body.removeChild(placeholder);
+    URL.revokeObjectURL(url);
 }
 /*
 -----[Utility Functions]
@@ -117,7 +133,7 @@ function display_current_target_key(){
 function display_progression_information(){
     progression_readout.innerHTML = `(${task_index + 1}/${evaluation_step_count})`;
 }
-function generate_target_key(){
+function generate_target_keys(){
     let key_distribution = [];
     key_frequencies.forEach(key=>{
         let normalised_frequency = key.key_frequency * 100;
