@@ -21,7 +21,7 @@ let evaluation_types = {
     'random_targets_one_dimensional':       'random_targets_one_dimensional'
 }
 
-let evaluation_type = evaluation_types.random_targets_one_dimensional;
+let evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
 
 let dpr = 1;
 let size = 600;
@@ -38,11 +38,11 @@ let section_index = 0;
 let action_index = 0;
 
 let active_target_color = "#fb7474";
-let visible_inactive_target_color = "#dddddd";
+let visible_inactive_target_color = "#F2F2F2";
 let invisible_inactive_target_color = "#ffffff";
 
 fitts_canvas.addEventListener('mousemove', trace);
-fitts_canvas.addEventListener('mousedown', click);
+document.addEventListener('mousedown', click);
 document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
 
@@ -67,8 +67,7 @@ function trace(event) {
     set_cursor_position(event);
 }
 function click(event) {
-    set_cursor_position(event);
-    
+    if (fitts_canvas.style.display === 'none') return;
     if (event.button === 0 && two_dimensional_evaluation_task()) {
         on_left_click();
     }
@@ -179,11 +178,20 @@ function evaluate_one_dimensional_click_accuracy(){
     }
     return correct_target_clicked;
 }
-function on_correct_target_clicked(target){
-    //console.log(`${target} was clicked successfully`)
+let error_count = 0;
+let error_rate = 0;
+function on_correct_target_clicked(target) {
+    
 }
 function on_correct_target_not_clicked(target) {
-    //console.log(`${target} was not clicked successfully`)
+    error_count ++;
+    evaluate_error_rate()
+}
+function evaluate_error_rate() {
+    error_rate = error_count / (action_index + 1);
+    if (error_rate > .25) {
+        console.log(`error rate above threshold (${error_rate})`);
+    }
 }
 function was_correct_target_clicked(target){
     return target.index === target_index;
@@ -197,15 +205,58 @@ function generate_targets(){
 /*
 ------------------------------------------------------------------------------------------------------------------------FIRST FUNCTION CALLS
 */
-initial_scaling();
-generate_targets();
+evaluate_scaling();
 
 function initialise_scroll_position(){
     scroll_target_position = get_center();
 }
 function update_scroll_position(delta){
-    scroll_target_position.y += (delta * .01);
+    scroll_target_position.y += (delta * .025);
     scroll_target_position.y = clamp_number_in_range(scroll_target_position.y, 0, 600);
+}
+function initialise_evaluation() {
+    document.getElementById('introduction').style.display = 'none';
+    generate_evaluation_section();
+}
+function start_evaluation(){
+    fitts_canvas.style.display = 'block';
+    reset_evaluation_blocks();
+}
+function generate_evaluation_section() {
+    display_evaluation_task_information();
+    generate_targets();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------SECTION REVELATION
+*/
+function display_evaluation_task_information() {
+    reset_evaluation_blocks();
+    hide_evaluation_canvas();
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets_two_dimensional:
+            document.getElementById('reciprocal-targets-two-dimensional').style.display = 'block';
+            break;
+        case evaluation_types.random_targets_two_dimensional:
+            document.getElementById('random-targets-two-dimensional').style.display = 'block';
+            break;
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            document.getElementById('reciprocal-targets-one-dimensional').style.display = 'block';
+            break;
+        case evaluation_types.random_targets_one_dimensional:
+            document.getElementById('random-targets-one-dimensional').style.display = 'block';
+            break;
+        default:
+            break;
+    }
+}
+function reset_evaluation_blocks(){
+    document.getElementById('reciprocal-targets-two-dimensional').style.display = 'none';
+    document.getElementById('random-targets-two-dimensional').style.display = 'none';
+    document.getElementById('reciprocal-targets-one-dimensional').style.display = 'none';
+    document.getElementById('random-targets-one-dimensional').style.display = 'none';
+}
+function hide_evaluation_canvas() {
+    fitts_canvas.style.display = 'none';
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------TARGET GENERATION
@@ -229,7 +280,6 @@ function calculate_target_parameters(){
             break;
     }
 }
-
 function generate_reciprocal_two_dimensional_targets(section){
     for (let i = 0; i < section.points; i++) {
         const angle = (i / section.points) * 2 * Math.PI;
@@ -383,20 +433,27 @@ function is_point_in_limits(point, limits){
 /*
 ------------------------------------------------------------------------------------------------------------------------INDEX CALCULATION
 */
+function reset_section() {
+    
+}
 function update_section_index(){
     if (task_index < targets.length) return;
     cache_performance_data();
     section_index++;
     clear_canvas(debug_context, debug_canvas);
     
-    if (section_index >= current_evaluation_type_length()) {
+    if (should_move_to_next_section()) {
         section_index = 0;
         get_next_evaluation_type();
+        display_evaluation_task_information();
     }
 
     target_index = 0;
     task_index = 0;
     generate_targets();
+}
+function should_move_to_next_section(){
+    return section_index >= current_evaluation_type_length();
 }
 function cache_performance_data(){
     if (one_dimensional_evaluation_task()) {
@@ -544,21 +601,10 @@ function update_target_index(){
     calculate_next_target_index();
 }
 function calculate_next_target_index(){
-    switch (evaluation_type){
-        case evaluation_types.reciprocal_targets_two_dimensional:
-            get_next_reciprocal_index();
-            break;
-        case evaluation_types.random_targets_two_dimensional:
-            get_next_linear_index();
-            break;
-        case evaluation_types.reciprocal_targets_one_dimensional:
-            get_next_linear_index();
-            break;
-        case evaluation_types.random_targets_one_dimensional:
-            get_next_linear_index();
-            break;
-        default:
-            break;
+    if (evaluation_type === evaluation_types.reciprocal_targets_two_dimensional) {
+        get_next_reciprocal_index();
+    } else {
+        get_next_linear_index();
     }
     task_index++;
 }
@@ -691,21 +737,15 @@ function input_position_relative_to_current_target() {
     return convert_to_local_space(get_user_input_position(), { x: current_target().x, y: current_target().y})
 }
 function set_cursor_position(event){
-    mouse_position.x = event.clientX - fitts_rect.left;
-    mouse_position.y = event.clientY - fitts_rect.top;
+    let rect = fitts_canvas.getBoundingClientRect();
+    mouse_position.x = event.clientX - rect.left;
+    mouse_position.y = event.clientY - rect.top;
 }
 function get_user_input_position(){
-    switch (evaluation_type){
-        case evaluation_types.reciprocal_targets_two_dimensional:
-            return mouse_position;
-        case evaluation_types.random_targets_two_dimensional:
-            return mouse_position;
-        case evaluation_types.reciprocal_targets_one_dimensional:
-            return scroll_target_position;
-        case evaluation_types.random_targets_one_dimensional:
-            return scroll_target_position;
-        default:
-            break;
+    if (two_dimensional_evaluation_task()) {
+        return mouse_position;
+    } else {
+        return scroll_target_position
     }
 }
 function get_scroll_position(){
@@ -823,7 +863,7 @@ function clear_canvas(context, canvas){
 /*
 ------------------------------------------------------------------------------------------------------------------------CANVAS SCALING
 */
-function initial_scaling(){
+function evaluate_scaling(){
     dpr = window.devicePixelRatio || 1;
     if (base_dpr() === null){
         console.log(`set base dpr to ${dpr}`);

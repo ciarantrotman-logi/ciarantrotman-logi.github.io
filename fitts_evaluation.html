@@ -9,9 +9,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body class="evaluation-block" id="body">
-    <h1>Fitts Evaluation</h1>
-    <p id="task-description">
-    <canvas id="fitts-canvas" width="600" height="600" class="canvas"></canvas>
+    <h1>Mouse Evaluation</h1>
+        <div id="introduction" style="display: block">
+            <p id="fitts-evaluation-welcome">Thank you again for participating in this mouse user evaluation.</p>
+            <p id="fitts-evaluation-introduction">This section of the evaluation is focused on seeing how easy it is to use your mouse. There are four clicking tasks in this section.</p>
+                <ol>
+                    <li id="fitts-evaluation-first-task-description">Click circular target placed around in a circle with your cursor</li>
+                    <li id="fitts-evaluation-second-task-description">Click randomly placed circular targets with your cursor</li>
+                    <li id="fitts-evaluation-third-task-description">Select targets using the scroll wheel</li>
+                    <li id="fitts-evaluation-fourth-task-description">Select randomly placed targets using the scroll wheel</li>
+                </ol>
+            <p id="fitts-evaluation-duration">This section should take roughly 5 - 7 minutes.</p>
+            <div class="progression-buttons">
+                <button class = "full-width" id="fitts-evaluation-continue" onclick="initialise_evaluation()">Begin Evaluation</button>
+            </div>
+        </div>
+        <div id="reciprocal-targets-two-dimensional" style="display: none"> 
+            <h3 id="reciprocal-targets-two-dimensional-introduction">Circular Left Click Evaluation</h3>
+            <p id="reciprocal-targets-two-dimensional-description">When you start you will see a ring of targets. Click the highlighted target as accuractly and as quickly as you can using your mouse and left click.</p>
+            <button class = "full-width" id="reciprocal-targets-two-dimensional-start" onclick="start_evaluation()">Start First Evaluation</button>
+        </div>
+        <div id="random-targets-two-dimensional" style="display: none">
+            <h3 id="random-targets-two-dimensional-introduction">Random Left Click Evaluation</h3>
+            <p id="random-targets-two-dimensional-description">When you start you will see a single target. Click each target as accuractly and as quickly as you can using your mouse and left click.</p>
+            <button class = "full-width" id="random-targets-two-dimensional-start" onclick="start_evaluation()">Start Second Evaluation</button>
+        </div>
+        <div id="reciprocal-targets-one-dimensional" style="display: none">
+            <h3 id="reciprocal-targets-one-dimensional-introduction">Back and Forth Scrolling Evalaution</h3>
+            <p id="reciprocal-targets-one-dimensional-description">When you start you will see two targets. Scroll until the black bar is inside a target and click using the middle mouse button.</p>
+            <button class = "full-width" id="reciprocal-targets-one-dimensional-start" onclick="start_evaluation()">Start Third Evaluation</button>
+        </div>
+        <div id="random-targets-one-dimensional" style="display: none">
+            <h3 id="random-targets-one-dimensional-introduction">Random Scrolling Evaluation</h3>
+            <p id="random-targets-one-dimensional-description">When you start you will see a single target. Scroll until the black bar is inside a target and click using the middle mouse button.</p>
+            <button class = "full-width" id="random-targets-one-dimensional-start" onclick="start_evaluation()">Start Fourth Evaluation</button>
+        </div>
+    <br>
+    <canvas id="fitts-canvas" width="600" height="600" class="canvas" style="display: none"></canvas>
     <canvas id="debug-canvas" width="600" height="600" class="canvas" style="display: none"></canvas>
 </body>
 <script src="fitts_evaluation.js"></script>
