@@ -8,16 +8,16 @@ let key_frequencies = [
     {key_name: "Up Arrow",      key_code: "ArrowUp",        key_frequency: .65},
     {key_name: "Down Arrow",    key_code: "ArrowDown",      key_frequency: .65},
     // Function Keys
-    {key_name: "F1",            key_code: "F1",             key_frequency: .3},
-    {key_name: "F2",            key_code: "F2",             key_frequency: .2},
-    {key_name: "F3",            key_code: "F3",             key_frequency: .1},
-    {key_name: "F4",            key_code: "F4",             key_frequency: .05},
-    {key_name: "F6",            key_code: "F6",             key_frequency: .005},
-    {key_name: "F7",            key_code: "F7",             key_frequency: .005},
-    {key_name: "F8",            key_code: "F8",             key_frequency: .005},
-    {key_name: "F9",            key_code: "F9",             key_frequency: .005},
-    {key_name: "F10",           key_code: "F10",            key_frequency: .005},
-    {key_name: "F12",           key_code: "F12",            key_frequency: .005},
+    {key_name: "F1",            key_code: "F1",             key_frequency: 0},
+    {key_name: "F2",            key_code: "F2",             key_frequency: 0},
+    {key_name: "F3",            key_code: "F3",             key_frequency: 0},
+    {key_name: "F4",            key_code: "F4",             key_frequency: 0},
+    {key_name: "F6",            key_code: "F6",             key_frequency: 0},
+    {key_name: "F7",            key_code: "F7",             key_frequency: 0},
+    {key_name: "F8",            key_code: "F8",             key_frequency: 0},
+    {key_name: "F9",            key_code: "F9",             key_frequency: 0},
+    {key_name: "F10",           key_code: "F10",            key_frequency: 0},
+    {key_name: "F12",           key_code: "F12",            key_frequency: 0},
     // Number Row
     {key_name: "1",             key_code: "Digit1",         key_frequency: .25},
     {key_name: "2",             key_code: "Digit2",         key_frequency: .25},
@@ -42,9 +42,10 @@ let key_frequencies = [
     {key_name: "E",             key_code: "KeyE",           key_frequency: .3},
     {key_name: "C",             key_code: "KeyC",           key_frequency: .3},
     {key_name: "F",             key_code: "KeyF",           key_frequency: .3},
+    {key_name: "Escape",        key_code: "Escape",         key_frequency: .1},
 ]
 
-let evaluation_step_count= 25;
+let evaluation_step_count= 50;
 let evaluation_steps= [];
 
 let task_index = 0;

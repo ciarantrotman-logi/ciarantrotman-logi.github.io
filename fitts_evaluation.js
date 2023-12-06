@@ -114,7 +114,9 @@ function scroll(event) {
 */
 function calculate_throughput() {
     let amplitude = distance_between_points(current_target(), previous_target());
-    let width = (two_dimensional_evaluation_sections[section_index].size * 2);
+    let width = one_dimensional_evaluation_task() 
+        ? one_dimensional_evaluation_sections[section_index].width
+        : two_dimensional_evaluation_sections[section_index].size * 2;
     let movement_time_ms = (new Date() - last_click_data.timestamp);
     let movement_time_s = movement_time_ms / 1000;
 
