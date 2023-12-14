@@ -136,7 +136,8 @@ html, body {
 
 .box.hide-text {
   color: transparent;
-  background-color: lightgrey;
+  background-color: white;
+  border: 2px solid lightgrey;
 }
 
 .container {
@@ -144,4 +145,7 @@ html, body {
   align-items: center;
   justify-content: center;
   height: 100px;
+}
+
+.text-box{
 }

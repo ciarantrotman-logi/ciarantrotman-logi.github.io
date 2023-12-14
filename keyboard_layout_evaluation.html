@@ -10,17 +10,32 @@
 <h1 id="header">Keyboard Layout Evaluation</h1>
 <div id="introduction">
     <p id="task-welcome">
-        Thank you for participating in this keyboard evaluation. 
+        Thank you for participating in this keyboard layout evaluation. 
     </p>
     <p id="task-explanation">
-        In this evaluation you are being asked to press the displayed key as quickly and as accurately as you can.
+        In this evaluation you will see a sequence of key pairs - the goal of the evaluation is to press each key in 
+        each pair as quickly as you can without making any mistakes. 
     </p>
+    <p>
+        You should use only your <b>index finger</b> for this evaluation.
+    </p>
+    <div id="evaluation-details">use
+        <p>
+            Please fill in the details for this evaluation:
+        </p>
+        <ol>
+            <li><label for="user-name">User Name: </label><input class="text-box" type="text" id="user-name" placeholder=""></li>
+            <li><label for="keyboard-make">Keyboard Make: </label><input class="text-box" type="text" id="keyboard-make" placeholder=""></li>
+            <li><label for="keyboard-model"></label>Keyboard Model: <input class="text-box" type="text" id="keyboard-model" placeholder=""></li>
+            <li><label for="keyboard-condition"></label>Keyboard Condition: <input class="text-box" type="text" id="keyboard-condition" placeholder=""></li>
+        </ol>
+    </div>
+    <button class = "full-width" id="start-evaluation" onclick="begin_evaluation()">Start Evaluation</button>
 </div>
-<div id="evaluation">
-    <p id="task-description"></p>
+<div id="key-location-exercise" style="display: none">
+    <p id="task-description">Press the highlighted key as quickly as you can.</p>
     <div class="container">
         <div class="box" id="base-key"></div>
-        <div> to </div>
         <div class="box" id="target-key"></div>
     </div>
     <p id="progress-visualisation"></p>
