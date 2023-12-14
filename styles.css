@@ -121,3 +121,27 @@ html, body {
 .canvas {
   /*outline: 2px solid black;*/
 }
+
+.box {
+  display: inline-block;
+  border: 2px solid black;
+  padding: 16px;
+  margin: 16px;
+  border-radius: 5px;
+  min-width: 16px;
+  min-height: 16px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.box.hide-text {
+  color: transparent;
+  background-color: lightgrey;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+}
