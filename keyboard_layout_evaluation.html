@@ -7,8 +7,8 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="evaluation-block">
-<h1 id="header">Keyboard Layout Evaluation</h1>
 <div id="introduction">
+    <h1 id="header">Keyboard Layout Evaluation</h1>
     <p id="task-welcome">
         Thank you for participating in this keyboard layout evaluation. 
     </p>
@@ -19,21 +19,32 @@
     <p>
         You should use only your <b>index finger</b> for this evaluation.
     </p>
-    <div id="evaluation-details">use
-        <p>
-            Please fill in the details for this evaluation:
-        </p>
+    <div id="evaluation-details">
+        <h3>
+            Evaluation Details
+        </h3>
         <ol>
-            <li><label for="user-name">User Name: </label><input class="text-box" type="text" id="user-name" placeholder=""></li>
-            <li><label for="keyboard-make">Keyboard Make: </label><input class="text-box" type="text" id="keyboard-make" placeholder=""></li>
-            <li><label for="keyboard-model"></label>Keyboard Model: <input class="text-box" type="text" id="keyboard-model" placeholder=""></li>
-            <li><label for="keyboard-condition"></label>Keyboard Condition: <input class="text-box" type="text" id="keyboard-condition" placeholder=""></li>
+            <li><label for="user-name"></label><input class="text-box" type="text" id="user-name" placeholder="User Name"></li>
+            <li><label for="test-condition"></label><select id="test-condition">
+                <option value selected="sighted">Sighted Evaluation</option>
+                <option value="blind">Blind Evaluation</option>
+            </select></li>
+        </ol>
+        <h3>
+            Prototype Details
+        </h3>
+        <ol>
+            <li><label for="keyboard-make"></label><input class="text-box" type="text" id="keyboard-make" placeholder="Keyboard Make"></li>
+            <li><label for="keyboard-model"></label><input class="text-box" type="text" id="keyboard-model" placeholder="Keyboard Model"></li>
+            <li><label for="keyboard-condition"></label><select id="keyboard-condition">
+                <option value selected="default">Default Configuration</option>
+                <option value="grip-tape">Grip Tape Configuration</option>
+            </select></li>
         </ol>
     </div>
     <button class = "full-width" id="start-evaluation" onclick="begin_evaluation()">Start Evaluation</button>
 </div>
 <div id="key-location-exercise" style="display: none">
-    <p id="task-description">Press the highlighted key as quickly as you can.</p>
     <div class="container">
         <div class="box" id="base-key"></div>
         <div class="box" id="target-key"></div>

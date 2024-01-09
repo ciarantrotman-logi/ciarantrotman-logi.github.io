@@ -200,6 +200,7 @@ function begin_evaluation(){
     document.getElementById('introduction').style.display = 'none';
     document.getElementById('key-location-exercise').style.display = 'block';
     cache_evaluation_data();
+    console.log(sessionStorage);
 }
 function cache_evaluation_data(){
     sessionStorage.setItem('user-name', sanitised_string(document.getElementById('user-name').value));
