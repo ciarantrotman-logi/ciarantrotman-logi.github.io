@@ -527,7 +527,7 @@ function getRandomInt(min, max) {
 let paragraphs = [
     {id: "warm-up", phrases: 3},
     {id: "practice", phrases: 6},
-    {id: "evaluation", phrases: 24}
+    {id: "evaluation", phrases: 12}
 ];
 
 // let paragraphs = [
@@ -1009,13 +1009,13 @@ window.addEventListener('beforeunload', function (event) {
 });
 
 choosePhrase();
-checkData();
+// checkData();
 
-function checkData(){
+/*function checkData(){
     let check = sessionStorage.getItem('user-information-check');
     console.log(`check is ${check}`);
     if (check !== 'true'){
         submitted = true;
         window.location.href = "https://ciarantrotman-logi.github.io/";
     }
-}
+}*/

@@ -270,7 +270,7 @@ function downloadData() {
             manualDownload(data);
         });
     submitted = true;
-    window.location.href = "https://testingti.me/RNdobXlI/?done=1";
+    // window.location.href = "https://testingti.me/RNdobXlI/?done=1";
 }
 
 function manualDownload(data){
@@ -304,12 +304,12 @@ function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
 }
 manageSection();
-checkData();
-function checkData(){
+// checkData();
+/*function checkData(){
     let check = sessionStorage.getItem('user-information-check');
     console.log(`check is ${check}`);
     if (check !== 'true'){
         submitted = true;
         window.location.href = "https://ciarantrotman-logi.github.io/";
     }
-}
+}*/
