@@ -22,10 +22,14 @@ let key_order = [
     {key_name: "F2",            key_code: "F2"},
     {key_name: "F3",            key_code: "F3"},
     {key_name: "F4",            key_code: "F4"},
-    {key_name: "F4",            key_code: "F5"},
+    {key_name: "F5",            key_code: "F5"},
     {key_name: "F6",            key_code: "F6"},
     {key_name: "F7",            key_code: "F7"},
     {key_name: "F8",            key_code: "F8"},
+    {key_name: "F9",            key_code: "F9"},
+    {key_name: "F10",            key_code: "F10"},
+    {key_name: "F11",            key_code: "F11"},
+    {key_name: "F12",            key_code: "F12"},
     /*
     Arrow Keys
     */
@@ -67,6 +71,7 @@ let input_keyboard_condition= document.getElementById('keyboard-condition');
 -----[System Events]
 */
 document.addEventListener('keydown', function(event) {
+    event.preventDefault();
     if (!task_started || task_completed) return;
     calculate_user_performance(event, validate_user_input(event));
     progress_evaluation_task();
