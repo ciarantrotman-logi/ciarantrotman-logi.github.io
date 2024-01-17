@@ -9,7 +9,7 @@ let sections = [
     {   header: 'Cognitive Load',
         introduction: 'This first section is focused on understanding how <b>easy or difficult you found the evaluation task</b> with this keyboard.',
         instructions: 'Select using the sliders below the rating you consider the most appropriate for each statement.',
-        id: 'task-load-target_index',
+        id: 'task-load-index',
         metrics: [
             {id: "tlx-mental-demand"},
             {id: "tlx-physical-demand"},
