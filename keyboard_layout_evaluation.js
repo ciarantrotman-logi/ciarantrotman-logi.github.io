@@ -71,17 +71,14 @@ let input_keyboard_condition= document.getElementById('keyboard-condition');
 -----[System Events]
 */
 document.addEventListener('keydown', function(event) {
-    if (task_active()) return;
-    event.preventDefault();
-    calculate_user_performance(event, validate_user_input(event));
-    progress_evaluation_task();
-    display_progression_information();
-    set_target_visibility()
+    if (task_started){
+        event.preventDefault();
+        calculate_user_performance(event, validate_user_input(event));
+        progress_evaluation_task();
+        display_progression_information();
+        set_target_visibility()
+    }
 });
-
-function task_active(){
-    return task_started && !task_completed;
-}
 /*
 -----[Visual Logic]
 */
