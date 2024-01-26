@@ -664,7 +664,7 @@ function proceed(){
     calculatePerformance();
     parseMetrics(true);
     submitted = true;
-    window.location.href = 'subjective_evaluation.html';
+    window.location.href = 'keyboard_subjective_evaluation.html';
 }
 
 function checkCapsLock(event){

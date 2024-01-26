@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EY84L3EPC"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-6EY84L3EPC');
+    </script>
+    <meta charset="UTF-8">
+    <title>Keyboard Evaluation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body class="evaluation-block">
+<div id="localised-block" style="display: none">
+    <label for="locale"></label><select id="locale" class="locale-selector" onchange="localise(value)">
+    <option value="en-us" selected>English</option>
+</select>
+    <h1 id="keyboard-evaluation-header"></h1>
+    <div id="introduction">
+        <p id="keyboard-evaluation-welcome"></p>
+        <p id="keyboard-evaluation-section-preamble"></p>
+        <ol>
+            <li id="evaluation-stage-explainer-introduction"></li>
+            <li id="evaluation-stage-explainer-typing-evaluation"></li>
+            <li id="evaluation-stage-explainer-subjective-evaluation"></li>
+        </ol>
+        <p id="privacy-consent-explainer"></p>
+        <button class = "full-width" id="privacy-consent-agreement" onclick="inputUserInformation()"></button>
+    </div>
+    <div id="user-information" style="display: none">
+        <p id="user-information-explanation"><p>
+        <h3 id="user-information-header-user-details"></h3>
+        <ol>
+            <li>
+                <label for="user-name" id="user-information-user-name-label"></label>
+                <input type="text" id="user-name" placeholder="">
+            </li>
+            <li>
+                <label for="user-handedness" id="user-information-user-handedness-label"></label>
+                <select id="user-handedness">
+                    <option value="right" id="user-information-user-handedness-option-right" selected></option>
+                    <option value="left" id="user-information-user-handedness-option-left"></option>
+                    <option value="ambidextrous" id="user-information-user-handedness-option-ambidextrous"></option>
+                </select>
+            </li>
+            <li>
+                <label for="user-hand-size" id="user-information-hand-size-label"></label>
+                <select id="user-hand-size">
+                    <option value="extra-small" id="user-information-hand-size-extra-small"></option>
+                    <option value="small" id="user-information-hand-size-small"></option>
+                    <option value="medium" id="user-information-hand-size-medium" selected></option>
+                    <option value="large" id="user-information-hand-size-large"></option>
+                    <option value="extra-large" id="user-information-hand-size-extra-large"></option>
+                </select>
+            </li>
+        </ol>
+        <h3 id="user-information-header-keyboard-usage"></h3>
+        <ol>
+            <li>
+                <label for="keyboard-usage" id="user-information-keyboard-usage-label"></label>
+                <select id="keyboard-usage">
+                    <option value="gaming" id="user-information-keyboard-usage-gaming"></option>
+                    <option value="productivity" id="user-information-keyboard-usage-working" selected></option>
+                    <option value="gaming-and-productivity" id="user-information-keyboard-usage-gaming-and-working"></option>
+                </select>
+            </li>
+            <li>
+                <label for="technical-familiarity" id="user-information-technical-familiarity-label"></label>
+                <select id="technical-familiarity">
+                    <option value="unfamiliar" id="user-information-technical-familiarity-unfamiliar"></option>
+                    <option value="somewhat-familiar" id="user-information-technical-familiarity-somewhat-familiar" selected></option>
+                    <option value="very-familiar" id="user-information-technical-familiarity-very-familiar"></option>
+                </select>
+            </li>
+            <li>
+                <label for="test-condition-flag" id="test-condition-flag-label"></label>
+                <select id="test-condition-flag">
+                    <option value="true" id="test-condition-flag-true" selected></option>
+                    <option value="false" id="test-condition-flag-false"></option>
+                </select>
+            </li>
+            <li>
+                <label for="ergonomic-flag" id="ergonomic-flag-flag-label"></label>
+                <select id="ergonomic-flag">
+                    <option value="true" id="ergonomic-flag-flag-true" selected></option>
+                    <option value="false" id="ergonomic-flag-flag-false"></option>
+                </select>
+            </li>
+            <li>
+                <label for="usage-environment" id="user-information-usage-environment-label"></label>
+                <select id="usage-environment">
+                    <option value="private" id="user-information-usage-environment-private" selected></option>
+                    <option value="shared" id="user-information-usage-environment-shared"></option>
+                </select>
+            </li>
+            <li>
+                <label for="workspace-type" id="user-information-workspace-type-label"></label>
+                <select id="workspace-type">
+                    <option value="dedicated" id="user-information-workspace-type-dedicated" selected></option>
+                    <option value="pop-up" id="user-information-workspace-type-pop-up"></option>
+                    <option value="mobile" id="user-information-workspace-type-mobile"></option>
+                </select>
+            </li>
+        </ol>
+        <br>
+        <button onclick="inputKeyboardInformation()" id="continue-to-keyboard-data" class="full-width" ></button></a>
+    </div>
+    <div id="keyboard-information" style="display: none">
+        <p id="keyboard-information-introduction"></p>
+        <h3 id="keyboard-information-header"></h3>
+        <ol>
+            <li>
+                <label for="evaluated-keyboard-make" id="keyboard-information-keyboard-make"></label>
+                <input type="text" id="evaluated-keyboard-make" placeholder="">
+            </li>
+            <li>
+                <label for="evaluated-keyboard-model" id="keyboard-information-keyboard-model"></label>
+                <input type="text" id="evaluated-keyboard-model" placeholder="">
+            </li>
+            <li>
+                <label for="benchmark-flag" id="keyboard-information-benchmark-flag"></label>
+                <select id="benchmark-flag">
+                    <option value="true" id="keyboard-information-benchmark-true" selected></option>
+                    <option value="false" id="keyboard-information-benchmark-false"></option>
+                </select>
+            </li>
+            <li>
+                <label for="palm-rest-flag" id="keyboard-information-palm-rest-flag"></label>
+                <select id="palm-rest-flag">
+                    <option value="true" id="keyboard-information-palm-rest-true"></option>
+                    <option value="false" id="keyboard-information-palm-rest-false" selected></option>
+                </select>
+            </li>
+            <li>
+                <label for="mechanical-flag" id="keyboard-information-mechanical-flag-label"></label>
+                <select id="mechanical-flag">
+                    <option value="false" id="keyboard-information-mechanical-flag-false" selected></option>
+                    <option value="true" id="keyboard-information-mechanical-flag-true"></option>
+                    <option value="unknown" id="keyboard-information-mechanical-flag-unknown"></option>
+                </select>
+            </li>
+            <div id="switch-type-div" style="display: none">
+                <ol>
+                    <li>
+                        <label for="switch-make" id="keyboard-information-switch-make-label"></label>
+                        <input type="text" id="switch-make" placeholder="">
+                    </li>
+                    <li>
+                        <label for="switch-model" id="keyboard-information-switch-model-label"></label>
+                        <input type="text" id="switch-model" placeholder="">
+                    </li>
+                </ol>
+            </div>
+            <li>
+                <label for="keyboard-layout" id="keyboard-information-keyboard-layout-label"></label>
+                <select id="keyboard-layout" onchange="localisation()">
+                    <option value="iso" id="keyboard-information-keyboard-layout-iso" selected></option>
+                    <option value="ansi" id="keyboard-information-keyboard-layout-ansi"></option>
+                    <option value="jis" id="keyboard-information-keyboard-layout-jis"></option>
+                </select> <a href="https://support.apple.com/en-ie/HT201794" target="_blank" id="keyboard-layout-information"></a>
+            </li>
+            <li>
+                <label for="keyboard-language" id="keyboard-information-keyboard-language-label"></label>
+                <select id="keyboard-language"></select>
+            </li>
+        </ol>
+        <br>
+        <a href="typing_evaluation.html"><button onclick="startEvaluation()" id="continue-to-evaluation" class="full-width" ></button></a>
+    </div>
+    <script src="keyboard_evaluation.js"></script>
+    <script src="localisation.js"></script>
+</div>
+</body>
+</html>

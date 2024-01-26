@@ -86,6 +86,7 @@ function inputKeyboardInformation(){
     document.getElementById('keyboard-information').style.display = 'block';
 }
 function startEvaluation(){
+    console.log('yes');
     sessionStorage.setItem('user-id', userIndex);
     sessionStorage.setItem('user-name', sanitisedString(document.getElementById('user-name').value));
     
@@ -105,11 +106,10 @@ function startEvaluation(){
     sessionStorage.setItem('evaluated-keyboard-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
 
     sessionStorage.setItem('mechanical-flag', document.getElementById('mechanical-flag').value);
-    if (document.getElementById('mechanical-flag').value === true){
+    if (document.getElementById('mechanical-flag').value === "true"){
         sessionStorage.setItem('switch-make', sanitisedString(document.getElementById('switch-make').value));
         sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('switch-model').value));
-    }
-    else {
+    } else {
         sessionStorage.setItem('switch-make',  sanitisedString(document.getElementById('evaluated-keyboard-make').value));
         sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
     }

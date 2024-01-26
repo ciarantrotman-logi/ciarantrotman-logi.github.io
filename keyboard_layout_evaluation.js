@@ -212,7 +212,7 @@ function cache_evaluation_data(){
     sessionStorage.setItem('user-name', sanitised_string(document.getElementById('user-name').value));
     sessionStorage.setItem('keyboard-make', sanitised_string(document.getElementById('keyboard-make').value));
     sessionStorage.setItem('keyboard-model', sanitised_string(document.getElementById('keyboard-model').value));
-    sessionStorage.setItem('keyboard-condition', sanitised_string(document.getElementById('keyboard-condition').value));
+    sessionStorage.setItem('keyboard-condition', sanitised_string(input_keyboard_condition.value));
 }
 /*
 -----[Initial Calls]
