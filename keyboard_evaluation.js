@@ -59,8 +59,6 @@ function populateKeyboardLanguageOptions(){
     }
 }
 
-
-
 function generateLanguageOptions(layout){
     layout.forEach(language =>{
         let option = document.createElement('option');
@@ -86,7 +84,6 @@ function inputKeyboardInformation(){
     document.getElementById('keyboard-information').style.display = 'block';
 }
 function startEvaluation(){
-    console.log('yes');
     sessionStorage.setItem('user-id', userIndex);
     sessionStorage.setItem('user-name', sanitisedString(document.getElementById('user-name').value));
     
@@ -150,8 +147,6 @@ window.addEventListener('beforeunload', function (event) {
         return warningMessage;
     }
 });
-checkData();
-
 
 let check = sessionStorage.getItem('user-information-check');
-console.log(`check is ${check}`);
+console.log(`Session Storage has been set: ${check}`);

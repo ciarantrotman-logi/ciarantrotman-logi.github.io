@@ -1,10 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EY84L3EPC"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-6EY84L3EPC');
+    </script>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>Mouse Evaluation</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
 </head>
-<body>
-$END$
+<body class="evaluation-block">
+    <div id="localised-block" style="display: none">
+        <label for="locale"></label>
+        <select id="locale" class="locale-selector" onchange="localise(value)">
+            <option value="en-us" selected>English</option>
+        </select>
+        <h1 id="me-header">me-header</h1>
+        <div id="introduction">
+            <p id="me-intro-welcome">mouse-evaluation-welcome</p>
+            <p id="me-section-preamble">mouse-evaluation-section-preamble</p>
+            <ol>
+                <li id="me-intro-explainer-user-info">me-intro-explainer-user-info</li>
+                <li id="me-intro-explainer-mouse-eval">me-intro-explainer-mouse-eval</li>
+                <li id="me-intro-explainer-subjective-eval">me-intro-explainer-subjective-eval</li>
+            </ol>
+            <p id="privacy-consent-explainer"></p>
+            <button id="button-label-privacy-consent-agreement" class="full-width" onclick="proceed_to_user_information_section()"></button>
+        </div>
+        <div id="user-information" style="display: none">
+            <p id="me-user-info-explainer">me-user-info-explainer</p>
+            <h3 id="me-user-info-basic-info-header">me-user-info-basic-info-header</h3>
+            <ol>
+                <li>
+                    <label for="user-name" id="user-information-user-name-label"></label>
+                    <input type="text" id="user-name" placeholder="">
+                </li>
+                <li>
+                    <label for="me-user-info-mouse-hand" id="me-user-info-mouse-hand-label"></label>
+                    <select id="me-user-info-mouse-hand">
+                        <option value="right" id="me-user-info-mouse-hand-right" selected></option>
+                        <option value="left" id="me-user-info-mouse-hand-left"></option>
+                        <option value="ambidextrous" id="me-user-info-mouse-hand-ambidextrous"></option>
+                    </select>
+                </li>
+                <li>
+                    <label for="me-user-info-hand-size" id="user-information-hand-size-label"></label>
+                    <select id="me-user-info-hand-size">
+                        <option value="extra-small" id="user-information-hand-size-extra-small"></option>
+                        <option value="small" id="user-information-hand-size-small"></option>
+                        <option value="medium" id="user-information-hand-size-medium" selected></option>
+                        <option value="large" id="user-information-hand-size-large"></option>
+                        <option value="extra-large" id="user-information-hand-size-extra-large"></option>
+                    </select>
+                </li>
+            </ol>
+            <h3 id="me-user-info-mouse-usage-header">me-user-info-mouse-usage-header</h3>
+            <ol>
+                <li>
+                    <label for="me-user-info-mouse-usage" id="me-user-info-mouse-usage-label"></label>
+                    <select id="me-user-info-mouse-usage">
+                        <option value="gaming" id="me-user-info-mouse-usage-gaming"></option>
+                        <option value="productivity" id="me-user-info-mouse-usage-working" selected></option>
+                        <option value="gaming-and-productivity" id="me-user-info-mouse-usage-gaming-and-working"></option>
+                    </select>
+                </li>
+                <li>
+                    <label for="me-user-info-mouse-familiarity" id="me-user-info-mouse-familiarity-label"></label>
+                    <select id="me-user-info-mouse-familiarity">
+                        <option value="unfamiliar" id="me-user-info-mouse-familiarity-unfamiliar"></option>
+                        <option value="somewhat-familiar" id="me-user-info-mouse-familiarity-somewhat-familiar" selected></option>
+                        <option value="very-familiar" id="me-user-info-mouse-familiarity-very-familiar"></option>
+                    </select>
+                </li>
+                <li>
+                    <label for="test-condition-flag" id="test-condition-flag-label"></label>
+                    <select id="test-condition-flag">
+                        <option value="true" id="test-condition-flag-true" selected></option>
+                        <option value="false" id="test-condition-flag-false"></option>
+                    </select>
+                </li>
+                <li>
+                    <label for="ergonomic-flag" id="ergonomic-flag-flag-label"></label>
+                    <select id="ergonomic-flag">
+                        <option value="true" id="ergonomic-flag-flag-true" selected></option>
+                        <option value="false" id="ergonomic-flag-flag-false"></option>
+                    </select>
+                </li>
+            </ol>
+            <br>
+            <button id="button-label-next-section" class="full-width" onclick="proceed_to_mouse_information_section()"></button></a>
+        </div>
+        <div id="mouse-information" style="display: none">
+            <p id="me-mouse-info-explainer">me-mouse-info-explainer</p>
+            <h3 id="me-mouse-info-mouse-info-header">me-mouse-info-mouse-info-header</h3>
+            <ol>
+                <li>
+                    <label for="me-mouse-info-mouse-make" id="me-mouse-info-mouse-make-label"></label>
+                    <input type="text" id="me-mouse-info-mouse-make" placeholder="">
+                </li>
+                <li>
+                    <label for="me-mouse-info-mouse-model" id="me-mouse-info-mouse-model-label"></label>
+                    <input type="text" id="me-mouse-info-mouse-model" placeholder="">
+                </li>
+                <li>
+                    <label for="me-mouse-info-mouse-color" id="me-mouse-info-mouse-color-label"></label>
+                    <input type="text" id="me-mouse-info-mouse-color" placeholder="">
+                </li>
+                <li>
+                    <label for="me-mouse-info-benchmark" id="me-mouse-info-benchmark-label"></label>
+                    <select id="me-mouse-info-benchmark">
+                        <option value="true" id="me-mouse-info-benchmark-true" selected></option>
+                        <option value="false" id="me-mouse-info-benchmark-false"></option>
+                    </select>
+                </li>
+                <li>
+                    <label for="me-mouse-info-dpi-known" id="me-mouse-info-dpi-known-label"></label>
+                    <select id="me-mouse-info-dpi-known">
+                        <option value="true" id="me-mouse-info-dpi-known-true"></option>
+                        <option value="false" id="me-mouse-info-dpi-known-false"selected></option>
+                    </select>
+                </li>
+                    <div id="me-mouse-info-dpi-known-details" style="display: block">
+                        <ol>
+                            <li>
+                                <label for="me-mouse-info-dpi" id="me-mouse-info-dpi-label"></label>
+                                <input type="number" id="me-mouse-info-dpi" min="0"/>
+                            </li>
+                        </ol>
+                    </div>
+                    <div id="me-mouse-info-dpi-unknown-details" style="display: block">
+                        <ol>
+                            <li>
+                                <label for="me-mouse-info-cursor-speed" id="me-mouse-info-cursor-speed-label"></label>
+                                <select id="me-mouse-info-cursor-speed">
+                                    <option value="slow" id="me-mouse-info-cursor-speed-slow"></option>
+                                    <option value="medium" id="me-mouse-info-cursor-speed-medium" selected></option>
+                                    <option value="fast" id="me-mouse-info-cursor-speed-fast"></option>
+                                </select>
+                            </li>
+                        </ol>
+                    </div>
+                <li>
+                    <label for="me-mouse-info-cursor-acceleration" id="me-mouse-info-cursor-acceleration-label"></label>
+                    <select id="me-mouse-info-cursor-acceleration">
+                        <option value="false" id="me-mouse-info-cursor-acceleration-false"></option>
+                        <option value="true" id="me-mouse-info-cursor-acceleration-true" selected></option>
+                        <option value="unknown" id="me-mouse-info-cursor-speed-unknown"></option>
+                    </select>
+                </li>
+            </ol>
+            <h3 id="me-mouse-info-environment-info-header">me-mouse-info-environment-info-header</h3>
+            <ol>
+                <li>
+                    <label for="me-mouse-info-surface-type" id="me-mouse-info-surface-type-label"></label>
+                    <select id="me-mouse-info-surface-type">
+                        <option value="desk" id="me-mouse-info-surface-desk"></option>
+                        <option value="mat" id="me-mouse-info-surface-mat"></option>
+                    </select>
+                </li>
+                    <div id="me-mouse-info-mat-details" style="display: block">
+                        <ol>
+                            <li>
+                                <label for="me-mouse-info-mat-brand-known" id="me-mouse-info-mat-brand-known-label"></label>
+                                <select id="me-mouse-info-mat-brand-known">
+                                    <option value="true" id="me-mouse-info-mat-brand-known-true" selected></option>
+                                    <option value="false" id="me-mouse-info-mat-brand-known-false"></option>
+                                </select>
+                            </li>
+                        </ol>
+                        <ol>
+                            <div id="me-mouse-info-mat-brand-known-details" style="display: block">
+                                <ol>
+                                    <li>
+                                        <label for="me-mouse-info-mat-make" id="me-mouse-info-mat-make-label"></label>
+                                        <input type="text" id="me-mouse-info-mat-make" placeholder="">
+                                    </li>
+                                    <li>
+                                        <label for="me-mouse-info-mat-model" id="me-mouse-info-mat-model-label"></label>
+                                        <input type="text" id="me-mouse-info-mat-model" placeholder="">
+                                    </li>
+                                </ol>
+                            </div>
+                            <div id="me-mouse-info-mat-brand-unknown-details" style="display: block">
+                                <ol>
+                                    <li>
+                                        <label for="me-mouse-mat-hardness" id="me-mouse-info-mat-hardness-label"></label>
+                                        <select id="me-mouse-mat-hardness">
+                                            <option value="soft" id="me-mouse-info-mat-hardness-soft" selected></option>
+                                            <option value="hard" id="me-mouse-info-mat-hardness-hard"></option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <label for="me-mouse-mat-roughness" id="me-mouse-info-mat-roughness-label"></label>
+                                        <select id="me-mouse-mat-roughness">
+                                            <option value="smooth" id="me-mouse-info-mat-hardness-smooth" selected></option>
+                                            <option value="rough" id="me-mouse-info-mat-hardness-rough"></option>
+                                        </select>
+                                    </li>
+                                </ol>
+                            </div>
+                        </ol>
+                    </div>
+                    <div id="me-mouse-info-desk-details" style="display: block">
+                        <ol>
+                            <li>
+                                <label for="me-mouse-info-desk-material" id="me-mouse-info-desk-material-label"></label>
+                                <select id="me-mouse-info-desk-material">
+                                    <option value="laminate" id="me-mouse-info-desk-material-laminate"></option>
+                                    <option value="metal" id="me-mouse-info-desk-material-metal"></option>
+                                    <option value="glass" id="me-mouse-info-desk-material-glass"></option>
+                                    <option value="wooden" id="me-mouse-info-desk-material-wood"></option>
+                                    <option value="stone" id="me-mouse-info-desk-material-stone"></option>
+                                    <option value="unknown" id="me-mouse-info-desk-material-unknown"></option>
+                                </select>
+                            </li>
+                        </ol>
+                    </div>
+                <li>
+                    <label for="me-mouse-info-feet-information" id="me-mouse-info-feet-information-label"></label>
+                    <select id="me-mouse-info-feet-information">
+                        <option value="stock" id="me-mouse-info-feet-information-stock" selected></option>
+                        <option value="changed" id="me-mouse-info-feet-information-changed"></option>
+                        <option value="unknown" id="me-mouse-info-feet-information-unknown"></option>
+                    </select>
+                </li>
+                    <div id="me-mouse-info-feet-details" style="display: block">
+                        <ol>
+                            <li>
+                                <label for="me-mouse-info-feet-make" id="me-mouse-info-feet-make-label"></label>
+                                <input type="text" id="me-mouse-info-feet-make" placeholder="">
+                            </li>
+                            <li>
+                                <label for="me-mouse-info-feet-model" id="me-mouse-info-feet-model-label"></label>
+                                <input type="text" id="me-mouse-info-feet-model" placeholder="">
+                            </li>
+                        </ol>
+                    </div>
+            </ol>
+            <br>
+            <a href="fitts_evaluation.html"><button id="button-label-start-evaluation" class="full-width" onclick="proceed_to_fitts_evaluation()"></button></a>
+        </div>
+    <script src="/mouse_evaluation.js"></script>
+    <script src="/localisation.js"></script>
+</div>
 </body>
 </html>
