@@ -60,14 +60,18 @@ html, body {
   width: 100%;
 }
 
-.completed-section{
+.section-indicator{
+  font-size: small;
+}
+
+.section-indicator.completed{
   color: lightgrey;
   font-weight: bold;
 }
-.current-section{
+.section-indicator.current{
   font-weight: bolder;
 }
-.uncompleted-section{
+.section-indicator.uncompleted{
   color: lightgrey;
   font-weight: normal;
 }

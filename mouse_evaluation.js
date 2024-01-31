@@ -1,7 +1,7 @@
 /*
 Data Loss Prevention
 */
-let submitted = true; // todo revert
+let submitted = false;
 window.addEventListener('beforeunload', function (event) {
     if (!submitted) {
         let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
@@ -15,7 +15,6 @@ Caching
 let url = new URL(window.location.href);
 let user_index = url.searchParams.get('userID');
 console.log(`User ID = ${user_index}`);
-
 /*
 State Management
 */
@@ -29,7 +28,6 @@ function proceed_to_mouse_information_section(){
 }
 function proceed_to_fitts_evaluation(){
     cache_session_storage();
-    // console.log(sessionStorage);
     submitted = true;
 }
 /*
@@ -48,9 +46,9 @@ function cache_session_storage(){
     sessionStorage.setItem('user-mouse-usage', document.getElementById('me-user-info-mouse-usage').value);
     sessionStorage.setItem('user-technical-familiarity', document.getElementById('me-user-info-mouse-familiarity').value);
     // Mouse Information
-    sessionStorage.setItem('evaluation-mouse-make', sanitisedString(document.getElementById('me-mouse-info-mouse-make').value));
-    sessionStorage.setItem('evaluation-mouse-model', sanitisedString(document.getElementById('me-mouse-info-mouse-model').value));
-    sessionStorage.setItem('evaluation-mouse-color', sanitisedString(document.getElementById('me-mouse-info-mouse-color').value));
+    sessionStorage.setItem('evaluation-mouse-make', sanitised_string(document.getElementById('me-mouse-info-mouse-make').value));
+    sessionStorage.setItem('evaluation-mouse-model', sanitised_string(document.getElementById('me-mouse-info-mouse-model').value));
+    sessionStorage.setItem('evaluation-mouse-color', sanitised_string(document.getElementById('me-mouse-info-mouse-color').value));
     if (dpi_known_field.value === 'true'){
         sessionStorage.setItem('evaluation-mouse-dpi', document.getElementById('me-mouse-info-dpi').value);
     } else {
@@ -61,8 +59,8 @@ function cache_session_storage(){
     sessionStorage.setItem('evaluation-surface', document.getElementById('me-mouse-info-surface-type').value);
     if (surface_type_field.value === 'mat'){
         if (mat_known_field.value === 'true'){
-            sessionStorage.setItem('evaluation-mat-make', sanitisedString(document.getElementById('me-mouse-info-mat-make').value));
-            sessionStorage.setItem('evaluation-mat-model', sanitisedString(document.getElementById('me-mouse-info-mat-model').value));
+            sessionStorage.setItem('evaluation-mat-make', sanitised_string(document.getElementById('me-mouse-info-mat-make').value));
+            sessionStorage.setItem('evaluation-mat-model', sanitised_string(document.getElementById('me-mouse-info-mat-model').value));
         } else {
             sessionStorage.setItem('evaluation-mat-hardness', document.getElementById('me-mouse-mat-hardness').value);
             sessionStorage.setItem('evaluation-mat-roughness', document.getElementById('me-mouse-mat-roughness').value);
@@ -72,8 +70,8 @@ function cache_session_storage(){
     }
     sessionStorage.setItem('evaluation-mouse-feet', document.getElementById('me-mouse-info-feet-information').value);
     if (feet_information_field.value === 'changed'){
-        sessionStorage.setItem('evaluation-mouse-feet-make', sanitisedString(document.getElementById('me-mouse-info-feet-make').value));
-        sessionStorage.setItem('evaluation-mouse-feet-model', sanitisedString(document.getElementById('me-mouse-info-feet-model').value));
+        sessionStorage.setItem('evaluation-mouse-feet-make', sanitised_string(document.getElementById('me-mouse-info-feet-make').value));
+        sessionStorage.setItem('evaluation-mouse-feet-model', sanitised_string(document.getElementById('me-mouse-info-feet-model').value));
     }
 }
 /*

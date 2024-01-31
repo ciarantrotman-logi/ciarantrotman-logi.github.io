@@ -270,7 +270,6 @@ function downloadData() {
             manualDownload(data);
         });
     submitted = true;
-    // window.location.href = "https://testingti.me/RNdobXlI/?done=1";
 }
 
 function manualDownload(data){
