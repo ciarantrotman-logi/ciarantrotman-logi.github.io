@@ -40,7 +40,7 @@ function cache_session_storage(){
     sessionStorage.setItem('benchmark-flag', document.getElementById('me-mouse-info-benchmark').value);
     // User Information 
     sessionStorage.setItem('user-id', user_index);
-    sessionStorage.setItem('user-name', sanitisedString(document.getElementById('user-name').value));
+    sessionStorage.setItem('user-name', sanitised_string(document.getElementById('user-name').value));
     sessionStorage.setItem('user-handedness', document.getElementById('me-user-info-mouse-hand').value);
     sessionStorage.setItem('user-hand-size', document.getElementById('me-user-info-hand-size').value);
     sessionStorage.setItem('user-mouse-usage', document.getElementById('me-user-info-mouse-usage').value);

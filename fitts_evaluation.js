@@ -23,6 +23,8 @@ let evaluation_types = {
 
 let evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
 
+let started_evaluation = false;
+
 let dpr = 1;
 let size = 600;
 
@@ -217,10 +219,12 @@ function update_scroll_position(delta){
     scroll_target_position.y = clamp_number_in_range(scroll_target_position.y, 0, 600);
 }
 function initialise_evaluation() {
+    console.log('at least this is triggered')
     document.getElementById('introduction').style.display = 'none';
     generate_evaluation_section();
 }
 function start_evaluation(){
+    started_evaluation = true;
     fitts_canvas.style.display = 'block';
     reset_evaluation_blocks();
 }
@@ -244,9 +248,6 @@ function display_evaluation_task_information() {
         case evaluation_types.reciprocal_targets_one_dimensional:
             document.getElementById('reciprocal-targets-one-dimensional').style.display = 'block';
             break;
-        case evaluation_types.random_targets_one_dimensional:
-            document.getElementById('random-targets-one-dimensional').style.display = 'block';
-            break;
         default:
             break;
     }
@@ -255,7 +256,6 @@ function reset_evaluation_blocks(){
     document.getElementById('reciprocal-targets-two-dimensional').style.display = 'none';
     document.getElementById('random-targets-two-dimensional').style.display = 'none';
     document.getElementById('reciprocal-targets-one-dimensional').style.display = 'none';
-    document.getElementById('random-targets-one-dimensional').style.display = 'none';
 }
 function hide_evaluation_canvas() {
     fitts_canvas.style.display = 'none';
@@ -868,17 +868,17 @@ function clear_canvas(context, canvas){
 function evaluate_scaling(){
     dpr = window.devicePixelRatio || 1;
     if (base_dpr() === null){
-        console.log(`set base dpr to ${dpr}`);
+        console.log(`Set Base DPR to: ${dpr}`);
         localStorage.setItem('dpr', dpr);
     } else {
         let factor = base_dpr() / dpr;
         if (factor === 1) {
-            console.log('scales match')
+            console.log('Scales Match')
         } else {
             scale_body();
         }
     }
-    console.log(`initial dpr: ${dpr}`);
+    console.log(`Initial DPR: ${dpr}`);
     
     fitts_rect = scale_canvas(fitts_canvas, fitts_context);
     debug_rect = scale_canvas(debug_canvas, debug_context);
@@ -898,14 +898,14 @@ function rescale(){
     let previous = dpr;
     dpr = window.devicePixelRatio || 1;
     if (dpr === previous){
-        console.log(`resized, no dpr change`);
+        console.log(`Window Resized; no DPR change`);
     } else {
         scale_body();
     }
 }
 function scale_body(){
     let factor = base_dpr() / dpr;
-    console.log(`scale factor: ${factor}`)
+    console.log(`Scale Factor: ${factor}`)
     body.style.transform = `scale(${factor})`;
 }
 function get_center(){
