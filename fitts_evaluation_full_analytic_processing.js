@@ -1,56 +1,10 @@
-function generate_csv_data(all_performance_data){
-    let csv = [];
-    csv.push({
-        'amplitude': 'amplitude',
-        'effective_amplitude': 'effective_amplitude',
-        'width': 'width',
-        'effective_width': 'effective_width',
-        'index_of_difficulty': 'index_of_difficulty',
-        'effective_index_of_difficulty': 'effective_index_of_difficulty',
-        'throughput': 'throughput',
-        'effective_throughput': 'effective_throughput',
-        'movement_time_ms': 'movement_time_ms',
-        'target_position_x': 'target_position_x',
-        'target_position_y': 'target_position_y',
-        'global_cursor_position_x': 'global_cursor_position_x',
-        'global_cursor_position_y': 'global_cursor_position_y',
-        'local_cursor_position_x': 'local_cursor_position_x',
-        'local_cursor_position_y': 'local_cursor_position_y',
-        'relative_cursor_position_x': 'relative_cursor_position_x',
-        'relative_cursor_position_y': 'relative_cursor_position_y',
-        'approach_vector_x': 'approach_vector_x',
-        'approach_vector_y': 'approach_vector_y',
-        'perpendicular_vector_x': 'perpendicular_vector_x',
-        'perpendicular_vector_y': 'perpendicular_vector_y',
-        'section_index': 'section_index',
-        'action_index': 'action_index',
-        'task_type': 'task_type',
-
-        'benchmark-flag': 'benchmark-flag',
-
-        'user-name': 'user-name',
-        'user-hand-size': 'user-hand-size',
-        'user-mouse-usage': 'user-mouse-usage',
-        'user-technical-familiarity': 'user-technical-familiarity',
-
-        'evaluation-mouse-make': 'evaluation-mouse-make',
-        'evaluation-mouse-model': 'evaluation-mouse-model',
-        'evaluation-mouse-dpi': 'evaluation-mouse-dpi',
-        'evaluation-mouse-dpi*': 'evaluation-mouse-dpi*',
-        'evaluation-mouse-acceleration': 'evaluation-mouse-acceleration',
-
-        'evaluation-surface': 'evaluation-surface',
-        'evaluation-mat-make': 'evaluation-mat-make',
-        'evaluation-mat-model': 'evaluation-mat-model',
-        'evaluation-mat-hardness': 'evaluation-mat-hardness',
-        'evaluation-mat-roughness': 'evaluation-mat-roughness',
-        'evaluation-desk-material': 'evaluation-mat-material',
-        'evaluation-mouse-feet': 'evaluation-mouse-feet',
-        'evaluation-mouse-feet-make': 'evaluation-mouse-feet-make',
-        'evaluation-mouse-feet-model': 'evaluation-mouse-feet-model'
-    });
-    all_performance_data.forEach(data => {
-        csv.push({
+function generate_blended_data(performance_data, cached_uid){
+    let blended_performance_data = [];
+    performance_data.forEach(data => {
+        blended_performance_data.push({
+            'uid': cached_uid,
+            'dpr': dpr,
+            
             'amplitude': data.amplitude,
             'effective_amplitude': data.effective_amplitude,
             'width': data.width,
@@ -80,6 +34,7 @@ function generate_csv_data(all_performance_data){
 
             'user_name': sessionStorage.getItem('user-name'),
             'user_hand_size': sessionStorage.getItem('user-hand-size'),
+            'user_handedness': sessionStorage.getItem('user-handedness'),
             'user_mouse_usage': sessionStorage.getItem('user-mouse-usage'),
             'user_technical_familiarity': sessionStorage.getItem('user-technical-familiarity'),
 
@@ -100,5 +55,5 @@ function generate_csv_data(all_performance_data){
             'evaluation-mouse-feet-model': sessionStorage.getItem('evaluation-mouse-feet-model')
         })
     });
-    return csv;
+    return blended_performance_data;
 }

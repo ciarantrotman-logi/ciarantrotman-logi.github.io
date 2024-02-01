@@ -47,10 +47,12 @@ let started_evaluation = false;
 let dpr = 1;
 let size = 800;
 
+let uid = Date.now().toString();
+
 let targets = [];
 let section_performance_data = [];
 let all_performance_data = [];
-let csv = [];
+let blended_analytic_data = [];
 
 let target_index = 0;
 let previous_target_index = 0;
@@ -252,10 +254,10 @@ function generate_evaluation_section() {
 */
 let should_be_fullscreen;
 function go_fullscreen() {
-    document.documentElement.requestFullscreen().then(r => should_be_fullscreen = true);
+    document.documentElement.requestFullscreen().then(() => should_be_fullscreen = true);
 }
 function exit_fullscreen() {
-    document.exitFullscreen().then(r => should_be_fullscreen = false);
+    document.exitFullscreen().then(() => should_be_fullscreen = false);
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------SECTION REVELATION
@@ -508,7 +510,8 @@ function finish_fitts_evaluation(){
     exit_fullscreen();
     calculate_aggregate_performance_data();
     if (full_analytics) {
-        csv = generate_csv_data(all_performance_data);
+        // csv = generate_csv_data(all_performance_data);
+        blended_analytic_data = generate_blended_data(all_performance_data, uid);
         show_download_buffer();
     } else {
         load_subjective_evaluation();
@@ -522,7 +525,7 @@ function load_subjective_evaluation() {
     window.location.href = 'mouse_subjective_evaluation.html';
 }
 /*
-------------------------------------------------------------------------------------------------------------------------FITTS LAW CALCULATIONS
+------------------------------------------------------------------------------------------------------------------------DATA ANALYSIS
 */
 function cache_one_dimensional_parameters(){
     section_performance_data.forEach(data => {
@@ -628,6 +631,41 @@ function calculate_effective_parameters(){
 function calculate_effective_throughput(effective_index_of_difficulty, movement_time) {
     return effective_index_of_difficulty / movement_time;
 }
+// TODO CHECK THIS IS CORRECT
+function calculate_pearsons_r(xValues, yValues) {
+    const n = xValues.length;
+
+    // Calculate the mean of x and y values
+    const meanX = xValues.reduce((a, b) => a + b, 0) / n;
+    const meanY = yValues.reduce((a, b) => a + b, 0) / n;
+
+    // Calculate the differences between each value and the mean
+    const diffX = xValues.map(x => x - meanX);
+    const diffY = yValues.map(y => y - meanY);
+
+    // Calculate the sum of the product of the differences
+    const sumDiffProd = diffX.reduce((a, b, i) => a + b * diffY[i], 0);
+
+    // Calculate the sum of the squares of the differences
+    const sumDiffXSquared = diffX.reduce((a, b) => a + b * b, 0);
+    const sumDiffYSquared = diffY.reduce((a, b) => a + b * b, 0);
+
+    // Calculate the correlation coefficient
+    return sumDiffProd / Math.sqrt(sumDiffXSquared * sumDiffYSquared);
+}
+function calculate_pearsons_p(xValues, yValues, r_value) {
+    const n = xValues.length;
+    const df = n - 2; // Calculate degrees of freedom
+
+    // Calculate the t-statistic
+    const t = r_value * Math.sqrt(df / (1 - r * r));
+
+    // Calculate the p-value using the t-distribution
+    const pValue = 2 * (1 - tcdf(Math.abs(t), df));
+
+    return pValue;
+}
+
 /*
 ------------------------------------------------------------------------------------------------------------------------TARGET INDEX SELECTION
 */
@@ -954,9 +992,13 @@ function base_dpr(){
 ------------------------------------------------------------------------------------------------------------------------DATA DOWNLOADING
 */
 function calculate_aggregate_performance_data() {
+    sessionStorage.setItem('dpr', dpr);
     sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_effective_throughput(evaluation_types.reciprocal_targets_two_dimensional));
     sessionStorage.setItem('throughput-2D-random', calculate_average_effective_throughput(evaluation_types.random_targets_two_dimensional));
     sessionStorage.setItem('throughput-1D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_one_dimensional));
+    // todo 2D-rec r^2 / p
+    // todo 2D-ran r^2 / p
+    // todo 1D-rec r^2 / p
 }
 function calculate_average_throughput(target_case){
     let aggregate = 0.0;
@@ -980,15 +1022,17 @@ function calculate_average_effective_throughput(target_case){
     });
     return aggregate / count;
 }
-async function directly_download_full_analytics() {
-    console.log(csv);
-    let download = csv.map(row => Object.values(row).join(',')).join('\n');
-    let blob = new Blob([download], { type: 'text/csv' });
-    let url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = Date.now().toString();
-    link.click();
+async function directly_download_full_analytics(){
+    const zip = new JSZip();
+    for (let i = 0; i < blended_analytic_data.length; i++){
+        const blob = new Blob([JSON.stringify(blended_analytic_data[i], null, 2)], { type: "application/json" });
+        zip.file(`${uid}-${i}.json`, blob);
+    }
+    const blob = await zip.generateAsync({ type: "blob" });
+    const downloadLink = document.createElement("a");
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = `${uid}.zip`;
+    downloadLink.click();
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------ERROR PREVENTION
