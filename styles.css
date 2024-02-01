@@ -122,8 +122,14 @@ html, body {
   display: flex;
 }
 
+.canvas-container{
+  display: flex;
+  justify-content: center;
+}
+
 .canvas {
-  outline: 2px solid red;
+  /*outline: 2px solid lightgrey;
+  border-radius: 5px;*/
 }
 
 .box {

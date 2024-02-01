@@ -1,4 +1,24 @@
+/*
+------------------------------------------------------------------------------------------------------------------------DATA LOSS PREVENTION
+*/
+let submitted = true; // todo revert
+window.addEventListener('beforeunload', function (event) {
+    if (!submitted) {
+        let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
+        event.returnValue = warningMessage;
+        return warningMessage;
+    }
+});
+/*
+------------------------------------------------------------------------------------------------------------------------ASSIGNMENTS
+*/
 let body = document.getElementById('body');
+let evaluation_tasks_element = document.getElementById('fe-evaluation-tasks');
+let canvas_area_element = document.getElementById('fe-canvas-container-area');
+let restart_required_element = document.getElementById('fe-evaluation-restart-required');
+let restart_required_error_message = document.getElementById('fe-eval-restart-required-resize');
+let restart_required_resize_message = document.getElementById('fe-eval-restart-required-error');
+let full_analytics_download_element = document.getElementById('fe-full-analytics-download-buffer');
 
 let fitts_canvas = document.getElementById('fitts-canvas');
 let fitts_context = fitts_canvas.getContext('2d');
@@ -17,8 +37,7 @@ let scroll_target_position = {x: 0, y: 0};
 let evaluation_types = {
     'reciprocal_targets_two_dimensional':   'reciprocal_targets_two_dimensional',
     'random_targets_two_dimensional':       'random_targets_two_dimensional',
-    'reciprocal_targets_one_dimensional':   'reciprocal_targets_one_dimensional',
-    'random_targets_one_dimensional':       'random_targets_one_dimensional'
+    'reciprocal_targets_one_dimensional':   'reciprocal_targets_one_dimensional'
 }
 
 let evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
@@ -26,7 +45,7 @@ let evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
 let started_evaluation = false;
 
 let dpr = 1;
-let size = 600;
+let size = 800;
 
 let targets = [];
 let section_performance_data = [];
@@ -48,6 +67,16 @@ document.addEventListener('mousedown', click);
 document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
 
+
+// Development Sections
+let two_dimensional_evaluation_sections = [
+    { points: 5, radius: 100, size: 75 }
+]
+let one_dimensional_evaluation_sections = [
+    { tasks: 2, amplitude: 100, width: 40 }
+]
+/*
+// Production Sections
 let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
     { points: 11, radius: 125, size: 50 },
@@ -182,21 +211,6 @@ function evaluate_one_dimensional_click_accuracy(){
     }
     return correct_target_clicked;
 }
-let error_count = 0;
-let error_rate = 0;
-function on_correct_target_clicked(target) {
-    
-}
-function on_correct_target_not_clicked(target) {
-    error_count ++;
-    evaluate_error_rate()
-}
-function evaluate_error_rate() {
-    error_rate = error_count / (action_index + 1);
-    if (error_rate > .25) {
-        console.log(`error rate above threshold (${error_rate})`);
-    }
-}
 function was_correct_target_clicked(target){
     return target.index === target_index;
 }
@@ -210,18 +224,17 @@ function generate_targets(){
 ------------------------------------------------------------------------------------------------------------------------FIRST FUNCTION CALLS
 */
 evaluate_scaling();
-
 function initialise_scroll_position(){
     scroll_target_position = get_center();
 }
 function update_scroll_position(delta){
     scroll_target_position.y += (delta * .025);
-    scroll_target_position.y = clamp_number_in_range(scroll_target_position.y, 0, 600);
+    scroll_target_position.y = clamp_number_in_range(scroll_target_position.y, 0, size);
 }
 function initialise_evaluation() {
-    console.log('at least this is triggered')
     document.getElementById('introduction').style.display = 'none';
     generate_evaluation_section();
+    go_fullscreen();
 }
 function start_evaluation(){
     started_evaluation = true;
@@ -231,6 +244,16 @@ function start_evaluation(){
 function generate_evaluation_section() {
     display_evaluation_task_information();
     generate_targets();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------FULLSCREEN MANAGEMENT
+*/
+let should_be_fullscreen;
+function go_fullscreen() {
+    document.documentElement.requestFullscreen().then(r => should_be_fullscreen = true);
+}
+function exit_fullscreen() {
+    document.exitFullscreen().then(r => should_be_fullscreen = false);
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------SECTION REVELATION
@@ -275,9 +298,6 @@ function calculate_target_parameters(){
         case evaluation_types.reciprocal_targets_one_dimensional:
             generate_reciprocal_one_dimensional_targets(one_dimensional_evaluation_sections[section_index]);
             break;
-        case evaluation_types.random_targets_one_dimensional:
-            generate_random_one_dimensional_targets(one_dimensional_evaluation_sections[section_index]);
-            break;
         default:
             break;
     }
@@ -301,7 +321,7 @@ function generate_random_two_dimensional_targets(section){
         y_max: (fitts_canvas.height / dpr) - size,
         y_min: size
     }
-    let start_point = generate_random_point_in_border(border);
+    let start_point = get_center();
     targets.push({
         x: start_point.x,
         y: start_point.y,
@@ -435,9 +455,6 @@ function is_point_in_limits(point, limits){
 /*
 ------------------------------------------------------------------------------------------------------------------------INDEX CALCULATION
 */
-function reset_section() {
-    
-}
 function update_section_index(){
     if (task_index < targets.length) return;
     cache_performance_data();
@@ -478,15 +495,29 @@ function get_next_evaluation_type() {
             evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
             break;
         case evaluation_types.reciprocal_targets_one_dimensional:
-            evaluation_type = evaluation_types.random_targets_one_dimensional;
-            break;
-        case evaluation_types.random_targets_one_dimensional:
-            generate_csv_data();
-            download_all_performance_data();
+            finish_fitts_evaluation();
             break;
         default:
             break;
     }
+}
+function finish_fitts_evaluation(){
+    submitted = true;
+    exit_fullscreen();
+    calculate_aggregate_performance_data();
+    if (full_analytics) {
+        generate_csv_data();
+        directly_download_full_analytics().then(r => show_download_buffer());
+    } else {
+        load_subjective_evaluation();
+    }
+}
+function show_download_buffer(){
+    evaluation_tasks_element.style.display = "none";
+    full_analytics_download_element.style.display = "block";
+}
+function load_subjective_evaluation() {
+    window.location.href = 'mouse_subjective_evaluation.html';
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------FITTS LAW CALCULATIONS
@@ -632,10 +663,6 @@ function render_targets() {
             render_one_dimensional_targets();
             debug_render_one_dimensional_targets();
             break;
-        case evaluation_types.random_targets_one_dimensional:
-            render_one_dimensional_targets();
-            debug_render_one_dimensional_targets();
-            break;
         case evaluation_types.reciprocal_targets_two_dimensional:
             render_two_dimensional_targets();
             debug_render_two_dimensional_targets();
@@ -767,7 +794,7 @@ function two_dimensional_evaluation_task(){
     return evaluation_type === evaluation_types.reciprocal_targets_two_dimensional || evaluation_type === evaluation_types.random_targets_two_dimensional;
 }
 function one_dimensional_evaluation_task(){
-    return evaluation_type === evaluation_types.reciprocal_targets_one_dimensional || evaluation_type === evaluation_types.random_targets_one_dimensional;
+    return evaluation_type === evaluation_types.reciprocal_targets_one_dimensional;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------ALGEBRAIC FUNCTIONS
@@ -897,10 +924,14 @@ function scale_canvas(canvas, context) {
 function rescale(){
     let previous = dpr;
     dpr = window.devicePixelRatio || 1;
-    if (dpr === previous){
+    if (dpr === previous) {
         console.log(`Window Resized; no DPR change`);
     } else {
         scale_body();
+    }
+    if (should_be_fullscreen && started_evaluation && !document.fullscreenElement) {
+        console.log(document.fullscreenElement);
+        display_resize_restart_screen();
     }
 }
 function scale_body(){
@@ -920,33 +951,59 @@ function base_dpr(){
 /*
 ------------------------------------------------------------------------------------------------------------------------DATA DOWNLOADING
 */
-function generate_csv_data(){
-    csv.push({
-        'amplitude': 'amplitude',
-        'effective_amplitude': 'effective_amplitude',
-        'width': 'width',
-        'effective_width': 'effective_width',
-        'index_of_difficulty': 'index_of_difficulty',
-        'effective_index_of_difficulty': 'effective_index_of_difficulty',
-        'throughput': 'throughput',
-        'effective_throughput': 'effective_throughput',
-        'movement_time_ms': 'movement_time_ms',
-        'target_position_x': 'target_position_x',
-        'target_position_y': 'target_position_y',
-        'global_cursor_position_x': 'global_cursor_position_x',
-        'global_cursor_position_y': 'global_cursor_position_y',
-        'local_cursor_position_x': 'local_cursor_position_x',
-        'local_cursor_position_y': 'local_cursor_position_y',
-        'relative_cursor_position_x': 'relative_cursor_position_x',
-        'relative_cursor_position_y': 'relative_cursor_position_y',
-        'approach_vector_x': 'approach_vector_x',
-        'approach_vector_y': 'approach_vector_y',
-        'perpendicular_vector_x': 'perpendicular_vector_x',
-        'perpendicular_vector_y': 'perpendicular_vector_y',
-        'section_index': 'section_index',
-        'action_index': 'action_index',
-        'task_type': 'task_type'
+function calculate_aggregate_performance_data() {
+    sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_two_dimensional));
+    sessionStorage.setItem('throughput-2D-random', calculate_average_throughput(evaluation_types.random_targets_two_dimensional));
+    sessionStorage.setItem('throughput-1D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_one_dimensional));
+    console.log(sessionStorage);
+}
+function calculate_average_throughput(target_case){
+    let aggregate = 0.0;
+    let count = 0;
+    all_performance_data.forEach(data => {
+        if (data.task_type === target_case){
+            aggregate += data.throughput;
+            count++;
+        }
     });
+    return aggregate / count;
+}
+let full_analytic_data_headers = {
+    'amplitude': 'amplitude',
+    'effective_amplitude': 'effective_amplitude',
+    'width': 'width',
+    'effective_width': 'effective_width',
+    'index_of_difficulty': 'index_of_difficulty',
+    'effective_index_of_difficulty': 'effective_index_of_difficulty',
+    'throughput': 'throughput',
+    'effective_throughput': 'effective_throughput',
+    'movement_time_ms': 'movement_time_ms',
+    'target_position_x': 'target_position_x',
+    'target_position_y': 'target_position_y',
+    'global_cursor_position_x': 'global_cursor_position_x',
+    'global_cursor_position_y': 'global_cursor_position_y',
+    'local_cursor_position_x': 'local_cursor_position_x',
+    'local_cursor_position_y': 'local_cursor_position_y',
+    'relative_cursor_position_x': 'relative_cursor_position_x',
+    'relative_cursor_position_y': 'relative_cursor_position_y',
+    'approach_vector_x': 'approach_vector_x',
+    'approach_vector_y': 'approach_vector_y',
+    'perpendicular_vector_x': 'perpendicular_vector_x',
+    'perpendicular_vector_y': 'perpendicular_vector_y',
+    'section_index': 'section_index',
+    'action_index': 'action_index',
+    'task_type': 'task_type'
+}
+function generate_csv_data(){
+    let full_analytic_header = {};
+    full_analytic_header.push(full_analytic_data_headers);
+    full_analytic_header.push(Object.keys(sessionStorage).map(function(key){
+        return { [key]: key };
+    }));
+    full_analytic_header = full_analytic_header.reduce(function(acc, curr) {
+        return Object.assign(acc, curr);
+    }, {});
+    csv.push({full_analytic_header});
     all_performance_data.forEach(data => {
         csv.push({
             'amplitude': data.amplitude,
@@ -976,7 +1033,9 @@ function generate_csv_data(){
         })
     });
 }
-async function download_all_performance_data(){
+async function directly_download_full_analytics() {
+    console.log(csv);
+    return;
     let download = csv.map(row => Object.values(row).join(',')).join('\n');
     let blob = new Blob([download], { type: 'text/csv' });
     let url = URL.createObjectURL(blob);
@@ -996,3 +1055,61 @@ window.addEventListener('keydown', function(event) {
 document.addEventListener('wheel', function(event) {
     event.preventDefault();
 }, { passive: false });
+/*
+------------------------------------------------------------------------------------------------------------------------INTEGRITY INSURANCE
+*/
+document.addEventListener('keydown', function(event) {
+    if (should_be_fullscreen) {
+        event.preventDefault();
+    }
+});
+function on_correct_target_clicked(target) { }
+function on_correct_target_not_clicked(target) {
+    error_count ++;
+    evaluate_error_rate();
+}
+let error_count = 0;
+let error_rate = 0;
+const total_error_threshold = .2;
+function evaluate_error_rate() {
+    error_rate = error_count / (action_index + 1);
+    if (error_rate > total_error_threshold) {
+        display_error_restart_screen();
+    }
+}
+function display_error_restart_screen(){
+    restart_required_error_message.style.display = 'block';
+    display_restart_screen();
+}
+function display_resize_restart_screen(){
+    restart_required_resize_message.style.display = 'block';
+    display_restart_screen();
+}
+function display_restart_screen(){
+    exit_fullscreen();
+    canvas_area_element.style.display = 'none';
+    evaluation_tasks_element.style.display = 'none';
+    restart_required_element.style.display = 'block';
+}
+function restart_evaluation() {
+    sessionStorage.setItem('restart-required-flag', 'true');
+    location.reload();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------URL PARSING
+*/
+let url = new URL(window.location.href);
+let debug_check = url.searchParams.get('debug') !== null;
+let full_analytics = url.searchParams.get('analytics') !== null;
+/*
+------------------------------------------------------------------------------------------------------------------------MANAGE ADDITIONAL STATES
+*/
+debug_canvas.style.display = debug_check
+    ? 'block'
+    : 'none';
+console.log(debug_check
+    ? 'Debug Visualisations Enabled'
+    : 'Debug Visualisations Disabled');
+console.log(full_analytics 
+    ? 'Full Analytics Enabled'
+    : 'Full Analytics Disabled');

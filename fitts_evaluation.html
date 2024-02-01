@@ -12,45 +12,63 @@
     <title>Fitts Evaluation</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon_mouse.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
-<body class="evaluation-block" id="body">
-    <div id="localised-block" style="display: none">
-        <label for="locale"></label>
-        <select id="locale" class="locale-selector" onchange="localise(value)">
-            <option value="en-us" selected>English</option>
-        </select>
-        <h1 id="me-header">me-header</h1>
-        <div id="introduction">
-            <p id="fe-task-overview"></p>
-            <ol>
-                <li id="fe-intro-explainer-first-task"></li>
-                <li id="fe-intro-explainer-second-task"></li>
-                <li id="fe-intro-explainer-third-task"></li>
-            </ol>
-            <br>
-            <button class = "full-width" id="button-start-evaluation" onclick="initialise_evaluation()"></button>
+<body id="body">
+    <div class="evaluation-block">
+        <div id="localised-block" style="display: none">
+            <label for="locale"></label>
+            <select id="locale" class="locale-selector" onchange="localise(value)">
+                <option value="en-us" selected>English</option>
+            </select>
+            <h1 id="me-header"></h1>
+            <div id="introduction">
+                <p id="fe-task-overview"></p>
+                <ol>
+                    <li id="fe-intro-explainer-first-task"></li>
+                    <li id="fe-intro-explainer-second-task"></li>
+                    <li id="fe-intro-explainer-third-task"></li>
+                </ol>
+                <p id="fe-accuracy-warning">fe-accuracy-warning</p>
+                <b id="fe-fullscreen-explainer">fe-fullscreen-explainer</b>
+                <br><br>
+                <button class = "full-width" id="button-start-evaluation" onclick="initialise_evaluation()"></button>
+            </div>
+            <div id="fe-evaluation-tasks">
+                <div id="reciprocal-targets-two-dimensional" style="display: none">
+                    <h3 id="reciprocal-targets-two-dimensional-introduction"></h3>
+                    <p id="reciprocal-targets-two-dimensional-description"></p>
+                    <button class = "full-width" id="reciprocal-targets-two-dimensional-start" onclick="start_evaluation()"></button>
+                </div>
+                <div id="random-targets-two-dimensional" style="display: none">
+                    <h3 id="random-targets-two-dimensional-introduction"></h3>
+                    <p id="random-targets-two-dimensional-description"></p>
+                    <button class = "full-width" id="random-targets-two-dimensional-start" onclick="start_evaluation()"></button>
+                </div>
+                <div id="reciprocal-targets-one-dimensional" style="display: none">
+                    <h3 id="reciprocal-targets-one-dimensional-introduction"></h3>
+                    <p id="reciprocal-targets-one-dimensional-description"></p>
+                    <button class = "full-width" id="reciprocal-targets-one-dimensional-start" onclick="start_evaluation()"></button>
+                </div>
+            </div>
+            <div id="fe-full-analytics-download-buffer" style="display: none">
+                <p id="fe-full-analytics-explainer">fe-full-analytics-explainer</p>
+                <button class = "full-width" id="button-full-analytics-continue" onclick="load_subjective_evaluation()">button-full-analytics-continue</button>
+            </div>
+            <div id="fe-evaluation-restart-required" style="display: none">
+                <p id="fe-eval-restart-required-error" style="display: none">fe-eval-restart-required-error</p>
+                <p id="fe-eval-restart-required-resize" style="display: none">fe-eval-restart-required-resize</p>
+                <b id="fe-eval-restart-required-explanation" style="display: block">fe-eval-restart-required-explanation</b>
+                <br>
+                <button class = "full-width" id="button-restart-evaluation" onclick="restart_evaluation()">button-restart-evaluation</button>
+            </div>
         </div>
-        <div id="reciprocal-targets-two-dimensional" style="display: none">
-            <h3 id="reciprocal-targets-two-dimensional-introduction"></h3>
-            <p id="reciprocal-targets-two-dimensional-description"></p>
-            <button class = "full-width" id="reciprocal-targets-two-dimensional-start" onclick="start_evaluation()"></button>
-        </div>
-        <div id="random-targets-two-dimensional" style="display: none">
-            <h3 id="random-targets-two-dimensional-introduction"></h3>
-            <p id="random-targets-two-dimensional-description"></p>
-            <button class = "full-width" id="random-targets-two-dimensional-start" onclick="start_evaluation()"></button>
-        </div>
-        <div id="reciprocal-targets-one-dimensional" style="display: none">
-            <h3 id="reciprocal-targets-one-dimensional-introduction"></h3>
-            <p id="reciprocal-targets-one-dimensional-description"></p>
-            <button class = "full-width" id="reciprocal-targets-one-dimensional-start" onclick="start_evaluation()"></button>
-        </div>
-        <br>
     </div>
-    <canvas id="fitts-canvas" width="600" height="600" class="canvas" style="display: none"></canvas>
-    <canvas id="debug-canvas" width="600" height="600" class="canvas" style="display: none"></canvas>
+    <div id="fe-canvas-container-area" class="canvas-container">
+        <canvas id="fitts-canvas" class="canvas" style="display: none"></canvas>
+        <canvas id="debug-canvas" class="canvas" style="display: none"></canvas>
+    </div>
     <script src="/fitts_evaluation.js"></script>
     <script src="/localisation.js"></script>
 </body>
