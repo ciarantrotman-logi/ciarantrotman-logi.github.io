@@ -69,27 +69,29 @@ window.addEventListener('resize', rescale);
 
 
 // Development Sections
+/*
 let two_dimensional_evaluation_sections = [
     { points: 5, radius: 100, size: 75 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 2, amplitude: 100, width: 40 }
-]
-/*
+]*/
+
 // Production Sections
 let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
     { points: 11, radius: 125, size: 50 },
     { points: 11, radius: 150, size: 25 },
     { points: 11, radius: 200, size: 15 },
-    { points: 11, radius: 250, size: 5 }
+    { points: 11, radius: 250, size: 5 },
+    { points: 11, radius: 350, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
-    { tasks: 10, amplitude: 100, width: 40 },
-    { tasks: 10, amplitude: 150, width: 30 },
-    { tasks: 10, amplitude: 200, width: 20 },
-    { tasks: 10, amplitude: 300, width: 10 },
-    { tasks: 10, amplitude: 400, width: 5 }
+    { tasks: 6, amplitude: 100, width: 40 },
+    { tasks: 6, amplitude: 150, width: 30 },
+    { tasks: 6, amplitude: 200, width: 20 },
+    { tasks: 6, amplitude: 300, width: 10 },
+    { tasks: 6, amplitude: 400, width: 5 }
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -506,8 +508,8 @@ function finish_fitts_evaluation(){
     exit_fullscreen();
     calculate_aggregate_performance_data();
     if (full_analytics) {
-        generate_csv_data();
-        directly_download_full_analytics().then(r => show_download_buffer());
+        csv = generate_csv_data(all_performance_data);
+        show_download_buffer();
     } else {
         load_subjective_evaluation();
     }
@@ -952,10 +954,9 @@ function base_dpr(){
 ------------------------------------------------------------------------------------------------------------------------DATA DOWNLOADING
 */
 function calculate_aggregate_performance_data() {
-    sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_two_dimensional));
-    sessionStorage.setItem('throughput-2D-random', calculate_average_throughput(evaluation_types.random_targets_two_dimensional));
+    sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_effective_throughput(evaluation_types.reciprocal_targets_two_dimensional));
+    sessionStorage.setItem('throughput-2D-random', calculate_average_effective_throughput(evaluation_types.random_targets_two_dimensional));
     sessionStorage.setItem('throughput-1D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_one_dimensional));
-    console.log(sessionStorage);
 }
 function calculate_average_throughput(target_case){
     let aggregate = 0.0;
@@ -968,80 +969,25 @@ function calculate_average_throughput(target_case){
     });
     return aggregate / count;
 }
-let full_analytic_data_headers = {
-    'amplitude': 'amplitude',
-    'effective_amplitude': 'effective_amplitude',
-    'width': 'width',
-    'effective_width': 'effective_width',
-    'index_of_difficulty': 'index_of_difficulty',
-    'effective_index_of_difficulty': 'effective_index_of_difficulty',
-    'throughput': 'throughput',
-    'effective_throughput': 'effective_throughput',
-    'movement_time_ms': 'movement_time_ms',
-    'target_position_x': 'target_position_x',
-    'target_position_y': 'target_position_y',
-    'global_cursor_position_x': 'global_cursor_position_x',
-    'global_cursor_position_y': 'global_cursor_position_y',
-    'local_cursor_position_x': 'local_cursor_position_x',
-    'local_cursor_position_y': 'local_cursor_position_y',
-    'relative_cursor_position_x': 'relative_cursor_position_x',
-    'relative_cursor_position_y': 'relative_cursor_position_y',
-    'approach_vector_x': 'approach_vector_x',
-    'approach_vector_y': 'approach_vector_y',
-    'perpendicular_vector_x': 'perpendicular_vector_x',
-    'perpendicular_vector_y': 'perpendicular_vector_y',
-    'section_index': 'section_index',
-    'action_index': 'action_index',
-    'task_type': 'task_type'
-}
-function generate_csv_data(){
-    let full_analytic_header = {};
-    full_analytic_header.push(full_analytic_data_headers);
-    full_analytic_header.push(Object.keys(sessionStorage).map(function(key){
-        return { [key]: key };
-    }));
-    full_analytic_header = full_analytic_header.reduce(function(acc, curr) {
-        return Object.assign(acc, curr);
-    }, {});
-    csv.push({full_analytic_header});
+function calculate_average_effective_throughput(target_case){
+    let aggregate = 0.0;
+    let count = 0;
     all_performance_data.forEach(data => {
-        csv.push({
-            'amplitude': data.amplitude,
-            'effective_amplitude': data.effective_amplitude,
-            'width': data.width,
-            'effective_width': data.effective_width,
-            'index_of_difficulty': data.index_of_difficulty,
-            'effective_index_of_difficulty': data.effective_index_of_difficulty,
-            'throughput': data.throughput,
-            'effective_throughput': data.effective_throughput,
-            'movement_time_ms': data.movement_time_ms,
-            'target_position_x': data.target.x,
-            'target_position_y': data.target.y,
-            'global_cursor_position_x': data.global_cursor_position.x,
-            'global_cursor_position_y': data.global_cursor_position.y,
-            'local_cursor_position_x': data.local_cursor_position.x,
-            'local_cursor_position_y': data.local_cursor_position.y,
-            'relative_cursor_position_x': data.relative_cursor_position.x,
-            'relative_cursor_position_y': data.relative_cursor_position.y,
-            'approach_vector_x' : data.approach_vector.x,
-            'approach_vector_y' : data.approach_vector.y,
-            'perpendicular_vector_x': data.perpendicular_vector.x,
-            'perpendicular_vector_y': data.perpendicular_vector.y,
-            'selection_index' : data.section_index,
-            'action_index' : data.action_index,
-            'task_type' : data.task_type
-        })
+        if (data.task_type === target_case){
+            aggregate += data.effective_throughput;
+            count++;
+        }
     });
+    return aggregate / count;
 }
 async function directly_download_full_analytics() {
     console.log(csv);
-    return;
     let download = csv.map(row => Object.values(row).join(',')).join('\n');
     let blob = new Blob([download], { type: 'text/csv' });
     let url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'all_performance_data.csv');
+    link.href = url;
+    link.download = Date.now().toString();
     link.click();
 }
 /*
@@ -1086,6 +1032,7 @@ function display_resize_restart_screen(){
     display_restart_screen();
 }
 function display_restart_screen(){
+    should_be_fullscreen = false;
     exit_fullscreen();
     canvas_area_element.style.display = 'none';
     evaluation_tasks_element.style.display = 'none';

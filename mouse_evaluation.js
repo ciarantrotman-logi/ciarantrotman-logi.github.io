@@ -1,7 +1,7 @@
 /*
 Data Loss Prevention
 */
-let submitted = false;
+let submitted = true;
 window.addEventListener('beforeunload', function (event) {
     if (!submitted) {
         let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
@@ -14,7 +14,9 @@ Caching
 */
 let url = new URL(window.location.href);
 let user_index = url.searchParams.get('userID');
+let full_analytics = url.searchParams.get('analytics') !== null;
 console.log(`User ID = ${user_index}`);
+console.log(`Full Analytics = ${full_analytics}`);
 /*
 State Management
 */
@@ -29,6 +31,9 @@ function proceed_to_mouse_information_section(){
 function proceed_to_fitts_evaluation(){
     cache_session_storage();
     submitted = true;
+    window.location.href = full_analytics 
+        ? 'fitts_evaluation.html?analytics'
+        : 'fitts_evaluation.html';
 }
 /*
 Session Storage Management
@@ -72,6 +77,9 @@ function cache_session_storage(){
     if (feet_information_field.value === 'changed'){
         sessionStorage.setItem('evaluation-mouse-feet-make', sanitised_string(document.getElementById('me-mouse-info-feet-make').value));
         sessionStorage.setItem('evaluation-mouse-feet-model', sanitised_string(document.getElementById('me-mouse-info-feet-model').value));
+    } else {
+        sessionStorage.setItem('evaluation-mouse-feet-make', sessionStorage.getItem('evaluation-mouse-make'));
+        sessionStorage.setItem('evaluation-mouse-feet-model', sessionStorage.getItem('evaluation-mouse-model'));
     }
 }
 /*
@@ -123,3 +131,6 @@ function display_feet_input_fields(){
     let need_information = feet_information_field.value === 'changed';
     feet_input_fields.style.display = need_information ? 'block' : 'none';
 }
+/*
+Debug Information 
+*/
