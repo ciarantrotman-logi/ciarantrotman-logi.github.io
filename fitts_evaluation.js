@@ -70,19 +70,6 @@ document.addEventListener('mousedown', click);
 document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
 
-
-// Development Sections
-let two_dimensional_evaluation_sections = [
-    { points: 7, radius: 100, size: 75 },
-    { points: 7, radius: 125, size: 50 },
-    { points: 7, radius: 150, size: 25 }
-]
-let one_dimensional_evaluation_sections = [
-    { tasks: 2, amplitude: 100, width: 40 }
-]
-
-// Production Sections
-/*
 let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
     { points: 11, radius: 125, size: 50 },
@@ -98,7 +85,6 @@ let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 300, width: 10 },
     { tasks: 6, amplitude: 400, width: 5 }
 ]
-*/
 
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -969,13 +955,26 @@ function calculate_aggregate_performance_data() {
     sessionStorage.setItem('throughput-1D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_one_dimensional));
     cache_correlation_data('2D-reciprocal', evaluation_types.reciprocal_targets_two_dimensional, true);
     cache_correlation_data('2D-random', evaluation_types.random_targets_two_dimensional, true);
-    calculate_data_correlation(evaluation_types.reciprocal_targets_one_dimensional, false);
+    cache_correlation_data('1D-reciprocal', evaluation_types.reciprocal_targets_one_dimensional, false);
 }
 function cache_correlation_data(suffix, target_case, effective_flag) {
     let correlation_data = calculate_data_correlation(target_case, effective_flag);
-    sessionStorage.setItem(`pearsons-r-${suffix}`, correlation_data.pearsons_r.toString());
+    sessionStorage.setItem(`pearsons-r-${suffix}`, correlation_data.r_value.toString());
     sessionStorage.setItem(`r-squared-${suffix}`, correlation_data.r_squared.toString());
-    sessionStorage.setItem(`q-value-${suffix}`, correlation_data.p_value.toString());
+    // sessionStorage.setItem(`z-value-${suffix}`, correlation_data.z_value.toString());
+    // sessionStorage.setItem(`p-value-${suffix}`, correlation_data.p_value.toString());
+}
+function calculate_data_correlation(target_case, effective_flag) {
+    let r_value = pearsons_r(target_case, effective_flag);
+    let r_squared = r_value * r_value;
+    let z_value = fisher_transformation(r_value);
+    let p_value = abramowitz_and_stegun_approximation(z_value);
+    return {
+        r_value: r_value,
+        r_squared: r_squared,
+        z_value: z_value,
+        p_value: p_value
+    };
 }
 function calculate_average_throughput(target_case){
     let aggregate = 0.0;

@@ -57,7 +57,7 @@ function generate_blended_data(performance_data, cached_uid){
     });
     return blended_performance_data;
 }
-function calculate_data_correlation(target_case, effective_flag) {
+function pearsons_r(target_case, effective_flag){
     let filtered_array = all_performance_data
         .filter(struct => struct.task_type === target_case)
         .map(struct => ({
@@ -67,7 +67,6 @@ function calculate_data_correlation(target_case, effective_flag) {
             movement_time : struct.movement_time_ms
         }));
     const n = filtered_array.length;
-    const degrees_of_freedom = n - 2;
 
     let x_values = filtered_array.map(struct => struct.index_of_difficulty);
     let y_values = filtered_array.map(struct => struct.movement_time);
@@ -83,51 +82,14 @@ function calculate_data_correlation(target_case, effective_flag) {
     const sum_of_square_of_difference_x = difference_x.reduce((a, b) => a + b * b, 0);
     const sum_of_square_of_difference_y = difference_y.reduce((a, b) => a + b * b, 0);
 
-    const pearsons_r = sum_of_product_of_difference / Math.sqrt(sum_of_square_of_difference_x * sum_of_square_of_difference_y);
-
-    const t = pearsons_r * Math.sqrt(degrees_of_freedom / (1 - pearsons_r * pearsons_r));
-    const p_value = 2 * (1 - student_t_cumulative_distribution_function(Math.abs(t), degrees_of_freedom));
-
-    return {
-        pearsons_r: pearsons_r,
-        r_squared: pearsons_r * pearsons_r,
-        p_value: p_value
-    };
+    return sum_of_product_of_difference / Math.sqrt(sum_of_square_of_difference_x * sum_of_square_of_difference_y);
 }
-function student_t_cumulative_distribution_function(t, degrees_of_freedom) {
-    const x = (t + Math.sqrt(t * t + degrees_of_freedom)) / (2 * Math.sqrt(t * t + degrees_of_freedom));
-    const beta_inc = (x, a, b) => {
-        const beta_cf = (x, a, b) => {
-            const maxIterations = 100;
-            const epsilon = 1e-10;
-            let m, m2, aa, c, d, i, del, h;
-            m = a + 1;
-            m2 = m + 1;
-            aa = 1;
-            c = 1;
-            d = 1 - x * m / m2;
-            for (i = 1; i <= maxIterations; i++) {
-                m += 2;
-                aa = -aa * (a + i - 1) * (a + b + i - 1);
-                c = -c * (m - 1) * x;
-                d = 1 + c * d;
-                if (Math.abs(d) < epsilon) {
-                    d = epsilon;
-                }
-                d = 1 / d;
-                del = d * c * aa;
-                h = del * (m - b);
-                d *= m - a;
-                c = h - d * c;
-
-                if (Math.abs(h / (1 + Math.abs(h))) < epsilon) {
-                    break;
-                }
-            }
-
-            return del;
-        };
-        return x < (a + 1) / (a + b + 2) ? beta_cf(x, a, b) * beta_inc(x, a, b) : 1 - beta_inc(1 - x, b, a);
-    };
-    return 1 - beta_inc((degrees_of_freedom) / (degrees_of_freedom + t * t), degrees_of_freedom / 2, 0.5);
+function fisher_transformation(r) {
+    return 0.5 * Math.log((1 + r) / (1 - r));
+}
+function abramowitz_and_stegun_approximation(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const d = 0.3989423 * Math.exp((-z * z) / 2);
+    const approximated_CDF = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+    return 2 * (1 - approximated_CDF);
 }

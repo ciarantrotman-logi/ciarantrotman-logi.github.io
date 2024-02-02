@@ -133,8 +133,8 @@ html, body {
 }
 
 .canvas {
-  outline: 2px solid lightgrey;
-  border-radius: 5px;
+  /*outline: 2px solid lightgrey;
+  border-radius: 5px;*/
 }
 
 .box {
