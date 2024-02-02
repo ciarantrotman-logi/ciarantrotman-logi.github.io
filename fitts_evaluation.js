@@ -16,10 +16,11 @@ let body = document.getElementById('body');
 let evaluation_tasks_element = document.getElementById('fe-evaluation-tasks');
 let canvas_area_element = document.getElementById('fe-canvas-container-area');
 let restart_required_element = document.getElementById('fe-evaluation-restart-required');
-let restart_required_error_message = document.getElementById('fe-eval-restart-required-resize');
-let restart_required_resize_message = document.getElementById('fe-eval-restart-required-error');
+let restart_required_error_message = document.getElementById('fe-eval-restart-required-error');
+let restart_required_resize_message = document.getElementById('fe-eval-restart-required-resize');
 let full_analytics_download_element = document.getElementById('fe-full-analytics-download-buffer');
 
+let non_canvas_element = document.getElementById('fe-non-canvas-area');
 let fitts_canvas = document.getElementById('fitts-canvas');
 let fitts_context = fitts_canvas.getContext('2d');
 let fitts_rect = fitts_canvas.getBoundingClientRect();
@@ -71,15 +72,17 @@ window.addEventListener('resize', rescale);
 
 
 // Development Sections
-/*
 let two_dimensional_evaluation_sections = [
-    { points: 5, radius: 100, size: 75 }
+    { points: 7, radius: 100, size: 75 },
+    { points: 7, radius: 125, size: 50 },
+    { points: 7, radius: 150, size: 25 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 2, amplitude: 100, width: 40 }
-]*/
+]
 
 // Production Sections
+/*
 let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
     { points: 11, radius: 125, size: 50 },
@@ -95,6 +98,8 @@ let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 300, width: 10 },
     { tasks: 6, amplitude: 400, width: 5 }
 ]
+*/
+
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
 */
@@ -242,6 +247,7 @@ function initialise_evaluation() {
 }
 function start_evaluation(){
     started_evaluation = true;
+    non_canvas_element.style.display = 'none';
     fitts_canvas.style.display = 'block';
     reset_evaluation_blocks();
 }
@@ -285,6 +291,7 @@ function reset_evaluation_blocks(){
     document.getElementById('reciprocal-targets-one-dimensional').style.display = 'none';
 }
 function hide_evaluation_canvas() {
+    non_canvas_element.style.display = 'block';
     fitts_canvas.style.display = 'none';
 }
 /*
@@ -631,41 +638,6 @@ function calculate_effective_parameters(){
 function calculate_effective_throughput(effective_index_of_difficulty, movement_time) {
     return effective_index_of_difficulty / movement_time;
 }
-// TODO CHECK THIS IS CORRECT
-function calculate_pearsons_r(xValues, yValues) {
-    const n = xValues.length;
-
-    // Calculate the mean of x and y values
-    const meanX = xValues.reduce((a, b) => a + b, 0) / n;
-    const meanY = yValues.reduce((a, b) => a + b, 0) / n;
-
-    // Calculate the differences between each value and the mean
-    const diffX = xValues.map(x => x - meanX);
-    const diffY = yValues.map(y => y - meanY);
-
-    // Calculate the sum of the product of the differences
-    const sumDiffProd = diffX.reduce((a, b, i) => a + b * diffY[i], 0);
-
-    // Calculate the sum of the squares of the differences
-    const sumDiffXSquared = diffX.reduce((a, b) => a + b * b, 0);
-    const sumDiffYSquared = diffY.reduce((a, b) => a + b * b, 0);
-
-    // Calculate the correlation coefficient
-    return sumDiffProd / Math.sqrt(sumDiffXSquared * sumDiffYSquared);
-}
-function calculate_pearsons_p(xValues, yValues, r_value) {
-    const n = xValues.length;
-    const df = n - 2; // Calculate degrees of freedom
-
-    // Calculate the t-statistic
-    const t = r_value * Math.sqrt(df / (1 - r * r));
-
-    // Calculate the p-value using the t-distribution
-    const pValue = 2 * (1 - tcdf(Math.abs(t), df));
-
-    return pValue;
-}
-
 /*
 ------------------------------------------------------------------------------------------------------------------------TARGET INDEX SELECTION
 */
@@ -970,7 +942,6 @@ function rescale(){
         scale_body();
     }
     if (should_be_fullscreen && started_evaluation && !document.fullscreenElement) {
-        console.log(document.fullscreenElement);
         display_resize_restart_screen();
     }
 }
@@ -996,9 +967,15 @@ function calculate_aggregate_performance_data() {
     sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_effective_throughput(evaluation_types.reciprocal_targets_two_dimensional));
     sessionStorage.setItem('throughput-2D-random', calculate_average_effective_throughput(evaluation_types.random_targets_two_dimensional));
     sessionStorage.setItem('throughput-1D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_one_dimensional));
-    // todo 2D-rec r^2 / p
-    // todo 2D-ran r^2 / p
-    // todo 1D-rec r^2 / p
+    cache_correlation_data('2D-reciprocal', evaluation_types.reciprocal_targets_two_dimensional, true);
+    cache_correlation_data('2D-random', evaluation_types.random_targets_two_dimensional, true);
+    calculate_data_correlation(evaluation_types.reciprocal_targets_one_dimensional, false);
+}
+function cache_correlation_data(suffix, target_case, effective_flag) {
+    let correlation_data = calculate_data_correlation(target_case, effective_flag);
+    sessionStorage.setItem(`pearsons-r-${suffix}`, correlation_data.pearsons_r.toString());
+    sessionStorage.setItem(`r-squared-${suffix}`, correlation_data.r_squared.toString());
+    sessionStorage.setItem(`q-value-${suffix}`, correlation_data.p_value.toString());
 }
 function calculate_average_throughput(target_case){
     let aggregate = 0.0;
@@ -1029,11 +1006,26 @@ async function directly_download_full_analytics(){
         zip.file(`${uid}-${i}.json`, blob);
     }
     const blob = await zip.generateAsync({ type: "blob" });
-    const downloadLink = document.createElement("a");
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = `${uid}.zip`;
-    downloadLink.click();
+    const download_link = document.createElement("a");
+    download_link.href = URL.createObjectURL(blob);
+    download_link.download = `${uid}.zip`;
+    download_link.click();
 }
+function download_session_storage() {
+    console.log(sessionStorage);
+    const storageData = {};
+    for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        storageData[key] = sessionStorage.getItem(key);
+    }
+    const json = JSON.stringify(storageData, null, 2);
+    const download_link = document.createElement("a");
+    download_link.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(json));
+    download_link.setAttribute('download', `${uid}.json`);
+    document.body.appendChild(download_link);
+    download_link.click();
+}
+
 /*
 ------------------------------------------------------------------------------------------------------------------------ERROR PREVENTION
 */
@@ -1078,11 +1070,13 @@ function display_resize_restart_screen(){
 function display_restart_screen(){
     should_be_fullscreen = false;
     exit_fullscreen();
+    non_canvas_element.style.display = 'block';
     canvas_area_element.style.display = 'none';
     evaluation_tasks_element.style.display = 'none';
     restart_required_element.style.display = 'block';
 }
 function restart_evaluation() {
+    submitted = true
     sessionStorage.setItem('restart-required-flag', 'true');
     location.reload();
 }

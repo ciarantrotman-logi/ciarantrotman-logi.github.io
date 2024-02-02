@@ -122,14 +122,19 @@ html, body {
   display: flex;
 }
 
-.canvas-container{
+.canvas-container {
+  position: absolute;
+  top: 30px;
+  left: 25%;
+  right: 25%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .canvas {
-  /*outline: 2px solid lightgrey;
-  border-radius: 5px;*/
+  outline: 2px solid lightgrey;
+  border-radius: 5px;
 }
 
 .box {

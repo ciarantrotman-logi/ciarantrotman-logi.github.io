@@ -18,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body id="body">
-    <div class="evaluation-block">
+    <div id="fe-non-canvas-area" class="evaluation-block">
         <div id="localised-block" style="display: none">
             <label for="locale"></label>
             <select id="locale" class="locale-selector" onchange="localise(value)">
@@ -58,6 +58,7 @@
                 <p id="fe-full-analytics-explainer">fe-full-analytics-explainer</p>
                 <div class="progression-buttons">
                     <button class = "progression-button" id="button-full-analytics-download" onclick="directly_download_full_analytics()">button-full-analytics-download</button>
+                    <button class = "progression-button" id="button-temp-session-storage-download" onclick="download_session_storage()">DOWNLOAD SESSION STORAGE DATA</button>
                     <button class = "progression-button" id="button-full-analytics-continue" onclick="load_subjective_evaluation()">button-full-analytics-continue</button>
                 </div>
             </div>
