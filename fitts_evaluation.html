@@ -71,12 +71,16 @@
             </div>
         </div>
     </div>
-    <div id="fe-canvas-container-area" class="canvas-container">
+    <div id="fe-eval-task-help-box" class="evaluation-block" style="display: none">
+        <div class="help-box">
+            <p id="reciprocal-targets-two-dimensional-help" style="display: none">reciprocal-targets-two-dimensional-help</p>
+            <p id="random-targets-two-dimensional-help" style="display: none">random-targets-two-dimensional-help</p>
+            <p id="reciprocal-targets-one-dimensional-help" style="display: none">reciprocal-targets-one-dimensional-help</p>
+        </div>
+    </div>
+    <div id="fe-canvas-container-area" class="canvas-container" style="display: none">
         <canvas id="fitts-canvas" class="canvas" style="display: none"></canvas>
         <canvas id="debug-canvas" class="canvas" style="display: none"></canvas>
-    </div>
-    <div id="fe-demo-canvas-container" class="canvas-container.demo">
-        <canvas id="demo-canvas" class="canvas" style="display: block"></canvas>
     </div>
     <script src="/fitts_evaluation.js"></script>
     <script src="/fitts_evaluation_full_analytic_processing.js"></script>

@@ -15,11 +15,11 @@ window.addEventListener('beforeunload', function (event) {
 let body = document.getElementById('body');
 let evaluation_tasks_element = document.getElementById('fe-evaluation-tasks');
 let canvas_area_element = document.getElementById('fe-canvas-container-area');
-let demo_canvas_area_element = document.getElementById('fe-demo-canvas-container');
 let restart_required_element = document.getElementById('fe-evaluation-restart-required');
 let restart_required_error_message = document.getElementById('fe-eval-restart-required-error');
 let restart_required_resize_message = document.getElementById('fe-eval-restart-required-resize');
 let full_analytics_download_element = document.getElementById('fe-full-analytics-download-buffer');
+let help_box_element = document.getElementById('fe-eval-task-help-box');
 
 let non_canvas_element = document.getElementById('fe-non-canvas-area');
 
@@ -30,10 +30,6 @@ let fitts_rect = fitts_canvas.getBoundingClientRect();
 let debug_canvas = document.getElementById('debug-canvas');
 let debug_context = debug_canvas.getContext('2d');
 let debug_rect = debug_canvas.getBoundingClientRect();
-
-let demo_canvas = document.getElementById('demo-canvas');
-let demo_context = demo_canvas.getContext('2d');
-let demo_rect = demo_canvas.getBoundingClientRect();
 
 let mouse_position = {x: 0, y: 0};
 let last_click_data = { 
@@ -49,10 +45,10 @@ let evaluation_types = {
 
 let evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
 
-let started_evaluation = false;
+let evaluation_task_in_progress = false;
 
 let dpr = 1;
-let size = 800;
+let size = 700;
 
 let uid = Date.now().toString();
 
@@ -81,15 +77,14 @@ let two_dimensional_evaluation_sections = [
     { points: 11, radius: 125, size: 50 },
     { points: 11, radius: 150, size: 25 },
     { points: 11, radius: 200, size: 15 },
-    { points: 11, radius: 250, size: 5 },
-    { points: 11, radius: 350, size: 5 }
+    { points: 11, radius: 250, size: 10 },
+    { points: 11, radius: 300, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 100, width: 40 },
     { tasks: 6, amplitude: 150, width: 30 },
     { tasks: 6, amplitude: 200, width: 20 },
-    { tasks: 6, amplitude: 300, width: 10 },
-    { tasks: 6, amplitude: 400, width: 5 }
+    { tasks: 6, amplitude: 300, width: 10 }
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -107,6 +102,8 @@ function click(event) {
     }
 }
 function on_left_click() {
+    if (!evaluation_task_in_progress) return;
+    
     draw_line(debug_context, current_target(), get_user_input_position(), '#dddddd');
     draw_circle(debug_context, get_user_input_position(), 2, '#dddddd', false, true);
     draw_circle(debug_context, get_last_click_position(), 2, '#ffffff', false, true);
@@ -237,10 +234,34 @@ function initialise_evaluation() {
     go_fullscreen();
 }
 function start_evaluation(){
-    started_evaluation = true;
+    evaluation_task_in_progress = true;
+    canvas_area_element.style.display = 'flex';
     non_canvas_element.style.display = 'none';
     fitts_canvas.style.display = 'block';
+    help_box_element.style.display = 'block';
     reset_evaluation_blocks();
+    show_evaluation_task_help();
+}
+function show_evaluation_task_help() {
+    reset_evaluation_task_help();
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets_two_dimensional:
+            document.getElementById('reciprocal-targets-two-dimensional-help').style.display = 'block';
+            break;
+        case evaluation_types.random_targets_two_dimensional:
+            document.getElementById('random-targets-two-dimensional-help').style.display = 'block';
+            break;
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            document.getElementById('reciprocal-targets-one-dimensional-help').style.display = 'block';
+            break;
+        default:
+            break;
+    }
+}
+function reset_evaluation_task_help(){
+    document.getElementById('reciprocal-targets-two-dimensional-help').style.display = 'none';
+    document.getElementById('random-targets-two-dimensional-help').style.display = 'none';
+    document.getElementById('reciprocal-targets-one-dimensional-help').style.display = 'none';
 }
 function generate_evaluation_section() {
     display_evaluation_task_information();
@@ -260,11 +281,12 @@ function exit_fullscreen() {
 ------------------------------------------------------------------------------------------------------------------------SECTION REVELATION
 */
 function display_evaluation_task_information() {
+    evaluation_task_in_progress = false;
+    help_box_element.style.display = 'none';
     reset_evaluation_blocks();
     hide_evaluation_canvas();
     switch (evaluation_type){
         case evaluation_types.reciprocal_targets_two_dimensional:
-            show_scrolling_task_demo();
             document.getElementById('reciprocal-targets-two-dimensional').style.display = 'block';
             break;
         case evaluation_types.random_targets_two_dimensional:
@@ -272,8 +294,6 @@ function display_evaluation_task_information() {
             break;
         case evaluation_types.reciprocal_targets_one_dimensional:
             document.getElementById('reciprocal-targets-one-dimensional').style.display = 'block';
-            //show_scrolling_task_demo(); 
-            // todo put this here
             break;
         default:
             break;
@@ -286,7 +306,8 @@ function reset_evaluation_blocks(){
 }
 function hide_evaluation_canvas() {
     non_canvas_element.style.display = 'block';
-    fitts_canvas.style.display = 'none';
+    canvas_area_element.style.display = 'none';
+    reset_evaluation_task_help();
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------TARGET GENERATION
@@ -705,8 +726,7 @@ function render_one_dimensional_targets() {
         draw_rectangle(fitts_context, target, target.size * 2,  width, target.color, true, false);
     }
     draw_rectangle(fitts_context, current_target(), current_target().size * 2,  width, active_target_color, true, false);
-    draw_rectangle(fitts_context, get_scroll_position() + 1, 1, width, 'black', true, true);
-    draw_rectangle(fitts_context, get_scroll_position() - 1, 1, width, 'black', true, true);
+    draw_rectangle(fitts_context, get_scroll_position(), 1, width, 'black', true, false);
 }
 function debug_render_one_dimensional_targets() {
     for (let i = 0; i < targets.length; i++) {
@@ -916,7 +936,6 @@ function evaluate_scaling(){
     
     fitts_rect = scale_canvas(fitts_canvas, fitts_context);
     debug_rect = scale_canvas(debug_canvas, debug_context);
-    demo_rect = scale_canvas(demo_canvas, demo_context);
 }
 function scale_canvas(canvas, context) {
     canvas.style.width = `${size}px`;
@@ -937,7 +956,7 @@ function rescale(){
     } else {
         scale_body();
     }
-    if (should_be_fullscreen && started_evaluation && !document.fullscreenElement) {
+    if (should_be_fullscreen && evaluation_task_in_progress && !document.fullscreenElement) {
         display_resize_restart_screen();
     }
 }
@@ -1083,6 +1102,7 @@ function display_restart_screen(){
     canvas_area_element.style.display = 'none';
     evaluation_tasks_element.style.display = 'none';
     restart_required_element.style.display = 'block';
+    help_box_element.style.display = 'none';
 }
 function restart_evaluation() {
     submitted = true

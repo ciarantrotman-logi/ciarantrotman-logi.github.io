@@ -122,19 +122,20 @@ html, body {
   display: flex;
 }
 
-.canvas-container {
-  position: absolute;
-  top: 30px;
-  left: 25%;
-  right: 25%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.help-box {
+  font-size: small;
+  border: 2px solid lightgrey;
+  color: grey;
+  border-radius: 8px;
+  padding: 4px 12px;
+  pointer-events: none;
+  text-align: center;
 }
 
-.canvas-container.demo {
-  position: relative;
-  top: 30px;
+.canvas-container {
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
   left: 25%;
   right: 25%;
   display: flex;
@@ -143,8 +144,8 @@ html, body {
 }
 
 .canvas {
-  outline: 2px solid lightgrey;
-  border-radius: 5px;
+  /*outline: 2px solid lightgrey;
+  border-radius: 5px;*/
 }
 
 .box {

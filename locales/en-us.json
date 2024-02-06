@@ -407,13 +407,13 @@
   "fe-fullscreen-explainer": "When you press continue, your browser will go fullscreen, please conduct this evaluation in fullscreen.",
   "button-start-evaluation": "Continue",
   "reciprocal-targets-two-dimensional-introduction": "Circular Left Click Evaluation",
-  "reciprocal-targets-two-dimensional-description": "When you start you will see a ring of targets. Click the highlighted target as accuractly and as quickly as you can using your mouse and left click.",
+  "reciprocal-targets-two-dimensional-description": "When you start the evaluation you will see a ring of circular targets. Move your cursor to the target that is highlighted and select it as quickly as you can using left click. Work through the evaluation being as quick yet accurate as you can.",
   "reciprocal-targets-two-dimensional-start": "Start Evaluation Task",
   "random-targets-two-dimensional-introduction": "Random Left Click Evaluation",
-  "random-targets-two-dimensional-description": "When you start you will see a single target. Click each target as accuractly and as quickly as you can using your mouse and left click.",
+  "random-targets-two-dimensional-description": "When you start the evaluation you will see a single circular target. Move your cursor to the target that and select it as quickly as you can using left click. Work through the evaluation being as quick yet accurate as you can.",
   "random-targets-two-dimensional-start": "Start Evaluation Task",
   "reciprocal-targets-one-dimensional-introduction": "Back and Forth Scrolling Evaluation",
-  "reciprocal-targets-one-dimensional-description": "When you start you will see two targets. Scroll until the black bar is inside a target and click using the middle mouse button.",
+  "reciprocal-targets-one-dimensional-description": "When you start the evaluation you will see two rectangular targets. Use your scroll wheel to move the black bar until it is inside the red target and select it using the middle mouse button. Work through the evaluation being as quick yet accurate as you can.",
   "reciprocal-targets-one-dimensional-start": "Start Evaluation Task",
   "fe-full-analytics-explainer": "Please download the .csv file you are being prompted to download, and share it with your facilitator.",
   "button-full-analytics-download": "Download Full Analytic Data",
@@ -421,5 +421,8 @@
   "fe-eval-restart-required-error": "You have missed too many targets during the evaluation! ",
   "fe-eval-restart-required-resize": "You exited fullscreen during the evaluation!",
   "fe-eval-restart-required-explanation": "Please restart the evaluation task and try to be as accurate as possible.",
-  "button-restart-evaluation": "Restart Evaluation"
+  "button-restart-evaluation": "Restart Evaluation",
+  "reciprocal-targets-two-dimensional-help": "Move your cursor to the highlighted target as quickly as you can and select it using left click",
+  "random-targets-two-dimensional-help": "Move your cursor to the target as quickly as you can and select it using left click",
+  "reciprocal-targets-one-dimensional-help": "Scroll until the black bar is inside the highlighted target and select it using the middle mouse button"
 }
