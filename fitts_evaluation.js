@@ -91,6 +91,7 @@ let one_dimensional_evaluation_sections = [
 */
 function trace(event) {
     set_cursor_position(event);
+    calculate_polling_rate();
 }
 function click(event) {
     if (fitts_canvas.style.display === 'none') return;
@@ -109,6 +110,9 @@ function on_left_click() {
     draw_circle(debug_context, get_last_click_position(), 2, '#ffffff', false, true);
 
     let on_target = evaluate_two_dimensional_click_accuracy();
+    if (on_target && task_index === 0) {
+        start_calculating_polling_rate();
+    }
     if (on_target && task_index > 0) {
         calculate_throughput();
     }
@@ -145,7 +149,7 @@ function calculate_throughput() {
     let width = one_dimensional_evaluation_task() 
         ? one_dimensional_evaluation_sections[section_index].width
         : two_dimensional_evaluation_sections[section_index].size * 2;
-    let movement_time_ms = (new Date() - last_click_data.timestamp);
+    let movement_time_ms = (performance.now() - last_click_data.timestamp);
     let movement_time_s = movement_time_ms / 1000;
 
     let index_of_difficulty = Math.log2((amplitude / width) + 1);
@@ -491,6 +495,7 @@ function update_section_index(){
         section_index = 0;
         get_next_evaluation_type();
         display_evaluation_task_information();
+        stop_calculating_polling_rate();
     }
 
     target_index = 0;
@@ -816,7 +821,7 @@ function cache_input_location_data(){
         x: get_user_input_position().x,
         y: get_user_input_position().y
     }
-    last_click_data.timestamp = new Date();
+    last_click_data.timestamp = performance.now();
 }
 function two_dimensional_evaluation_task(){
     return evaluation_type === evaluation_types.reciprocal_targets_two_dimensional || evaluation_type === evaluation_types.random_targets_two_dimensional;
@@ -1109,6 +1114,64 @@ function restart_evaluation() {
     submitted = true
     sessionStorage.setItem('restart-required-flag', 'true');
     location.reload();
+}
+/*
+------------------------------------------------------------------------------------------------------------------------HARDWARE SPECIFICATION PARSING
+*/
+window.requestAnimationFrame(calculate_frames_per_second);
+let frames = [];
+let max_calculated_fps = 0;
+function calculate_frames_per_second(now) {
+    frames.unshift(now);
+    if (frames.length > 10) {
+        let last_frame = frames.pop();
+        let fps = Math.floor(1000 * 10 / (now - last_frame));
+        if (max_calculated_fps < fps) {
+            max_calculated_fps = fps;
+            sessionStorage.setItem('fps', max_calculated_fps);
+            console.log(`FPS set to ${fps}`);
+        }
+    }
+    window.requestAnimationFrame(calculate_frames_per_second);
+}
+let last_polling_time = 0;
+let polling_rate_data = [];
+let should_calculate_polling_rate = false;
+let latch = false;
+function start_calculating_polling_rate() {
+    if (latch) return;
+    latch = true;
+    should_calculate_polling_rate = true;
+    last_polling_time = performance.now();
+}
+function stop_calculating_polling_rate() {
+    should_calculate_polling_rate = false;
+    let median_polling_rate = calculate_median_polling_rate();
+    let median_polling_frequency = convert_to_hertz(median_polling_rate);
+    sessionStorage.setItem('polling-rate', median_polling_frequency);
+    console.log(`Polling Rate set to ${median_polling_frequency}Hz`);
+}
+function calculate_polling_rate(){
+    if (!should_calculate_polling_rate) return;
+    let current_polling_time = performance.now();
+    let duration = current_polling_time - last_polling_time;
+    polling_rate_data.push(duration);
+    last_polling_time = current_polling_time;
+}
+function calculate_median_polling_rate() {
+    polling_rate_data.sort(function(a, b) {
+        return a - b;
+    });
+    let length = polling_rate_data.length;
+    let middle_index = Math.floor(length / 2);
+    if (length % 2 === 1) {
+        return polling_rate_data[middle_index];
+    } else {
+        return (polling_rate_data[middle_index - 1] + polling_rate_data[middle_index]) / 2;
+    }
+}
+function convert_to_hertz(milliseconds){
+    return 1000 / milliseconds;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------URL PARSING

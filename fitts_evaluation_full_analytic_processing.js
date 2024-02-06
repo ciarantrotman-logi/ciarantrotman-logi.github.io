@@ -4,6 +4,8 @@ function generate_blended_data(performance_data, cached_uid){
         blended_performance_data.push({
             'uid': cached_uid,
             'dpr': dpr,
+            'fps': sessionStorage.getItem('fps'),
+            'polling-rate': sessionStorage.getItem('polling-rate'),
             
             'amplitude': data.amplitude,
             'effective_amplitude': data.effective_amplitude,
