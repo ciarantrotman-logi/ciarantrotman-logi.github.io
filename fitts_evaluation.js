@@ -540,6 +540,7 @@ function finish_fitts_evaluation(){
     }
 }
 function show_download_buffer(){
+    help_box_element.style.display = 'none';
     evaluation_tasks_element.style.display = "none";
     full_analytics_download_element.style.display = "block";
 }
