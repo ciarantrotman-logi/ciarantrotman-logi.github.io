@@ -58,7 +58,7 @@
                 <p id="fe-full-analytics-explainer">fe-full-analytics-explainer</p>
                 <div class="progression-buttons">
                     <button class = "progression-button" id="button-full-analytics-download" onclick="directly_download_full_analytics()">button-full-analytics-download</button>
-                    <button class = "progression-button" id="button-temp-session-storage-download" onclick="download_session_storage()">DOWNLOAD SESSION STORAGE DATA</button>
+                    <button class = "progression-button" id="button-temp-session-storage-download" onclick="download_session_storage()">Download Session Storage Data</button>
                     <button class = "progression-button" id="button-full-analytics-continue" onclick="load_subjective_evaluation()">button-full-analytics-continue</button>
                 </div>
             </div>
@@ -74,6 +74,9 @@
     <div id="fe-canvas-container-area" class="canvas-container">
         <canvas id="fitts-canvas" class="canvas" style="display: none"></canvas>
         <canvas id="debug-canvas" class="canvas" style="display: none"></canvas>
+    </div>
+    <div id="fe-demo-canvas-container" class="canvas-container.demo">
+        <canvas id="demo-canvas" class="canvas" style="display: block"></canvas>
     </div>
     <script src="/fitts_evaluation.js"></script>
     <script src="/fitts_evaluation_full_analytic_processing.js"></script>

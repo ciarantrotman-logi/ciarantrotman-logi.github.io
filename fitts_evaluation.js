@@ -15,12 +15,14 @@ window.addEventListener('beforeunload', function (event) {
 let body = document.getElementById('body');
 let evaluation_tasks_element = document.getElementById('fe-evaluation-tasks');
 let canvas_area_element = document.getElementById('fe-canvas-container-area');
+let demo_canvas_area_element = document.getElementById('fe-demo-canvas-container');
 let restart_required_element = document.getElementById('fe-evaluation-restart-required');
 let restart_required_error_message = document.getElementById('fe-eval-restart-required-error');
 let restart_required_resize_message = document.getElementById('fe-eval-restart-required-resize');
 let full_analytics_download_element = document.getElementById('fe-full-analytics-download-buffer');
 
 let non_canvas_element = document.getElementById('fe-non-canvas-area');
+
 let fitts_canvas = document.getElementById('fitts-canvas');
 let fitts_context = fitts_canvas.getContext('2d');
 let fitts_rect = fitts_canvas.getBoundingClientRect();
@@ -28,6 +30,10 @@ let fitts_rect = fitts_canvas.getBoundingClientRect();
 let debug_canvas = document.getElementById('debug-canvas');
 let debug_context = debug_canvas.getContext('2d');
 let debug_rect = debug_canvas.getBoundingClientRect();
+
+let demo_canvas = document.getElementById('demo-canvas');
+let demo_context = demo_canvas.getContext('2d');
+let demo_rect = demo_canvas.getBoundingClientRect();
 
 let mouse_position = {x: 0, y: 0};
 let last_click_data = { 
@@ -85,7 +91,6 @@ let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 300, width: 10 },
     { tasks: 6, amplitude: 400, width: 5 }
 ]
-
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
 */
@@ -259,6 +264,7 @@ function display_evaluation_task_information() {
     hide_evaluation_canvas();
     switch (evaluation_type){
         case evaluation_types.reciprocal_targets_two_dimensional:
+            show_scrolling_task_demo();
             document.getElementById('reciprocal-targets-two-dimensional').style.display = 'block';
             break;
         case evaluation_types.random_targets_two_dimensional:
@@ -266,6 +272,8 @@ function display_evaluation_task_information() {
             break;
         case evaluation_types.reciprocal_targets_one_dimensional:
             document.getElementById('reciprocal-targets-one-dimensional').style.display = 'block';
+            //show_scrolling_task_demo(); 
+            // todo put this here
             break;
         default:
             break;
@@ -502,8 +510,8 @@ function finish_fitts_evaluation(){
     submitted = true;
     exit_fullscreen();
     calculate_aggregate_performance_data();
+    calculate_aggregate_correlation_data();
     if (full_analytics) {
-        // csv = generate_csv_data(all_performance_data);
         blended_analytic_data = generate_blended_data(all_performance_data, uid);
         show_download_buffer();
     } else {
@@ -690,14 +698,15 @@ function debug_render_two_dimensional_targets(){
         }
 }
 function render_one_dimensional_targets() {
-    let width = 595;
+    let width = 650;
     clear_canvas(fitts_context, fitts_canvas);
     for (let i = 0; i < targets.length; i++) {
         let target = targets[i];
         draw_rectangle(fitts_context, target, target.size * 2,  width, target.color, true, false);
     }
     draw_rectangle(fitts_context, current_target(), current_target().size * 2,  width, active_target_color, true, false);
-    draw_rectangle(fitts_context, get_scroll_position(), 2, width, 'black', true, true);
+    draw_rectangle(fitts_context, get_scroll_position() + 1, 1, width, 'black', true, true);
+    draw_rectangle(fitts_context, get_scroll_position() - 1, 1, width, 'black', true, true);
 }
 function debug_render_one_dimensional_targets() {
     for (let i = 0; i < targets.length; i++) {
@@ -907,6 +916,7 @@ function evaluate_scaling(){
     
     fitts_rect = scale_canvas(fitts_canvas, fitts_context);
     debug_rect = scale_canvas(debug_canvas, debug_context);
+    demo_rect = scale_canvas(demo_canvas, demo_context);
 }
 function scale_canvas(canvas, context) {
     canvas.style.width = `${size}px`;
@@ -953,6 +963,8 @@ function calculate_aggregate_performance_data() {
     sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_effective_throughput(evaluation_types.reciprocal_targets_two_dimensional));
     sessionStorage.setItem('throughput-2D-random', calculate_average_effective_throughput(evaluation_types.random_targets_two_dimensional));
     sessionStorage.setItem('throughput-1D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_one_dimensional));
+}
+function calculate_aggregate_correlation_data(){
     cache_correlation_data('2D-reciprocal', evaluation_types.reciprocal_targets_two_dimensional, true);
     cache_correlation_data('2D-random', evaluation_types.random_targets_two_dimensional, true);
     cache_correlation_data('1D-reciprocal', evaluation_types.reciprocal_targets_one_dimensional, false);
@@ -961,8 +973,6 @@ function cache_correlation_data(suffix, target_case, effective_flag) {
     let correlation_data = calculate_data_correlation(target_case, effective_flag);
     sessionStorage.setItem(`pearsons-r-${suffix}`, correlation_data.r_value.toString());
     sessionStorage.setItem(`r-squared-${suffix}`, correlation_data.r_squared.toString());
-    // sessionStorage.setItem(`z-value-${suffix}`, correlation_data.z_value.toString());
-    // sessionStorage.setItem(`p-value-${suffix}`, correlation_data.p_value.toString());
 }
 function calculate_data_correlation(target_case, effective_flag) {
     let r_value = pearsons_r(target_case, effective_flag);
