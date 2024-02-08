@@ -76,9 +76,9 @@ let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
     { points: 11, radius: 125, size: 50 },
     { points: 11, radius: 150, size: 25 },
-    //{ points: 11, radius: 200, size: 15 },
-    //{ points: 11, radius: 250, size: 10 },
-    //{ points: 11, radius: 300, size: 5 }
+    { points: 11, radius: 200, size: 15 },
+    { points: 11, radius: 250, size: 10 },
+    { points: 11, radius: 300, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 100, width: 40 },
