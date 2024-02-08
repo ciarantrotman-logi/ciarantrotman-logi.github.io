@@ -22,22 +22,26 @@ let successful_upload_message = document.getElementById('me-subjective-eval-uplo
 let previous_button = document.getElementById('me-subjective-eval-previous-section');
 let next_button = document.getElementById('me-subjective-eval-next-section');
 let submit_button = document.getElementById('me-subjective-eval-submit');
+let progress_bar = document.getElementById('progress-bar');
 /*
 State Management
 */
 function start_subjective_evaluation() {
     introduction_area.style.display = "none";
     metric_evaluation_area.style.display = "block";
+    calculate_progress_bar_width();
 }
 function next_section(){
     index++;
     clamp_index();
     manage_section();
+    scroll_to_top();
 }
 function previous_section(){
     index--;
     clamp_index();
     manage_section();
+    scroll_to_top();
 }
 function clamp_index(){
     index = clamp(index, 0, sections.length - 1);
@@ -140,9 +144,13 @@ function construct_page(){
     let i = 1;
     sections.forEach(section =>{
         let container = document.createElement("div");
+        let sticky_header = document.createElement("div");
+
+        sticky_header.classList.add('sticky-header');
+        
         let base_id = section.id.toString();
         container.id = base_id;
-
+        
         let header = construct_element_with_id("h2", `${base_id}-header`);
         let introduction = construct_element_with_id("p", `${base_id}-introduction`);
         let instructions = construct_element_with_id("i", `${base_id}-instruction`);
@@ -154,10 +162,12 @@ function construct_page(){
         let divider = document.createElement("div");
         divider.innerHTML = "<br><hr><br>";
 
-        container.appendChild(header);
-        container.appendChild(introduction);
-        container.appendChild(instructions);
+        container.appendChild(sticky_header);
         container.appendChild(divider);
+        
+        sticky_header.appendChild(header);
+        sticky_header.appendChild(introduction);
+        sticky_header.appendChild(instructions);
 
         section.metrics.forEach(metric => {
             let base_id = metric.id.toString();
@@ -256,6 +266,19 @@ Utility Functions
 */
 function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
+}
+function scroll_to_top() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+window.addEventListener('scroll', calculate_progress_bar_width);
+function calculate_progress_bar_width(){
+    const scroll_top = document.documentElement.scrollTop;
+    const scroll_height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (scroll_top / scroll_height) * 100;
+    progress_bar.style.width = progress + '%';
 }
 /*
 Database Initialisation

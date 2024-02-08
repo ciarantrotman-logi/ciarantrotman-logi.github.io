@@ -76,9 +76,9 @@ let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
     { points: 11, radius: 125, size: 50 },
     { points: 11, radius: 150, size: 25 },
-    { points: 11, radius: 200, size: 15 },
-    { points: 11, radius: 250, size: 10 },
-    { points: 11, radius: 300, size: 5 }
+    //{ points: 11, radius: 200, size: 15 },
+    //{ points: 11, radius: 250, size: 10 },
+    //{ points: 11, radius: 300, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 100, width: 40 },
@@ -1126,7 +1126,7 @@ function calculate_frames_per_second(now) {
     if (frames.length > 10) {
         let last_frame = frames.pop();
         let fps = Math.floor(1000 * 10 / (now - last_frame));
-        if (max_calculated_fps < fps) {
+        if (max_calculated_fps < fps && fps % 2 === 0) {
             max_calculated_fps = fps;
             sessionStorage.setItem('fps', max_calculated_fps);
             console.log(`FPS set to ${fps}`);
@@ -1146,17 +1146,29 @@ function start_calculating_polling_rate() {
 }
 function stop_calculating_polling_rate() {
     should_calculate_polling_rate = false;
-    let median_polling_rate = calculate_median_polling_rate();
-    let median_polling_frequency = convert_to_hertz(median_polling_rate);
-    sessionStorage.setItem('polling-rate', median_polling_frequency);
-    console.log(`Polling Rate set to ${median_polling_frequency}Hz`);
+    let median_polling_duration = calculate_median_polling_rate();
+    let modal_polling_duration = calculate_modal_polling_rate();
+    let median_polling_frequency = convert_to_hertz(median_polling_duration);
+    let modal_polling_frequency = convert_to_hertz(modal_polling_duration);
+    console.log(`Median (${median_polling_duration.toFixed(1)}ms) Modal (${modal_polling_duration.toFixed(1)}ms)`);
+    let polling_duration = 0;
+    let polling_frequency = 0;
+    if (median_polling_frequency === modal_polling_frequency){
+        polling_frequency = median_polling_frequency;
+        polling_duration = median_polling_duration;
+    } else {
+        polling_frequency = modal_polling_duration;
+        polling_duration = modal_polling_duration;
+    }
+    sessionStorage.setItem('polling-rate', polling_frequency);
+    console.log(`Polling Rate set to ${polling_frequency.toFixed(1)}Hz, (${polling_duration.toFixed(1)}ms)`);
 }
 function calculate_polling_rate(){
     if (!should_calculate_polling_rate) return;
     let current_polling_time = performance.now();
     let duration = current_polling_time - last_polling_time;
-    polling_rate_data.push(duration);
     last_polling_time = current_polling_time;
+    polling_rate_data.push(duration);
 }
 function calculate_median_polling_rate() {
     polling_rate_data.sort(function(a, b) {
@@ -1169,6 +1181,28 @@ function calculate_median_polling_rate() {
     } else {
         return (polling_rate_data[middle_index - 1] + polling_rate_data[middle_index]) / 2;
     }
+}
+function calculate_modal_polling_rate() {
+    let mode_map = {};
+    let max_count = 0;
+    let modes = [];
+    const rounded_polling_rates = polling_rate_data.map((num) => num.toFixed(1));
+    rounded_polling_rates.forEach(function (element) {
+        if (mode_map[element] == null) {
+            mode_map[element] = 1;
+        } else {
+            mode_map[element]++;
+        }
+        if (mode_map[element] > max_count) {
+            max_count = mode_map[element];
+        }
+    });
+    for (let element in mode_map) {
+        if (mode_map[element] === max_count) {
+            modes.push(Number(element));
+        }
+    }
+    return modes.pop();
 }
 function convert_to_hertz(milliseconds){
     return 1000 / milliseconds;
