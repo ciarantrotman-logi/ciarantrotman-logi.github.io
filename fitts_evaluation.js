@@ -1,7 +1,7 @@
 /*
 ------------------------------------------------------------------------------------------------------------------------DATA LOSS PREVENTION
 */
-let submitted = true; // todo revert
+let submitted = false;
 window.addEventListener('beforeunload', function (event) {
     if (!submitted) {
         let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
@@ -74,17 +74,17 @@ window.addEventListener('resize', rescale);
 
 let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
-    //{ points: 11, radius: 125, size: 50 },
-    //{ points: 11, radius: 150, size: 25 },
-    //{ points: 11, radius: 200, size: 15 },
-    //{ points: 11, radius: 250, size: 10 },
-    //{ points: 11, radius: 300, size: 5 }
+    { points: 11, radius: 125, size: 50 },
+    { points: 11, radius: 150, size: 25 },
+    { points: 11, radius: 200, size: 15 },
+    { points: 11, radius: 250, size: 10 },
+    { points: 11, radius: 300, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 100, width: 40 },
-    //{ tasks: 6, amplitude: 150, width: 30 },
-    //{ tasks: 6, amplitude: 200, width: 20 },
-    //{ tasks: 6, amplitude: 300, width: 10 }
+    { tasks: 6, amplitude: 150, width: 30 },
+    { tasks: 6, amplitude: 200, width: 20 },
+    { tasks: 6, amplitude: 300, width: 10 }
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -495,11 +495,11 @@ function update_section_index(){
     clear_canvas(debug_context, debug_canvas);
     
     if (should_move_to_next_section()) {
+        stop_calculating_polling_rate();
+        stop_calculating_velocity();
         section_index = 0;
         get_next_evaluation_type();
         display_evaluation_task_information();
-        stop_calculating_polling_rate();
-        stop_calculating_velocity();
     }
 
     target_index = 0;
@@ -1311,3 +1311,6 @@ console.log(debug_check
 console.log(full_analytics 
     ? 'Full Analytics Enabled'
     : 'Full Analytics Disabled');
+/*
+------------------------------------------------------------------------------------------------------------------------DATABASE DECLARATION
+*/

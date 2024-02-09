@@ -1,7 +1,7 @@
 /*
 Data Loss Prevention
 */
-let submitted = true; // todo revert
+let submitted = false;
 window.addEventListener('beforeunload', function (event) {
     if (!submitted) {
         let warningMessage = 'Your data has not been submitted yet. Are you sure you want to leave?';
@@ -343,7 +343,6 @@ function download_data() {
             direct_download_data(data);
         });
     submitted = true;
-    console.log(sessionStorage);
 }
 
 function direct_download_data(data){
@@ -386,3 +385,4 @@ Database Initialisation
 */
 firebase.initializeApp(mouse_evaluation_firebase_data);
 let database = firebase.database();
+let analytics = firebase.analytics();
