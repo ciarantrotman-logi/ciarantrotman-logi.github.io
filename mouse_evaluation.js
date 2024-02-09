@@ -30,6 +30,7 @@ function proceed_to_mouse_information_section(){
 }
 function proceed_to_fitts_evaluation(){
     cache_session_storage();
+    cache_system_information();
     submitted = true;
     window.location.href = full_analytics 
         ? 'fitts_evaluation.html?analytics'
@@ -81,6 +82,11 @@ function cache_session_storage(){
         sessionStorage.setItem('evaluation-mouse-feet-make', sessionStorage.getItem('evaluation-mouse-make'));
         sessionStorage.setItem('evaluation-mouse-feet-model', sessionStorage.getItem('evaluation-mouse-model'));
     }
+}
+function cache_system_information(){
+    sessionStorage.setItem('browser-name', navigator.userAgent);
+    sessionStorage.setItem('operating-system', navigator.platform);
+    sessionStorage.setItem('preferred-language', navigator.language);
 }
 /*
 Utility Functions

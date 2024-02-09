@@ -6,6 +6,9 @@ function generate_blended_data(performance_data, cached_uid){
             'dpr': dpr,
             'fps': sessionStorage.getItem('fps'),
             'polling-rate': sessionStorage.getItem('polling-rate'),
+            'screen-pixel-width' : sessionStorage.getItem('screen-pixel-width'),
+            'screen-pixel-height' : sessionStorage.getItem('screen-pixel-height'),
+            'screen-orientation' : sessionStorage.getItem('screen-orientation'),
             
             'amplitude': data.amplitude,
             'effective_amplitude': data.effective_amplitude,

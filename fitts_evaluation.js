@@ -74,17 +74,17 @@ window.addEventListener('resize', rescale);
 
 let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
-    { points: 11, radius: 125, size: 50 },
-    { points: 11, radius: 150, size: 25 },
-    { points: 11, radius: 200, size: 15 },
-    { points: 11, radius: 250, size: 10 },
-    { points: 11, radius: 300, size: 5 }
+    //{ points: 11, radius: 125, size: 50 },
+    //{ points: 11, radius: 150, size: 25 },
+    //{ points: 11, radius: 200, size: 15 },
+    //{ points: 11, radius: 250, size: 10 },
+    //{ points: 11, radius: 300, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
     { tasks: 6, amplitude: 100, width: 40 },
-    { tasks: 6, amplitude: 150, width: 30 },
-    { tasks: 6, amplitude: 200, width: 20 },
-    { tasks: 6, amplitude: 300, width: 10 }
+    //{ tasks: 6, amplitude: 150, width: 30 },
+    //{ tasks: 6, amplitude: 200, width: 20 },
+    //{ tasks: 6, amplitude: 300, width: 10 }
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -92,6 +92,7 @@ let one_dimensional_evaluation_sections = [
 function trace(event) {
     set_cursor_position(event);
     calculate_polling_rate();
+    calculate_velocity();
 }
 function click(event) {
     if (fitts_canvas.style.display === 'none') return;
@@ -112,6 +113,8 @@ function on_left_click() {
     let on_target = evaluate_two_dimensional_click_accuracy();
     if (on_target && task_index === 0) {
         start_calculating_polling_rate();
+        start_calculating_velocity();
+        cache_screen_dimension_data();
     }
     if (on_target && task_index > 0) {
         calculate_throughput();
@@ -496,6 +499,7 @@ function update_section_index(){
         get_next_evaluation_type();
         display_evaluation_task_information();
         stop_calculating_polling_rate();
+        stop_calculating_velocity();
     }
 
     target_index = 0;
@@ -1118,6 +1122,15 @@ function restart_evaluation() {
 /*
 ------------------------------------------------------------------------------------------------------------------------HARDWARE SPECIFICATION PARSING
 */
+function cache_screen_dimension_data(){
+    let screen_pixel_width = window.screen.width * dpr;
+    let screen_pixel_height = window.screen.height * dpr;
+    let screen_orientation = window.screen.orientation;
+    console.log(`Screen Resolution: (${screen_pixel_width}:${screen_pixel_height})`)
+    sessionStorage.setItem('screen-pixel-width', screen_pixel_width.toString());
+    sessionStorage.setItem('screen-pixel-height', screen_pixel_height.toString());
+    sessionStorage.setItem('screen-orientation', screen_orientation.toString());
+}
 window.requestAnimationFrame(calculate_frames_per_second);
 let frames = [];
 let max_calculated_fps = 0;
@@ -1137,14 +1150,15 @@ function calculate_frames_per_second(now) {
 let last_polling_time = 0;
 let polling_rate_data = [];
 let should_calculate_polling_rate = false;
-let latch = false;
+let polling_rate_calculation_latch = false;
 function start_calculating_polling_rate() {
-    if (latch) return;
-    latch = true;
+    if (polling_rate_calculation_latch) return;
+    polling_rate_calculation_latch = true;
     should_calculate_polling_rate = true;
     last_polling_time = performance.now();
 }
 function stop_calculating_polling_rate() {
+    if (!should_calculate_polling_rate) return;
     should_calculate_polling_rate = false;
     let median_polling_duration = calculate_median_polling_rate();
     let modal_polling_duration = calculate_modal_polling_rate();
@@ -1157,7 +1171,7 @@ function stop_calculating_polling_rate() {
         polling_frequency = median_polling_frequency;
         polling_duration = median_polling_duration;
     } else {
-        polling_frequency = modal_polling_duration;
+        polling_frequency = modal_polling_frequency;
         polling_duration = modal_polling_duration;
     }
     sessionStorage.setItem('polling-rate', polling_frequency);
@@ -1166,9 +1180,9 @@ function stop_calculating_polling_rate() {
 function calculate_polling_rate(){
     if (!should_calculate_polling_rate) return;
     let current_polling_time = performance.now();
-    let duration = current_polling_time - last_polling_time;
+    let time_since_last_data = current_polling_time - last_polling_time;
     last_polling_time = current_polling_time;
-    polling_rate_data.push(duration);
+    polling_rate_data.push(time_since_last_data);
 }
 function calculate_median_polling_rate() {
     polling_rate_data.sort(function(a, b) {
@@ -1206,6 +1220,78 @@ function calculate_modal_polling_rate() {
 }
 function convert_to_hertz(milliseconds){
     return 1000 / milliseconds;
+}
+/*
+------------------------------------------------------------------------------------------------------------------------VELOCITY CALCULATIONS
+*/
+let last_cursor_position = {x: 0, y: 0};
+let last_velocity_stamp = 0;
+let sampled_velocities = [];
+let should_calculate_velocity = false;
+function start_calculating_velocity(){
+    should_calculate_velocity = true;
+    last_cursor_position = mouse_position;
+    last_velocity_stamp = performance.now();
+    sampled_velocities = [];
+}
+function stop_calculating_velocity() {
+    if (!should_calculate_velocity) return;
+    should_calculate_velocity = false;
+    let velocity_data = calculate_velocity_data();
+    let section = session_storage_section_name();
+    console.log(`[${section}] Mean (${velocity_data.mean.toFixed(1)}px/ms) Median (${velocity_data.median.toFixed(1)}px/ms) Maximum(${velocity_data.maximum.toFixed(1)}px/ms)`);
+    sessionStorage.setItem(`mean-velocity-${section}`, velocity_data.mean);
+    sessionStorage.setItem(`maximum-velocity-${section}`, velocity_data.maximum);
+    sessionStorage.setItem(`median-velocity-${section}`, velocity_data.median);
+    sampled_velocities = [];
+}
+
+function calculate_velocity() {
+    if (!should_calculate_velocity) return;
+    let current_velocity_stamp = performance.now();
+    let current_mouse_position = mouse_position;
+    let distance_travelled = distance_between_points(last_cursor_position, current_mouse_position);
+    let velocity = distance_travelled / (current_velocity_stamp - last_velocity_stamp);
+    sampled_velocities.push(velocity);
+    last_cursor_position = {
+        x: current_mouse_position.x, 
+        y: current_mouse_position.y};
+    last_velocity_stamp = current_velocity_stamp;
+}
+function session_storage_section_name(){
+    switch (evaluation_type){
+        case evaluation_types.reciprocal_targets_two_dimensional:
+            return "2D-reciprocal";
+        case evaluation_types.random_targets_two_dimensional:
+            return "2D-random";
+        case evaluation_types.reciprocal_targets_one_dimensional:
+            return "1D-reciprocal";
+        default:
+            return null;
+    }
+}
+function calculate_velocity_data() {
+    sampled_velocities.sort(function(a, b) {
+        return a - b;
+    });
+    let length = sampled_velocities.length;
+    let middle_index = Math.floor(length / 2);
+    let maximum_velocity = sampled_velocities[length - 1];
+    let sum = sampled_velocities.reduce((a, b) => a + b, 0);
+    let mean_velocity = sum / length;
+    if (length % 2 === 1) {
+        return {
+            median : sampled_velocities[middle_index],
+            mean: mean_velocity,
+            maximum : maximum_velocity
+        };
+    } else {
+        return {
+            median: (sampled_velocities[middle_index - 1] + sampled_velocities[middle_index]) / 2,
+            mean: mean_velocity,
+            maximum: maximum_velocity
+        };
+    }
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------URL PARSING

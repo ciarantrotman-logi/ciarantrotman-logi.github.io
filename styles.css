@@ -62,22 +62,43 @@ html, body {
 
 .section-indicator{
   font-size: small;
+  color: grey;
+  border: 2px solid lightgrey;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .section-indicator.completed{
+  border: 1px solid lightgrey;
+  background-color: #fafafa;
   color: lightgrey;
   font-weight: bold;
+  font-size: x-small;
+  width: 18px;
+  height: 18px;
 }
 .section-indicator.current{
+  border: 2px solid darkslategrey;
+  border-radius: 5px;
+  color: darkslategrey;
   font-weight: bolder;
 }
 .section-indicator.uncompleted{
+  border: 1px solid lightgrey;
   color: lightgrey;
   font-weight: normal;
+  font-size: x-small;
+  width: 18px;
+  height: 18px;
 }
 
 .progression-buttons {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
 }
@@ -85,7 +106,7 @@ html, body {
 .label-container {
   margin-top: 10px;
   margin-bottom: 50px;
-  font-size: 9pt;
+  font-size: small;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -95,12 +116,12 @@ html, body {
   text-align: left;
 }
 
-.right-label {
-  text-align: right;
-}
-
 .center-label {
   text-align: center;
+}
+
+.right-label {
+  text-align: right;
 }
 
 .hidden-input {
@@ -195,7 +216,7 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 5px;
+  height: 3px;
   background-color: black;
   z-index: 30;
 }
@@ -205,7 +226,7 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 5px;
+  height: 3px;
   background-color: #f3f3f3;
   z-index: 20;
 }

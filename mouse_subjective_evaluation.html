@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EY84L3EPC"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DTX2L7SXR"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-6EY84L3EPC');
+        gtag('config', 'G-5DTX2L7SXR');
     </script>
     <meta charset="UTF-8">
     <title>Mouse Subjective Evaluation</title>
@@ -33,8 +33,9 @@
     <div id="metric-evaluation-area" style="display: none">
         <div id="progress-bar" class="progress-bar"></div>
         <div class="progress-bar-background"></div>
+        <div id="evaluation-area"></div><hr>
         <div class="progression-buttons" id="progression-indicators" style="display: flex"></div>
-        <div id="evaluation-area"></div><hr><br>
+        <br>
         <div class="progression-buttons">
             <button class = "progression-button" id="me-subjective-eval-previous-section" onclick="previous_section()">me-subjective-eval-previous-section</button>
             <button class = "progression-button" id="me-subjective-eval-next-section" onclick="next_section()">me-subjective-eval-next-section</button>
@@ -44,8 +45,9 @@
         </div>
     </div>
     <div id="evaluation-finished-area" style="display: none">
-        <p id="me-subjective-eval-direct-download-message" style="display: none">me-subjective-eval-direct-download-message</p>
-        <p id="me-subjective-eval-uploaded-data-message" style="display: none">me-subjective-eval-uploaded-data-message</p>
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdkcGD1fyaC5CfNH1_m1eWhb6m6jddRxjUmvPT_acsUnrSzfw/viewform?embedded=true" width="600px" height="1300px" frameborder="0" marginheight="0" marginwidth="0">Loading!</iframe>
+        <p id="me-subjective-eval-direct-download-message" style="display: none"></p>
+        <p id="me-subjective-eval-uploaded-data-message" style="display: none"></p>
     </div>
 </div>
 <script src="mouse_subjective_evaluation.js"></script>

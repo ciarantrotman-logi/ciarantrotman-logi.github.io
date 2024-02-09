@@ -81,24 +81,19 @@ let sections = [
         range: {min: -10, max: 10, value: 0}},
     {   id: 'umux-m',
         metrics: [
-            {id: "umux-m-p-functionality"},
-            {id: "umux-m-n-frustration"},
-            {id: "umux-m-p-easiness"},
-            {id: "umux-m-n-difficulty"}
+            {id: "umux-m-effectiveness"},
+            {id: "umux-m-satisfaction"},
+            {id: "umux-m-usability"},
+            {id: "umux-m-efficiency"},
+            {id: "umux-m-fluidity"},
         ],
         range: {min: -2, max: 2, value: 0}},
-    {   id: 'fss-m',
+    {   id: 'umux-m*',
         metrics: [
-            {id: "fss-m-aba-challenge"},
-            {id: "fss-m-fp-fluidity"},
-            {id: "fss-m-aba-temporality"},
-            {id: "fss-m-fp-concentration"},
-            {id: "fss-m-fp-clarity"},
-            {id: "fss-m-aba-absorption"},
-            {id: "fss-m-fp-autonomy"},
-            {id: "fss-m-fp-confidence"},
-            {id: "fss-m-fp-control"},
-            {id: "fss-m-aba-thought"}
+            {id: "umux-m*-satisfaction"},
+            {id: "umux-m*-usability"},
+            {id: "umux-m*-efficiency"},
+            {id: "umux-m*-fluidity"},
         ],
         range: {min: -2, max: 2, value: 0}},
     {   id: 'attrakdiff-m',
@@ -109,13 +104,118 @@ let sections = [
             {id: "attrakdiff-m-h-stylish"},
             {id: "attrakdiff-m-p-predictable"},
             {id: "attrakdiff-m-h-premium"},
-            {id: "attrakdiff-m-h-creative"},
+            {id: "attrakdiff-m-h-imaginative"},
             {id: "attrakdiff-m-a-good"},
-            {id: "attrakdiff-m-p-structure"},
+            {id: "attrakdiff-m-p-structured"},
             {id: "attrakdiff-m-h-captivating"}
         ],
-        range: {min: -3, max: 3, value: 0}
-    }
+        range: {min: -3, max: 3, value: 0}},
+    {   id: 'ergo-m*',
+        metrics: [
+            {id: "ergo-m*-size"},
+            {id: "ergo-m*-weight"},
+            {id: "ergo-m*-confidence"},
+            {id: "ergo-m*-balance"},
+        ],
+        range: {min: -3, max: 3, value: 0}},
+    {   id: 'ergo-m',
+        metrics: [
+            {id: "ergo-m-size-high"},
+            {id: "ergo-m-size-wide"},
+            {id: "ergo-m-size-tilted"},
+            {id: "ergo-m-weight-heavy"},
+            {id: "ergo-m-material-hard"},
+            {id: "ergo-m-material-warm"},
+            {id: "ergo-m-material-rigid"},
+            {id: "ergo-m-quality-comfortable"},
+            {id: "ergo-m-quality-pleasant"},
+            {id: "ergo-m-quality-premium"}
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'glide-m',
+        metrics: [
+            {id: "glide-m-interface-textured"},
+            {id: "glide-m-interface-slippy"},
+            {id: "glide-m-interface-loud"},
+            {id: "glide-m-interface-consistent"},
+            {id: "glide-m-usability-fast"},
+            {id: "glide-m-usability-heavy"},
+            {id: "glide-m-usability-controlled"},
+            {id: "glide-m-usability-laborious"},
+            {id: "glide-m-quality-pleasant"},
+            {id: "glide-m-quality-premium"},
+            {id: "glide-m-quality-satisfying"}
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'timbre-m',
+        metrics: [
+            {id: "timbre-m-hard"},
+            {id: "timbre-m-loud"},
+            {id: "timbre-m-powerful"},
+            {id: "timbre-m-harsh"},
+            {id: "timbre-m-high"},
+            {id: "timbre-m-deep"},
+            {id: "timbre-m-pleasant"},
+            {id: "timbre-m-harmonious"},
+            {id: "timbre-m-beautiful"},
+            {id: "timbre-m-rough"},
+            {id: "timbre-m-dull"},
+            {id: "timbre-m-thick"},
+            {id: "timbre-m-grating"},
+            {id: "timbre-m-premium"},
+            {id: "timbre-m-satisfying"},
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'timbre-m*',
+        metrics: [
+            {id: "timbre-m*-loud"},
+            {id: "timbre-m*-dull"},
+            {id: "timbre-m*-deep"},
+            {id: "timbre-m*-pleasant"},
+            {id: "timbre-m*-premium"},
+            {id: "timbre-m*-satisfying"},
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'tactility-m',
+        metrics: [
+            {id: "tactility-m-comfortable"},
+            {id: "tactility-m-heavy"},
+            {id: "tactility-m-strong"},
+            {id: "tactility-m-distinct"},
+            {id: "tactility-m-sharp"},
+            {id: "tactility-m-stable"},
+            {id: "tactility-m-pleasant"},
+            {id: "tactility-m-premium"},
+            {id: "tactility-m-satisfying"},
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'tactility-m*',
+        metrics: [
+            {id: "tactility-m*-comfortable"},
+            {id: "tactility-m*-heavy"},
+            {id: "tactility-m*-strong"},
+            {id: "tactility-m*-distinct"},
+            {id: "tactility-m*-sharp"},
+            {id: "tactility-m*-stable"},
+            {id: "tactility-m*-pleasant"},
+            {id: "tactility-m*-premium"},
+            {id: "tactility-m*-satisfying"},
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'fss-m',
+        metrics: [
+            {id: "fss-m-a-challenge"},
+            {id: "fss-m-f-fluidity"},
+            {id: "fss-m-a-temporality"},
+            {id: "fss-m-f-concentration"},
+            {id: "fss-m-f-clarity"},
+            {id: "fss-m-a-absorption"},
+            {id: "fss-m-f-autonomy"},
+            {id: "fss-m-f-confidence"},
+            {id: "fss-m-f-control"},
+            {id: "fss-m-a-thought"}
+        ],
+        range: {min: -2, max: 2, value: 0}}
 ]
 /*
 Procedural Generation
@@ -135,11 +235,13 @@ function build_slider(slider, section){
 }
 function construct_page(){
     let progression_indicators = document.getElementById('progression-indicators');
+    let index = 1;
     sections.forEach(section => {
         let base_id = section.id.toString();
         let marker = construct_element_with_id("p", `${base_id}-indicator`, 'section-indicator');
-        marker.innerHTML = marker.id;
+        marker.innerHTML = `${index}`;
         progression_indicators.appendChild(marker);
+        index++;
     })
     let i = 1;
     sections.forEach(section =>{
@@ -154,6 +256,7 @@ function construct_page(){
         let header = construct_element_with_id("h2", `${base_id}-header`);
         let introduction = construct_element_with_id("p", `${base_id}-introduction`);
         let instructions = construct_element_with_id("i", `${base_id}-instruction`);
+        instructions.style.fontSize = 'small';
 
         header.innerHTML = header.id;
         introduction.innerHTML = introduction.id;
@@ -206,6 +309,7 @@ manage_section();
 Submission & Data Processing
 */
 function submit_data(){
+    scroll_to_top();
     metric_evaluation_area.style.display = "none";
     evaluation_finished_area.style.display = "block";
     cache_submission_time();
@@ -228,8 +332,6 @@ function cache_evaluation_metric_data(){
     })
 }
 function download_data() {
-    direct_download_data(sessionStorage);
-    /*
     const data = sessionStorage;
     let stamp = Date.now().toString();
     database.ref(stamp).set(data)
@@ -240,7 +342,6 @@ function download_data() {
             direct_download_message.style.display = 'block';
             direct_download_data(data);
         });
-    */
     submitted = true;
     console.log(sessionStorage);
 }
@@ -283,5 +384,5 @@ function calculate_progress_bar_width(){
 /*
 Database Initialisation
 */
-// firebase.initializeApp(firebaseConfig);
-// let database = firebase.database();
+firebase.initializeApp(mouse_evaluation_firebase_data);
+let database = firebase.database();
