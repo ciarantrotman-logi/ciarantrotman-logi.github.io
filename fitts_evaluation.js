@@ -81,10 +81,10 @@ let two_dimensional_evaluation_sections = [
     { points: 11, radius: 300, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
-    { tasks: 6, amplitude: 100, width: 40 },
-    { tasks: 6, amplitude: 150, width: 30 },
-    { tasks: 6, amplitude: 200, width: 20 },
-    { tasks: 6, amplitude: 300, width: 10 }
+    { tasks: 3, amplitude: 100, width: 40 },
+    { tasks: 3, amplitude: 150, width: 30 },
+    { tasks: 3, amplitude: 200, width: 20 },
+    { tasks: 3, amplitude: 300, width: 10 }
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -219,6 +219,7 @@ function was_correct_target_clicked(target){
     return target.index === target_index;
 }
 function generate_targets(){
+    error_count = 0;
     clear_canvas(fitts_context, fitts_canvas);
     initialise_scroll_position();
     calculate_target_parameters();
@@ -1090,9 +1091,10 @@ function on_correct_target_not_clicked(target) {
 }
 let error_count = 0;
 let error_rate = 0;
-const total_error_threshold = .2;
+const total_error_threshold = .35;
 function evaluate_error_rate() {
-    error_rate = error_count / (action_index + 1);
+    error_rate = error_count / targets.length;
+    console.log(error_rate);
     if (error_rate > total_error_threshold) {
         display_error_restart_screen();
     }
