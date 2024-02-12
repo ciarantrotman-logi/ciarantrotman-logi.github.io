@@ -1091,7 +1091,7 @@ function on_correct_target_not_clicked(target) {
 }
 let error_count = 0;
 let error_rate = 0;
-const total_error_threshold = .35;
+const total_error_threshold = .4;
 function evaluate_error_rate() {
     error_rate = error_count / targets.length;
     console.log(error_rate);
