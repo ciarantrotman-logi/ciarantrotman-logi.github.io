@@ -1116,7 +1116,7 @@ let error_count = 0;
 let error_rate = 0;
 const total_error_threshold = .4;
 function evaluate_error_rate() {
-    error_rate = error_count / targets.length;
+    error_rate = error_count / total_task_count;
     console.log(error_rate);
     if (error_rate > total_error_threshold) {
         display_error_restart_screen();
