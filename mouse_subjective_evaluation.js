@@ -385,4 +385,3 @@ Database Initialisation
 */
 firebase.initializeApp(mouse_evaluation_firebase_data);
 let database = firebase.database();
-let analytics = firebase.analytics();
