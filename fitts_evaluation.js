@@ -98,9 +98,11 @@ function click(event) {
     if (fitts_canvas.style.display === 'none') return;
     if (event.button === 0 && two_dimensional_evaluation_task()) {
         on_left_click();
+        calculate_progress_bar_width();
     }
     if (event.button === 1 && one_dimensional_evaluation_task()) {
         on_middle_click();
+        calculate_progress_bar_width();
     }
 }
 function on_left_click() {
@@ -145,7 +147,28 @@ function scroll(event) {
     render_targets();
 }
 /*
-------------------------------------------------------------------------------------------------------------------------CALCULATION TOWN
+------------------------------------------------------------------------------------------------------------------------PROGRESS EVALUATION
+*/
+let attempted_task_count = 0;
+let total_task_count = 0;
+let progress_bar = document.getElementById('progress-bar');
+calculate_total_task_count();
+function calculate_total_task_count(){
+    two_dimensional_evaluation_sections.forEach(function (task) {
+        total_task_count += task.points; // Once for reciprocal task
+        total_task_count += task.points; // Once for random task
+    });
+    one_dimensional_evaluation_sections.forEach(function (task) {
+        total_task_count += task.tasks;
+    });
+}
+function calculate_progress_bar_width(){
+    attempted_task_count++;
+    let progress = (attempted_task_count / total_task_count) * 100;
+    progress_bar.style.width = progress + '%';
+}
+/*
+------------------------------------------------------------------------------------------------------------------------CALCULATION & EVALUATION
 */
 function calculate_throughput() {
     let amplitude = distance_between_points(current_target(), previous_target());
