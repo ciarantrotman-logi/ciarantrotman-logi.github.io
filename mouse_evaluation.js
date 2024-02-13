@@ -15,8 +15,17 @@ Caching
 let url = new URL(window.location.href);
 let user_index = url.searchParams.get('userID');
 let full_analytics = url.searchParams.get('analytics') !== null;
+let query_string = "";
+extract_query_parameters(url.toString());
+function extract_query_parameters(url_string) {
+    let question_mark_index = url_string.indexOf("?");
+    if (question_mark_index !== -1) {
+        query_string = url_string.substring(question_mark_index + 1);
+    }
+}
 console.log(`User ID = ${user_index}`);
 console.log(`Full Analytics = ${full_analytics}`);
+console.log(`Query Parameters = ${query_string}`);
 /*
 State Management
 */
@@ -32,9 +41,7 @@ function proceed_to_fitts_evaluation(){
     cache_session_storage();
     cache_system_information();
     submitted = true;
-    window.location.href = full_analytics 
-        ? 'fitts_evaluation.html?analytics'
-        : 'fitts_evaluation.html';
+    window.location.href = `fitts_evaluation.html?${query_string}`
 }
 /*
 Session Storage Management

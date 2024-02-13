@@ -578,7 +578,7 @@ function show_download_buffer(){
     full_analytics_download_element.style.display = "block";
 }
 function load_subjective_evaluation() {
-    window.location.href = 'mouse_subjective_evaluation.html';
+    window.location.href = `mouse_subjective_evaluation.html${query_string}`;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------DATA ANALYSIS
@@ -1324,6 +1324,14 @@ function calculate_velocity_data() {
 let url = new URL(window.location.href);
 let debug_check = url.searchParams.get('debug') !== null;
 let full_analytics = url.searchParams.get('analytics') !== null;
+let query_string = "";
+extract_query_parameters(url.toString());
+function extract_query_parameters(url_string) {
+    let question_mark_index = url_string.indexOf("?");
+    if (question_mark_index !== -1) {
+        query_string = url_string.substring(question_mark_index + 1);
+    }
+}
 /*
 ------------------------------------------------------------------------------------------------------------------------MANAGE ADDITIONAL STATES
 */

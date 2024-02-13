@@ -218,6 +218,48 @@ let sections = [
         range: {min: -2, max: 2, value: 0}}
 ]
 /*
+URL Parsing
+ */
+// URL queries to disable sections
+let url = new URL(window.location.href);
+let disable_timbre = url.searchParams.get("disable_timbre") !== null;
+let disable_tactility = url.searchParams.get("disable_tactility") !== null;
+let disable_glide = url.searchParams.get("disable_glide") !== null;
+let filtered_sections = [];
+sections.forEach(section =>{
+    switch (section.id) {
+        case 'glide-m':
+            if (!disable_glide){
+                filtered_sections.push(section);
+            }
+            break;
+        case 'timbre-m':
+            if (!disable_timbre){
+                filtered_sections.push(section);
+            }
+            break;
+        case 'timbre-m*':
+            if (!disable_timbre){
+                filtered_sections.push(section);
+            }
+            break;
+        case 'tactility-m':
+            if (!disable_tactility){
+                filtered_sections.push(section);
+            }
+            break;
+        case 'tactility-m*':
+            if (!disable_tactility){
+                filtered_sections.push(section);
+            }
+            break;
+        default:
+            filtered_sections.push(section);
+            break;
+    }
+});
+sections = filtered_sections;
+/*
 Procedural Generation
 */
 function construct_element_with_id(tag, id, class_name){
