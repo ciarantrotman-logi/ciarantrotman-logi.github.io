@@ -1150,7 +1150,7 @@ function restart_evaluation() {
 function cache_screen_dimension_data(){
     let screen_pixel_width = window.screen.width * dpr;
     let screen_pixel_height = window.screen.height * dpr;
-    let screen_orientation = window.screen.orientation;
+    let screen_orientation = window.screen.orientation.type;
     console.log(`Screen Resolution: (${screen_pixel_width}:${screen_pixel_height})`)
     sessionStorage.setItem('screen-pixel-width', screen_pixel_width.toString());
     sessionStorage.setItem('screen-pixel-height', screen_pixel_height.toString());
