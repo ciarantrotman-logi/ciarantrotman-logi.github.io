@@ -51,6 +51,7 @@ let dpr = 1;
 let size = 700;
 
 let uid = Date.now().toString();
+sessionStorage.setItem('uid', uid);
 
 let targets = [];
 let section_performance_data = [];
