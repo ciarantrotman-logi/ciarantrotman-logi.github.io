@@ -81,10 +81,10 @@ let two_dimensional_evaluation_sections = [
     { points: 11, radius: 300, size: 5 }
 ]
 let one_dimensional_evaluation_sections = [
-    { tasks: 3, amplitude: 100, width: 40 },
-    { tasks: 3, amplitude: 150, width: 30 },
-    { tasks: 3, amplitude: 200, width: 20 },
-    { tasks: 3, amplitude: 300, width: 10 }
+    { tasks: 4, amplitude: 100, width: 40 },
+    { tasks: 4, amplitude: 150, width: 30 },
+    { tasks: 4, amplitude: 200, width: 20 },
+    { tasks: 4, amplitude: 300, width: 10 }
 ]
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -133,6 +133,9 @@ function on_middle_click() {
     draw_circle(debug_context, get_last_click_position(), 2, '#ffffff', false, true);
 
     let on_target = evaluate_one_dimensional_click_accuracy();
+    if (on_target && task_index === 0) {
+        start_calculating_velocity();
+    }
     if (on_target && task_index > 0) {
         calculate_throughput();
     }
@@ -145,6 +148,7 @@ function on_middle_click() {
 function scroll(event) {
     update_scroll_position(event.deltaY);
     render_targets();
+    calculate_velocity();
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------PROGRESS EVALUATION
@@ -517,7 +521,6 @@ function update_section_index(){
     cache_performance_data();
     section_index++;
     clear_canvas(debug_context, debug_canvas);
-    
     if (should_move_to_next_section()) {
         stop_calculating_polling_rate();
         stop_calculating_velocity();
@@ -1117,7 +1120,6 @@ let error_rate = 0;
 const total_error_threshold = .4;
 function evaluate_error_rate() {
     error_rate = error_count / total_task_count;
-    console.log(error_rate);
     if (error_rate > total_error_threshold) {
         display_error_restart_screen();
     }
@@ -1255,7 +1257,7 @@ let sampled_velocities = [];
 let should_calculate_velocity = false;
 function start_calculating_velocity(){
     should_calculate_velocity = true;
-    last_cursor_position = mouse_position;
+    last_cursor_position = get_user_input_position();
     last_velocity_stamp = performance.now();
     sampled_velocities = [];
 }
@@ -1274,7 +1276,7 @@ function stop_calculating_velocity() {
 function calculate_velocity() {
     if (!should_calculate_velocity) return;
     let current_velocity_stamp = performance.now();
-    let current_mouse_position = mouse_position;
+    let current_mouse_position = get_user_input_position();
     let distance_travelled = distance_between_points(last_cursor_position, current_mouse_position);
     let velocity = distance_travelled / (current_velocity_stamp - last_velocity_stamp);
     sampled_velocities.push(velocity);
