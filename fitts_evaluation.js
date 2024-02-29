@@ -377,11 +377,12 @@ function generate_reciprocal_two_dimensional_targets(section){
 }
 function generate_random_two_dimensional_targets(section){
     let size = section.size;
+    let horizontal_skew = (fitts_canvas.height / dpr) * .3;
     let border = {
         x_max: (fitts_canvas.width / dpr) - size,
         x_min: size,
-        y_max: (fitts_canvas.height / dpr) - size,
-        y_min: size
+        y_max: ((fitts_canvas.height / dpr) - size - horizontal_skew),
+        y_min: (size + horizontal_skew) 
     }
     let start_point = get_center();
     targets.push({
