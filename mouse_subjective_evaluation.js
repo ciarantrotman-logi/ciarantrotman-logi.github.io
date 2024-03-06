@@ -44,15 +44,15 @@ function previous_section(){
     scroll_to_top();
 }
 function clamp_index(){
-    index = clamp(index, 0, sections.length - 1);
+    index = clamp(index, 0, standard_evaluation_sections.length - 1);
 }
 function manage_section(){
-    next_button.disabled = index === sections.length - 1;
+    next_button.disabled = index === standard_evaluation_sections.length - 1;
     previous_button.disabled = index === 0;
-    submit_button.style.display = index !== sections.length - 1 ? "none" : "block";
-    for (let i = 0; i < sections.length; i++) {
-        document.getElementById(sections[i].id).style.display = i === index ? "block" : "none";
-        let indicator = document.getElementById(`${sections[i].id.toString()}-indicator`);
+    submit_button.style.display = index !== standard_evaluation_sections.length - 1 ? "none" : "block";
+    for (let i = 0; i < standard_evaluation_sections.length; i++) {
+        document.getElementById(standard_evaluation_sections[i].id).style.display = i === index ? "block" : "none";
+        let indicator = document.getElementById(`${standard_evaluation_sections[i].id.toString()}-indicator`);
         if (i === index) {
             indicator.classList.add('current');
             indicator.classList.remove('completed', 'uncompleted');
@@ -68,7 +68,7 @@ function manage_section(){
 /*
 Evaluation Metrics
 */
-let sections = [
+let standard_evaluation_sections = [
     {   id: 'tlx-m',
         metrics: [
             {id: "tlx-m-mental-demand"},
@@ -217,6 +217,70 @@ let sections = [
         ],
         range: {min: -2, max: 2, value: 0}}
 ]
+let gliding_specific_sections = [
+    {   id: 'umux-g',
+        metrics: [
+            {id: "umux-g-effectiveness"},
+            {id: "umux-g-satisfaction"},
+            {id: "umux-g-usability"},
+            {id: "umux-g-efficiency"},
+        ],
+        range: {min: -2, max: 2, value: 0}},
+    {   id: 'usability-g*',
+        metrics: [
+            {id: "usability-g*-control-general"},
+            {id: "usability-g*-control-starting"},
+            {id: "usability-g*-control-stopping"},
+            {id: "usability-g*-precision-local"},
+            {id: "usability-g*-precision-global"},
+            {id: "usability-g*-directionality-symmetry"},
+            {id: "usability-g*-directionality-horizontal"},
+            {id: "usability-g*-directionality-vertical"},
+        ],
+        range: {min: -3, max: 3, value: 0}},
+    {   id: 'usability-g',
+        metrics: [
+            {id: "usability-g-fast"},
+            {id: "usability-g-laborious"},
+            {id: "usability-g-heavy"},
+            {id: "usability-g-unstable"},
+            {id: "usability-g-unresponsive"},
+            {id: "usability-g-inconsistent"},
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'timbre-g',
+        metrics: [
+            {id: "timbre-g-loud"},
+            {id: "timbre-g-pleasant"},
+            {id: "timbre-g-premium"},
+            {id: "timbre-g-satisfying"},
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'tactility-g',
+        metrics: [
+            {id: "tactility-g-rough"},
+            {id: "tactility-g-sticky"},
+            {id: "tactility-g-hard"},
+            {id: "tactility-g-pleasant"},
+            {id: "tactility-g-premium"},
+            {id: "tactility-g-satisfying"},
+        ],
+        range: {min: -50, max: 50, value: 0}},
+    {   id: 'attrakdiff-g',
+        metrics: [
+            {id: "attrakdiff-g-p-simple"},
+            {id: "attrakdiff-g-a-attractive"},
+            {id: "attrakdiff-g-p-practical"},
+            {id: "attrakdiff-g-h-stylish"},
+            {id: "attrakdiff-g-p-predictable"},
+            {id: "attrakdiff-g-h-premium"},
+            {id: "attrakdiff-g-h-imaginative"},
+            {id: "attrakdiff-g-a-good"},
+            {id: "attrakdiff-g-p-structured"},
+            {id: "attrakdiff-g-h-captivating"}
+        ],
+        range: {min: -3, max: 3, value: 0}}
+]
 /*
 URL Parsing
  */
@@ -225,40 +289,41 @@ let url = new URL(window.location.href);
 let disable_timbre = url.searchParams.get("disable_timbre") !== null;
 let disable_tactility = url.searchParams.get("disable_tactility") !== null;
 let disable_glide = url.searchParams.get("disable_glide") !== null;
+let gliding_only = url.searchParams.get("gliding_only") !== null;
 let filtered_sections = [];
-sections.forEach(section =>{
-    switch (section.id) {
-        case 'glide-m':
-            if (!disable_glide){
+
+if (gliding_only){
+    standard_evaluation_sections = gliding_specific_sections;
+} else {
+    standard_evaluation_sections.forEach(section =>{
+        switch (section.id) {
+            case 'glide-m':
+                if (!disable_glide){
+                    filtered_sections.push(section);
+                } break;
+            case 'timbre-m':
+                if (!disable_timbre){
+                    filtered_sections.push(section);
+                } break;
+            case 'timbre-m*':
+                if (!disable_timbre){
+                    filtered_sections.push(section);
+                } break;
+            case 'tactility-m':
+                if (!disable_tactility){
+                    filtered_sections.push(section);
+                } break;
+            case 'tactility-m*':
+                if (!disable_tactility){
+                    filtered_sections.push(section);
+                } break;
+            default:
                 filtered_sections.push(section);
-            }
-            break;
-        case 'timbre-m':
-            if (!disable_timbre){
-                filtered_sections.push(section);
-            }
-            break;
-        case 'timbre-m*':
-            if (!disable_timbre){
-                filtered_sections.push(section);
-            }
-            break;
-        case 'tactility-m':
-            if (!disable_tactility){
-                filtered_sections.push(section);
-            }
-            break;
-        case 'tactility-m*':
-            if (!disable_tactility){
-                filtered_sections.push(section);
-            }
-            break;
-        default:
-            filtered_sections.push(section);
-            break;
-    }
-});
-sections = filtered_sections;
+                break;
+        }
+    });
+    standard_evaluation_sections = filtered_sections;
+}
 /*
 Procedural Generation
 */
@@ -278,7 +343,7 @@ function build_slider(slider, section){
 function construct_page(){
     let progression_indicators = document.getElementById('progression-indicators');
     let index = 1;
-    sections.forEach(section => {
+    standard_evaluation_sections.forEach(section => {
         let base_id = section.id.toString();
         let marker = construct_element_with_id("p", `${base_id}-indicator`, 'section-indicator');
         marker.innerHTML = `${index}`;
@@ -286,7 +351,7 @@ function construct_page(){
         index++;
     })
     let i = 1;
-    sections.forEach(section =>{
+    standard_evaluation_sections.forEach(section =>{
         let container = document.createElement("div");
         let sticky_header = document.createElement("div");
 
@@ -367,7 +432,7 @@ function cache_submission_time(){
     sessionStorage.setItem('evaluation-second', new Date().getUTCSeconds().toString());
 }
 function cache_evaluation_metric_data(){
-    sections.forEach(section => {
+    standard_evaluation_sections.forEach(section => {
         section.metrics.forEach( metric => {
             sessionStorage.setItem(metric.id, document.getElementById(metric.id).value);
         })

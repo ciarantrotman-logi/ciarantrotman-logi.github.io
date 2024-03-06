@@ -88,6 +88,40 @@ let one_dimensional_evaluation_sections = [
     { tasks: 4, amplitude: 300, width: 10 }
 ]
 /*
+------------------------------------------------------------------------------------------------------------------------URL PARSING
+*/
+let url = new URL(window.location.href);
+let debug_check = url.searchParams.get('debug') !== null;
+let full_analytics = url.searchParams.get('analytics') !== null;
+let gliding_only = url.searchParams.get("gliding_only") !== null;
+let query_string = "";
+extract_query_parameters(url.toString());
+function extract_query_parameters(url_string) {
+    let question_mark_index = url_string.indexOf("?");
+    if (question_mark_index !== -1) {
+        query_string = '?';
+        query_string += url_string.substring(question_mark_index + 1);
+    }
+}
+/*
+------------------------------------------------------------------------------------------------------------------------MANAGE ADDITIONAL STATES
+*/
+debug_canvas.style.display = debug_check
+    ? 'block'
+    : 'none';
+console.log(debug_check
+    ? 'Debug Visualisations Enabled'
+    : 'Debug Visualisations Disabled');
+console.log(full_analytics
+    ? 'Full Analytics Enabled'
+    : 'Full Analytics Disabled');
+console.log(gliding_only
+    ? 'Only 2D Evaluation Tasks'
+    : 'All Evaluation Tasks');
+if (gliding_only){
+    document.getElementById('fe-intro-explainer-third-task').style.display = 'none';
+}
+/*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
 */
 function trace(event) {
@@ -163,6 +197,7 @@ function calculate_total_task_count(){
         total_task_count += task.points; // Once for reciprocal task
         total_task_count += task.points; // Once for random task
     });
+    if (gliding_only) return;
     one_dimensional_evaluation_sections.forEach(function (task) {
         total_task_count += task.tasks;
     });
@@ -556,6 +591,11 @@ function get_next_evaluation_type() {
             evaluation_type = evaluation_types.random_targets_two_dimensional;
             break;
         case evaluation_types.random_targets_two_dimensional:
+            if (gliding_only) {
+                hide_everything();
+                finish_fitts_evaluation();
+                break;
+            }
             evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
             break;
         case evaluation_types.reciprocal_targets_one_dimensional:
@@ -576,6 +616,9 @@ function finish_fitts_evaluation(){
     } else {
         load_subjective_evaluation();
     }
+}
+function hide_everything(){
+    document.getElementById('body').style.display = 'none';
 }
 function show_download_buffer(){
     help_box_element.style.display = 'none';
@@ -1322,32 +1365,6 @@ function calculate_velocity_data() {
         };
     }
 }
-/*
-------------------------------------------------------------------------------------------------------------------------URL PARSING
-*/
-let url = new URL(window.location.href);
-let debug_check = url.searchParams.get('debug') !== null;
-let full_analytics = url.searchParams.get('analytics') !== null;
-let query_string = "";
-extract_query_parameters(url.toString());
-function extract_query_parameters(url_string) {
-    let question_mark_index = url_string.indexOf("?");
-    if (question_mark_index !== -1) {
-        query_string = url_string.substring(question_mark_index + 1);
-    }
-}
-/*
-------------------------------------------------------------------------------------------------------------------------MANAGE ADDITIONAL STATES
-*/
-debug_canvas.style.display = debug_check
-    ? 'block'
-    : 'none';
-console.log(debug_check
-    ? 'Debug Visualisations Enabled'
-    : 'Debug Visualisations Disabled');
-console.log(full_analytics 
-    ? 'Full Analytics Enabled'
-    : 'Full Analytics Disabled');
 /*
 ------------------------------------------------------------------------------------------------------------------------DATABASE DECLARATION
 */

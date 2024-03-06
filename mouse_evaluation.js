@@ -20,7 +20,8 @@ extract_query_parameters(url.toString());
 function extract_query_parameters(url_string) {
     let question_mark_index = url_string.indexOf("?");
     if (question_mark_index !== -1) {
-        query_string = url_string.substring(question_mark_index + 1);
+        query_string = '?';
+        query_string += url_string.substring(question_mark_index + 1);
     }
 }
 console.log(`User ID = ${user_index}`);
@@ -41,7 +42,7 @@ function proceed_to_fitts_evaluation(){
     cache_session_storage();
     cache_system_information();
     submitted = true;
-    window.location.href = `fitts_evaluation.html?${query_string}`
+    window.location.href = `fitts_evaluation.html${query_string}`
 }
 /*
 Session Storage Management
