@@ -1,194 +1,184 @@
-function onContinue(){
+function on_continue(){
     document.getElementById('introduction').style.display = "none";
     document.getElementById('metric-area').style.display = "block";
 }
 
-let evaluationArea = document.getElementById('evaluation-area');
+let evaluation_section_area = document.getElementById('evaluation-area');
+let progress_bar = document.getElementById('progress-bar');
 
 let sections = [
-    {   header: 'Cognitive Load',
-        introduction: 'This first section is focused on understanding how <b>easy or difficult you found the evaluation task</b> with this keyboard.',
-        instructions: 'Select using the sliders below the rating you consider the most appropriate for each statement.',
-        id: 'task-load-index',
+    {   id: 'tlx-k',
         metrics: [
-            {id: "tlx-mental-demand"},
-            {id: "tlx-physical-demand"},
-            {id: "tlx-temporal-demand"},
-            {id: "tlx-performance"},
-            {id: "tlx-effort"},
-            {id: "tlx-frustration"}
+            {id: "tlx-k-mental-demand"},
+            {id: "tlx-k-physical-demand"},
+            {id: "tlx-k-temporal-demand"},
+            {id: "tlx-k-performance"},
+            {id: "tlx-k-effort"},
+            {id: "tlx-k-frustration"}
         ],
         range: {min: -10, max: 10, value: 0}},
-    {   header: 'Usability',
-        introduction: 'Next, we want to get understand how <b>how you found using this keyboard</b> during the evaluation.',
-        instructions: 'Select using the sliders below the rating you consider the most appropriate for each statement.',
-        id: 'keyboard-usability-score',
+    {   id: 'umux-k',
         metrics: [
-            {id: "umux-p-functionality"},
-            {id: "umux-n-frustration"},
-            {id: "umux-p-easiness"},
-            {id: "umux-n-difficulty"},
+            {id: "umux-k-functionality"},
+            {id: "umux-k-frustration"},
+            {id: "umux-k-easiness"},
+            {id: "umux-k-difficulty"},
             {id: "umux-k-legibility"},
             {id: "umux-k-ergonomics"},
             {id: "umux-k-satisfaction"}
         ],
         range: {min: -2, max: 2, value: 0}},
-    {   header: 'Immersion',
-        introduction: 'Now we want to get a quick insight into how <b>immersed you were</b> while you were doing this evaluation.',
-        instructions: 'Select using the sliders below the rating you consider the most appropriate for each statement.',
-        id: 'flow-short-scale',
+    {   id: 'attrakdiff-k',
         metrics: [
-            {id: "fss-aba-challenge"},
-            {id: "fss-fp-fluidity"},
-            {id: "fss-aba-temporality"},
-            {id: "fss-fp-concentration"},
-            {id: "fss-fp-clarity"},
-            {id: "fss-aba-absorption"},
-            {id: "fss-fp-autonomy"},
-            {id: "fss-fp-confidence"},
-            {id: "fss-fp-control"},
-            {id: "fss-aba-thought"}
+            {id: "attrakdiff-k-p-simple"},
+            {id: "attrakdiff-k-a-attractive"},
+            {id: "attrakdiff-k-p-practical"},
+            {id: "attrakdiff-k-h-stylish"},
+            {id: "attrakdiff-k-p-predictable"},
+            {id: "attrakdiff-k-h-premium"},
+            {id: "attrakdiff-k-h-imaginative"},
+            {id: "attrakdiff-k-a-good"},
+            {id: "attrakdiff-k-p-structured"},
+            {id: "attrakdiff-k-h-captivating"}
         ],
-        range: {min: -2, max: 2, value: 0}},
-    {   header: 'Acoustics',
-        introduction: 'This next section looks at what your impressions of the <b>sound of the keyboard</b> are.',
-        instructions: 'Select using the sliders below the rating you consider the most appropriate for the acoustics of the keyboard you are evaluating.',
-        id: 'timbre-semantic-pairs',
+        range: {min: -3, max: 3, value: 0}},
+    {   id: 'timbre-k',
         metrics: [
-            {id: "timbre-calmness"},
-            {id: "timbre-pleasantness"},
-            {id: "timbre-smoothness"},
-            {id: "timbre-harmoniousness"},
-            {id: "timbre-gentleness"},
-            {id: "timbre-sharpness"},
-            {id: "timbre-loudness"},
-            {id: "timbre-pitch"},
-            {id: "timbre-thickness"},
-            {id: "timbre-weakness"},
-            {id: "timbre-metallicness"},
-            {id: "timbre-harshness"},
-            {id: "timbre-beauty"},
-            {id: "timbre-keyboard-premiumness"},
-            {id: "timbre-keyboard-satisfaction"}
+            {id: "timbre-k-hard"},
+            {id: "timbre-k-loud"},
+            {id: "timbre-k-powerful"},
+            {id: "timbre-k-harsh"},
+            {id: "timbre-k-high"},
+            {id: "timbre-k-deep"},
+            {id: "timbre-k-pleasant"},
+            {id: "timbre-k-harmonious"},
+            {id: "timbre-k-beautiful"},
+            {id: "timbre-k-rough"},
+            {id: "timbre-k-dull"},
+            {id: "timbre-k-thick"},
+            {id: "timbre-k-grating"},
+            {id: "timbre-k-premium"},
+            {id: "timbre-k-satisfying"},
         ],
         range: {min: -50, max: 50, value: 0}},
-    {   header: 'Tactile Feedback',
-        introduction: 'Next, we want a sense of what your impressions of the <b>tactile feedback from the keyboard</b> are.',
-        instructions: 'Select using the sliders below the rating you consider the most appropriate for the click feel of the keyboard you are evaluating.',
-        id: 'haptic-semantic-pairs',
+    {   id: 'tactility-k',
         metrics: [
-            {id: "haptic-pleasantness"},
-            {id: "haptic-comfort"},
-            {id: "haptic-satisfaction"},
-            {id: "haptic-heaviness"},
-            {id: "haptic-strength"},
-            {id: "haptic-distinctness"},
-            {id: "haptic-sharpness"},
-            {id: "haptic-stability"},
-            {id: "haptic-premiumness"}
+            {id: "tactility-k-comfortable"},
+            {id: "tactility-k-heavy"},
+            {id: "tactility-k-strong"},
+            {id: "tactility-k-distinct"},
+            {id: "tactility-k-sharp"},
+            {id: "tactility-k-stable"},
+            {id: "tactility-k-pleasant"},
+            {id: "tactility-k-premium"},
+            {id: "tactility-k-satisfying"},
         ],
         range: {min: -50, max: 50, value: 0}},
-    {   header: 'Touch and Feel',
-        introduction: 'Now we want a quick sense of your thoughts on the <b>touch and feel of the keys</b> on this keyboard.',
-        instructions: 'Select using the sliders below the rating you consider the most appropriate for the feeling of keys on the keyboard you are evaluating.',
-        id: 'somatosensory-semantic-pairs',
+    {   id: 'ergo-m',
         metrics: [
-            {id: "somatosensory-smoothness"},
-            {id: "somatosensory-stickiness"},
-            {id: "somatosensory-softness"},
-            {id: "somatosensory-coldness"},
-            {id: "somatosensory-flexibility"}
+            {id: "ergo-m-smoothness"},
+            {id: "ergo-m-stickiness"},
+            {id: "ergo-m-softness"},
+            {id: "ergo-m-coldness"},
+            {id: "ergo-m-flexibility"}
         ],
         range: {min: -50, max: 50, value: 0}},
-    {   header: 'Design and Aesthetics',
-        introduction: 'Then finally, we want to get a sense of your perception of the <b>design and aesthetics</b> of this keyboard.',
-        instructions: 'Select using the sliders below the rating you consider the most appropriate for the keyboard you are evaluating.',
-        id: 'hedonistic-pragmatic-usability',
+    {   id: 'fss-k',
         metrics: [
-            {id: "attrakdiff-p-simple"},
-            {id: "attrakdiff-a-attractive"},
-            {id: "attrakdiff-p-practical"},
-            {id: "attrakdiff-h-stylish"},
-            {id: "attrakdiff-p-predictable"},
-            {id: "attrakdiff-h-premiumn"},
-            {id: "attrakdiff-h-creative"},
-            {id: "attrakdiff-a-good"},
-            {id: "attrakdiff-p-structure"},
-            {id: "attrakdiff-h-captivating"}
+            {id: "fss-k-a-challenge"},
+            {id: "fss-k-f-fluidity"},
+            {id: "fss-k-a-temporality"},
+            {id: "fss-k-f-concentration"},
+            {id: "fss-k-f-clarity"},
+            {id: "fss-k-a-absorption"},
+            {id: "fss-k-f-autonomy"},
+            {id: "fss-k-f-confidence"},
+            {id: "fss-k-f-control"},
+            {id: "fss-k-a-thought"}
         ],
-        range: {min: -3, max: 3, value: 0}
-    }
+        range: {min: -2, max: 2, value: 0}}
 ]
 
-constructPage();
 
-function constructElementWithID(tag, id){
+function construct_element_with_id(tag, id, class_name){
     let element = document.createElement(tag);
     element.id = id;
+    element.className = class_name;
     return element;
 }
 
-function constructPage(){
-    let container = document.getElementById('progression-indicators');
+function build_slider(slider, section){
+    slider.type = "range";
+    slider.className = "slider";
+    slider.min = section.range.min;
+    slider.max = section.range.max;
+    slider.value = section.range.value;
+}
+
+function construct_page(){
+    let progression_indicators = document.getElementById('progression-indicators');
+    let index = 1;
     sections.forEach(section => {
-        let marker = document.createElement("p");
-        let baseID = section.id.toString();
-        marker.id = `${baseID}-indicator`;
-        container.appendChild(marker);
+        let base_id = section.id.toString();
+        let marker = construct_element_with_id("p", `${base_id}-indicator`, 'section-indicator');
+        marker.innerHTML = `${index}`;
+        progression_indicators.appendChild(marker);
+        index++;
     })
-    
     let i = 1;
     sections.forEach(section =>{
         let container = document.createElement("div");
-        let baseID = section.id.toString();
-        container.id = baseID;
-        
-        let header = constructElementWithID("h2", `${baseID}-header`);
-        let introduction = constructElementWithID("p", `${baseID}-introduction`);
-        let instructions = constructElementWithID("i", `${baseID}-instruction`);
-        
+        let sticky_header = document.createElement("div");
+
+        sticky_header.classList.add('sticky-header');
+
+        let base_id = section.id.toString();
+        container.id = base_id;
+
+        let header = construct_element_with_id("h2", `${base_id}-header`);
+        let introduction = construct_element_with_id("p", `${base_id}-introduction`);
+        let instructions = construct_element_with_id("i", `${base_id}-instruction`);
+        instructions.style.fontSize = 'small';
+
+        header.innerHTML = header.id;
+        introduction.innerHTML = introduction.id;
+        instructions.innerHTML = instructions.id;
+
         let divider = document.createElement("div");
         divider.innerHTML = "<br><hr><br>";
-        
-        container.appendChild(header);
-        container.appendChild(introduction);
-        container.appendChild(instructions);
+
+        container.appendChild(sticky_header);
         container.appendChild(divider);
-        
-        section.metrics.forEach(metric =>{
-            let element = document.createElement("div");
-            let description = document.createElement("div");
-            let input = document.createElement("input");
-            let labels = document.createElement("div");
-            let left = document.createElement("label");
-            let right = document.createElement("label");
-            
-            let baseID = metric.id.toString();
 
-            input.id = baseID;
-            input.type = "range";
-            input.className = "slider";
-            input.min = section.range.min;
-            input.max = section.range.max;
-            input.value = section.range.value;
+        sticky_header.appendChild(header);
+        sticky_header.appendChild(introduction);
+        sticky_header.appendChild(instructions);
 
-            description.id = `${baseID}-description`;
-            left.id = `${baseID}-low`;
-            right.id = `${baseID}-high`;
+        section.metrics.forEach(metric => {
+            let base_id = metric.id.toString();
 
-            labels.className = "label-container";
-            left.className = "left-label";
-            right.className = "right-label";
+            let element = construct_element_with_id("div", `${base_id}-container`);
+            let description = construct_element_with_id("div", `${base_id}-description`);
+            let low_label = construct_element_with_id("div", `${base_id}-low`, "left-label");
+            let high_label = construct_element_with_id("div", `${base_id}-high`, "right-label");
+            let label_container = construct_element_with_id("div", `${base_id}-label-container`, "label-container");
+            let metric_slider = construct_element_with_id("input", `${base_id}`);
 
-            labels.appendChild(left);
-            labels.appendChild(right);
+            build_slider(metric_slider, section);
+
+            description.innerHTML = description.id;
+            low_label.innerHTML = low_label.id;
+            high_label.innerHTML = high_label.id;
+
+            label_container.appendChild(low_label);
+            label_container.appendChild(high_label);
 
             element.appendChild(description);
-            element.appendChild(input);
-            element.appendChild(labels);
+            element.appendChild(metric_slider);
+            element.appendChild(label_container);
             container.appendChild(element);
         })
-        evaluationArea.appendChild(container);
+        evaluation_section_area.appendChild(container);
         i++;
     })
 }
@@ -199,40 +189,39 @@ let submitButton = document.getElementById('subjective-evaluation-submit');
 
 let index = 0;
 
-function nextSection(){
+function next_section(){
     index++;
-    index = clamp(index, 0, sections.length - 1);
-    manageSection();
+    clamp_index();
+    manage_section();
+    scroll_to_top();
 }
-function previousSection(){
+function previous_section(){
     index--;
-    index = clamp(index, 0, sections.length - 1);
-    manageSection();
+    clamp_index();
+    manage_section();
+    scroll_to_top();
 }
 
-function manageSection(){
+function clamp_index(){
+    index = clamp(index, 0, sections.length - 1);
+}
+
+function manage_section(){
     nextButton.disabled = index === sections.length - 1;
     previousButton.disabled = index === 0;
-
     submitButton.style.display = index !== sections.length - 1 ? "none" : "block";
-
     for (let i = 0; i < sections.length; i++) {
         document.getElementById(sections[i].id).style.display = i === index ? "block" : "none";
         let indicator = document.getElementById(`${sections[i].id.toString()}-indicator`);
-        if (i === index){
-            indicator.classList.add('current-section');
-            indicator.classList.remove('completed-section');
-            indicator.classList.remove('uncompleted-section');
-        }
-        else if (i < index){
-            indicator.classList.add('completed-section');
-            indicator.classList.remove('current-section');
-            indicator.classList.remove('uncompleted-section');
-        }
-        else {
-            indicator.classList.add('uncompleted-section');
-            indicator.classList.remove('completed-section');
-            indicator.classList.remove('current-section');
+        if (i === index) {
+            indicator.classList.add('current');
+            indicator.classList.remove('completed', 'uncompleted');
+        } else if (i < index) {
+            indicator.classList.add('completed');
+            indicator.classList.remove('current', 'uncompleted');
+        } else {
+            indicator.classList.add('uncompleted');
+            indicator.classList.remove('completed', 'current');
         }
     }
 }
@@ -251,12 +240,12 @@ function submit(){
             sessionStorage.setItem(metric.id, document.getElementById(metric.id).value);
         })
     })
-    downloadData();
+    download_data();
 }
 
 let submitted = false;
 
-function downloadData() {
+function download_data() {
     const data = sessionStorage;
     let stamp = Date.now().toString();
     database.ref(stamp).set(data)
@@ -267,12 +256,12 @@ function downloadData() {
         .catch(function(error) {
             document.getElementById("finish-screen").innerHTML =
                 "Thank you for participating in this user test, please download this .JSON file and send it to the facilitator.";
-            manualDownload(data);
+            manual_download(data);
         });
     submitted = true;
 }
 
-function manualDownload(data){
+function manual_download(data){
     const json = {};
     Object.keys(data).forEach(key => {
         json[key] = data[key];
@@ -295,20 +284,32 @@ window.addEventListener('beforeunload', function (event) {
         return warningMessage;
     }
 });
-
-firebase.initializeApp(firebaseConfig);
-let database = firebase.database();
-
+/*
+Utility Functions
+*/
 function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
 }
-manageSection();
-// checkData();
-/*function checkData(){
-    let check = sessionStorage.getItem('user-information-check');
-    console.log(`check is ${check}`);
-    if (check !== 'true'){
-        submitted = true;
-        window.location.href = "https://ciarantrotman-logi.github.io/";
-    }
-}*/
+function scroll_to_top() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+window.addEventListener('scroll', calculate_progress_bar_width);
+function calculate_progress_bar_width(){
+    const scroll_top = document.documentElement.scrollTop;
+    const scroll_height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (scroll_top / scroll_height) * 100;
+    progress_bar.style.width = progress + '%';
+}
+/*
+Database Initialisation
+*/
+firebase.initializeApp(firebaseConfig);
+let database = firebase.database();
+/*
+Page Construction
+*/
+construct_page();
+manage_section();

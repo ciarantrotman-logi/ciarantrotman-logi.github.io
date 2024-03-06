@@ -73,7 +73,7 @@ html, body {
 }
 
 .section-indicator.completed{
-  border: 1px solid lightgrey;
+  border: 2px solid lightgrey;
   background-color: #fafafa;
   color: lightgrey;
   font-weight: bold;
@@ -88,12 +88,44 @@ html, body {
   font-weight: bolder;
 }
 .section-indicator.uncompleted{
-  border: 1px solid lightgrey;
+  border: 2px solid lightgrey;
   color: lightgrey;
   font-weight: normal;
   font-size: x-small;
   width: 18px;
   height: 18px;
+}
+
+.section-indicator.active{
+  border: 2px solid darkslategrey;
+  border-radius: 5px;
+  color: darkslategrey;
+  font-weight: bolder;
+}
+.section-indicator.inactive{
+  border: 2px solid lightgrey;
+  color: lightgrey;
+  font-weight: normal;
+  font-size: x-small;
+  width: 18px;
+  height: 18px;
+}
+.section-indicator.target{
+  border: 2px solid orangered;
+  color: orangered;
+  font-weight: bolder;
+  font-size: x-small;
+  width: 18px;
+  height: 18px;
+}
+.section-indicator.correct{
+  border: 2px solid green;
+  border-radius: 5px;
+  color: green;
+  font-size: small;
+  font-weight: bolder;
+  width: 24px;
+  height: 24px;
 }
 
 .progression-buttons {

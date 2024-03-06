@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DTX2L7SXR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5DTX2L7SXR');
+    </script>
+    <meta charset="UTF-8">
+    <title>Mouse Evaluation Task</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon_mouse.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body id="body">
+<div class="evaluation-block">
+    <div id="localised-block" style="display: none">
+        <label for="locale"></label>
+        <select id="locale" class="locale-selector" onchange="localise(value)">
+            <option value="en-us" selected>English</option>
+        </select>
+        <h1 id="me-header"></h1>
+        <div id="evaluation-task" style="justify-content: center; align-items: center; display: flex;">
+        <div class="progression-buttons" id="task-elements" style="display: flex"></div>
+        </div>
+    </div>
+</div>
+<script src="/quantised_scroll_evaluation.js"></script>
+<script src="/localisation.js"></script>
+</body>
+</html>
