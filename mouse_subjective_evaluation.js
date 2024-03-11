@@ -260,6 +260,7 @@ let gliding_specific_sections = [
         metrics: [
             {id: "tactility-g-rough"},
             {id: "tactility-g-sticky"},
+            {id: "tactility-g-firm"},
             {id: "tactility-g-hard"},
             {id: "tactility-g-pleasant"},
             {id: "tactility-g-premium"},

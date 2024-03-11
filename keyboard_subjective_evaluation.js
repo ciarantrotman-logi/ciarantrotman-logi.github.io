@@ -14,7 +14,7 @@ let sections = [
             {id: "tlx-k-temporal-demand"},
             {id: "tlx-k-performance"},
             {id: "tlx-k-effort"},
-            {id: "tlx-k-frustration"}
+            {id: "tlx-k-frustration"},
         ],
         range: {min: -10, max: 10, value: 0}},
     {   id: 'umux-k',
@@ -74,13 +74,16 @@ let sections = [
             {id: "tactility-k-satisfying"},
         ],
         range: {min: -50, max: 50, value: 0}},
-    {   id: 'ergo-m',
+    {   id: 'ergo-k',
         metrics: [
-            {id: "ergo-m-smoothness"},
-            {id: "ergo-m-stickiness"},
-            {id: "ergo-m-softness"},
-            {id: "ergo-m-coldness"},
-            {id: "ergo-m-flexibility"}
+            {id: "ergo-k-smooth"},
+            {id: "ergo-k-sticky"},
+            {id: "ergo-k-soft"},
+            {id: "ergo-k-cold"},
+            {id: "ergo-k-flexible"},
+            {id: "ergo-k-pleasant"},
+            {id: "ergo-k-premium"},
+            {id: "ergo-k-satisfying"}
         ],
         range: {min: -50, max: 50, value: 0}},
     {   id: 'fss-k',

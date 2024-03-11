@@ -262,3 +262,8 @@ html, body {
   background-color: #f3f3f3;
   z-index: 20;
 }
+
+.rounded-image {
+  border-radius: 16px;
+  border: 2px solid black;
+}
