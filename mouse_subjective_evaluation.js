@@ -291,38 +291,60 @@ let disable_timbre = url.searchParams.get("disable_timbre") !== null;
 let disable_tactility = url.searchParams.get("disable_tactility") !== null;
 let disable_glide = url.searchParams.get("disable_glide") !== null;
 let gliding_only = url.searchParams.get("gliding_only") !== null;
+let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
 let filtered_sections = [];
 
 if (gliding_only){
     standard_evaluation_sections = gliding_specific_sections;
 } else {
-    standard_evaluation_sections.forEach(section =>{
-        switch (section.id) {
-            case 'glide-m':
-                if (!disable_glide){
+    if (premium_keycaps){
+        standard_evaluation_sections.forEach(section => {
+            switch (section.id) {
+                case 'attrakdiff-m':
                     filtered_sections.push(section);
-                } break;
-            case 'timbre-m':
-                if (!disable_timbre){
+                    break;
+                case 'ergo-m':
                     filtered_sections.push(section);
-                } break;
-            case 'timbre-m*':
-                if (!disable_timbre){
+                    break;
+                case 'timbre-m':
                     filtered_sections.push(section);
-                } break;
-            case 'tactility-m':
-                if (!disable_tactility){
+                    break;
+                case 'tactility-m':
                     filtered_sections.push(section);
-                } break;
-            case 'tactility-m*':
-                if (!disable_tactility){
+                    break;
+                default:
+                    break;
+            }
+        });
+    } else {
+        standard_evaluation_sections.forEach(section =>{
+            switch (section.id) {
+                case 'glide-m':
+                    if (!disable_glide){
+                        filtered_sections.push(section);
+                    } break;
+                case 'timbre-m':
+                    if (!disable_timbre){
+                        filtered_sections.push(section);
+                    } break;
+                case 'timbre-m*':
+                    if (!disable_timbre){
+                        filtered_sections.push(section);
+                    } break;
+                case 'tactility-m':
+                    if (!disable_tactility){
+                        filtered_sections.push(section);
+                    } break;
+                case 'tactility-m*':
+                    if (!disable_tactility){
+                        filtered_sections.push(section);
+                    } break;
+                default:
                     filtered_sections.push(section);
-                } break;
-            default:
-                filtered_sections.push(section);
-                break;
-        }
-    });
+                    break;
+            }
+        });
+    }
     standard_evaluation_sections = filtered_sections;
 }
 /*

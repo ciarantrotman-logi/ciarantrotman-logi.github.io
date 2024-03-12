@@ -94,6 +94,10 @@ let url = new URL(window.location.href);
 let debug_check = url.searchParams.get('debug') !== null;
 let full_analytics = url.searchParams.get('analytics') !== null;
 let gliding_only = url.searchParams.get("gliding_only") !== null;
+let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
+
+let no_scrolling = gliding_only || premium_keycaps;
+
 let query_string = "";
 extract_query_parameters(url.toString());
 function extract_query_parameters(url_string) {
@@ -115,10 +119,10 @@ console.log(debug_check
 console.log(full_analytics
     ? 'Full Analytics Enabled'
     : 'Full Analytics Disabled');
-console.log(gliding_only
+console.log(no_scrolling
     ? 'Only 2D Evaluation Tasks'
     : 'All Evaluation Tasks');
-if (gliding_only){
+if (no_scrolling){
     document.getElementById('fe-intro-explainer-third-task').style.display = 'none';
 }
 /*
@@ -197,7 +201,7 @@ function calculate_total_task_count(){
         total_task_count += task.points; // Once for reciprocal task
         total_task_count += task.points; // Once for random task
     });
-    if (gliding_only) return;
+    if (no_scrolling) return;
     one_dimensional_evaluation_sections.forEach(function (task) {
         total_task_count += task.tasks;
     });
@@ -591,7 +595,7 @@ function get_next_evaluation_type() {
             evaluation_type = evaluation_types.random_targets_two_dimensional;
             break;
         case evaluation_types.random_targets_two_dimensional:
-            if (gliding_only) {
+            if (no_scrolling) {
                 hide_everything();
                 finish_fitts_evaluation();
                 break;
