@@ -46,7 +46,7 @@ function previous_section(){
 function clamp_index(){
     index = clamp(index, 0, standard_evaluation_sections.length - 1);
 }
-function manage_section(){
+function manage_section() {
     next_button.disabled = index === standard_evaluation_sections.length - 1;
     previous_button.disabled = index === 0;
     submit_button.style.display = index !== standard_evaluation_sections.length - 1 ? "none" : "block";
@@ -510,6 +510,9 @@ function calculate_progress_bar_width(){
     const progress = (scroll_top / scroll_height) * 100;
     progress_bar.style.width = progress + '%';
 }
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
 /*
 Database Initialisation
 */

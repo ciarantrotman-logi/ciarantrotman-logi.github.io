@@ -73,6 +73,10 @@ document.addEventListener('mousedown', click);
 document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
 
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
 let two_dimensional_evaluation_sections = [
     { points: 11, radius: 100, size: 75 },
     { points: 11, radius: 125, size: 50 },
