@@ -287,17 +287,19 @@ URL Parsing
  */
 // URL queries to disable sections
 let url = new URL(window.location.href);
+let reset_when_finished = url.searchParams.get("reset_when_finished") !== null;
 let disable_timbre = url.searchParams.get("disable_timbre") !== null;
 let disable_tactility = url.searchParams.get("disable_tactility") !== null;
 let disable_glide = url.searchParams.get("disable_glide") !== null;
 let gliding_only = url.searchParams.get("gliding_only") !== null;
 let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
+let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
 let filtered_sections = [];
 
-if (gliding_only){
+if (gliding_only) {
     standard_evaluation_sections = gliding_specific_sections;
 } else {
-    if (premium_keycaps){
+    if (premium_keycaps) {
         standard_evaluation_sections.forEach(section => {
             switch (section.id) {
                 case 'attrakdiff-m':
@@ -310,6 +312,31 @@ if (gliding_only){
                     filtered_sections.push(section);
                     break;
                 case 'tactility-m':
+                    filtered_sections.push(section);
+                    break;
+                default:
+                    break;
+            }
+        });
+    } else if (mouse_gliding_only) {
+        standard_evaluation_sections.forEach(section => {
+            switch (section.id) {
+                case 'umux-m':
+                    filtered_sections.push(section);
+                    break;
+                default:
+                    break;
+            }
+        });
+        gliding_specific_sections.forEach(section => {
+            switch (section.id) {
+                case 'usability-g*':
+                    filtered_sections.push(section);
+                    break;
+                case 'usability-g':
+                    filtered_sections.push(section);
+                    break;
+                case 'timbre-g':
                     filtered_sections.push(section);
                     break;
                 default:
@@ -438,6 +465,15 @@ manage_section();
 /*
 Submission & Data Processing
 */
+let query_string = "";
+extract_query_parameters(url.toString());
+function extract_query_parameters(url_string) {
+    let question_mark_index = url_string.indexOf("?");
+    if (question_mark_index !== -1) {
+        query_string = '?';
+        query_string += url_string.substring(question_mark_index + 1);
+    }
+}
 function submit_data(){
     scroll_to_top();
     metric_evaluation_area.style.display = "none";
@@ -467,6 +503,9 @@ function download_data() {
     database.ref(stamp).set(data)
         .then(function() {
             successful_upload_message.style.display = 'block';
+            if (reset_when_finished) {
+                window.location.href = `mouse_evaluation.html${query_string}`;
+            }
         })
         .catch(function(error) {
             direct_download_message.style.display = 'block';
