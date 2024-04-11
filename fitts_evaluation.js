@@ -98,9 +98,10 @@ let url = new URL(window.location.href);
 let debug_check = url.searchParams.get('debug') !== null;
 let full_analytics = url.searchParams.get('analytics') !== null;
 let gliding_only = url.searchParams.get("gliding_only") !== null;
+let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
 let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
 
-let no_scrolling = gliding_only || premium_keycaps;
+let no_scrolling = gliding_only || premium_keycaps || mouse_gliding_only;
 
 let query_string = "";
 extract_query_parameters(url.toString());
