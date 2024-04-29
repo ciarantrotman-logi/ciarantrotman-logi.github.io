@@ -807,7 +807,7 @@
   "usability-g*-directionality-horizontal-description": "I feel like I am in control of the mouse when moving from side to side on this mat",
   "usability-g*-directionality-horizontal-low": "Strongly disagree",
   "usability-g*-directionality-horizontal-high": "Strongly agree",
-  "usability-g*-directionality-vertical-description": "I feel like I am in control of the mouse when moving from side to side on this mat",
+  "usability-g*-directionality-vertical-description": "I feel like I am in control of the mouse when moving up and down on this mat",
   "usability-g*-directionality-vertical-low": "Strongly disagree",
   "usability-g*-directionality-vertical-high": "Strongly agree",
   "usability-g-header": "Performance",
