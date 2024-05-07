@@ -504,6 +504,7 @@ function download_data() {
         .then(function() {
             successful_upload_message.style.display = 'block';
             if (reset_when_finished) {
+                sessionStorage.clear();
                 window.location.href = `mouse_evaluation.html${query_string}`;
             }
         })

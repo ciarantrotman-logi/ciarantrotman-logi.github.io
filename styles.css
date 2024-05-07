@@ -201,6 +201,16 @@ html, body {
   border-radius: 5px;*/
 }
 
+.dpi-body {
+  margin: 0;
+  overflow: hidden;
+  cursor: none;
+}
+.dpi-canvas {
+  outline: 2px solid red;
+  display: block;
+}
+
 .box {
   display: inline-block;
   border: 3px solid black;
