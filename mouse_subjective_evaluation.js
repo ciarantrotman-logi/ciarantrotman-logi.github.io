@@ -294,6 +294,7 @@ let disable_glide = url.searchParams.get("disable_glide") !== null;
 let gliding_only = url.searchParams.get("gliding_only") !== null;
 let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
 let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
+let center_of_gravity = url.searchParams.get("center_of_gravity") !== null;
 let filtered_sections = [];
 
 if (gliding_only) {
@@ -343,7 +344,35 @@ if (gliding_only) {
                     break;
             }
         });
-    } else {
+    } else if (center_of_gravity) {
+    standard_evaluation_sections.forEach(section => {
+        switch (section.id) {
+            case 'tlx-m':
+                filtered_sections.push(section);
+                break;
+            case 'umux-m':
+                filtered_sections.push(section);
+                break;
+            case 'ergo-m*':
+                filtered_sections.push(section);
+                break;
+            default:
+                break;
+        }
+    });
+    gliding_specific_sections.forEach(section => {
+        switch (section.id) {
+            case 'usability-g*':
+                filtered_sections.push(section);
+                break;
+            case 'usability-g':
+                filtered_sections.push(section);
+                break;
+            default:
+                break;
+        }
+    });
+} else {
         standard_evaluation_sections.forEach(section =>{
             switch (section.id) {
                 case 'glide-m':

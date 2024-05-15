@@ -9,14 +9,14 @@ let normalised_cursor_position = {
     x: 0,
     y: 0
 };
-let adjusted_cursor_position = {
+let scalar_cursor_position = {
     x: 0,
     y: 0
 };
-let first_position = true;
+let first_recorded_frame = true;
 
-let base_dpi = 1600;
-let scalar = 1;
+// let base_dpi = 100;
+let scalar = 0;
 
 function scale_canvas(){
     dpi_canvas.width = window.innerWidth;
@@ -29,49 +29,55 @@ function mouse_movement(event){
 }
 function set_cursor_position(event){
     let rect = dpi_canvas.getBoundingClientRect();
+    
+    // if it's the first frame then we need to center the apparent cursor
+    if (first_recorded_frame){
+        first_recorded_frame = false;
+        cursor_position = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
+        normalised_cursor_position = canvas_midpoint();
+        scalar_cursor_position = canvas_midpoint();
+        return;
+    }
+    
+    // cursor_position and scalar_cursor_position still reference the positions from the last frame
     let cached_cursor_position = {
         x: event.clientX - rect.left,
         y: event.clientY - rect.top
     }
+    let cached_scalar_cursor_position = {
+        x: scalar_cursor_position.x,
+        y: scalar_cursor_position.y
+    }
+    // calculate the displacement since the last frame and apply it to our normalised cursor
     let real_displacement = {
         d_x: cached_cursor_position.x - cursor_position.x,
         d_y: cached_cursor_position.y - cursor_position.y
-    }
-    let adjusted_displacement = {
-        d_x: real_displacement.d_x / scalar,
-        d_y: real_displacement.d_y / scalar
-    }
-    let cached_adjusted_cursor_position = {
-        x: adjusted_cursor_position.x + adjusted_displacement.d_x,
-        y: adjusted_cursor_position.y + adjusted_displacement.d_y
-    }
-
-    cursor_position = cached_cursor_position;
-    
-    if (first_position){
-        first_position = false;
-        normalised_cursor_position = {
-            x: rect.left + rect.width / 2,
-            y: rect.left + rect.width / 2
-        }
-        adjusted_cursor_position = {
-            x: normalised_cursor_position.x,
-            y: normalised_cursor_position.y
-        }
-        return;
     }
     normalised_cursor_position = {
         x: normalised_cursor_position.x + real_displacement.d_x,
         y: normalised_cursor_position.y + real_displacement.d_y
     }
-    adjusted_cursor_position = {
-        x: cached_adjusted_cursor_position.x + adjusted_displacement.d_x,
-        y: cached_adjusted_cursor_position.y + adjusted_displacement.d_y
+    // then update our cursor_position
+    cursor_position = cached_cursor_position;
+    
+    // then we can calculate and apply the scalar attributes for the cursor
+    let scalar_displacement = {
+        d_x: real_displacement.d_x * scalar,
+        d_y: real_displacement.d_y * scalar
+    }
+    scalar_cursor_position = {
+        x: cached_scalar_cursor_position.x + scalar_displacement.d_x,
+        y: cached_scalar_cursor_position.y + scalar_displacement.d_y
     }
     
-    draw_dot(cursor_position.x, cursor_position.y, 'grey');
-    draw_dot(adjusted_cursor_position.x, adjusted_cursor_position.y, 'black');
-    draw_dot(normalised_cursor_position.x, normalised_cursor_position.y, 'red');
+    
+    //draw_dot(cursor_position.x, cursor_position.y, 'grey');
+    //draw_dot(normalised_cursor_position.x, normalised_cursor_position.y, 'red');
+    draw_dot(scalar_cursor_position.x, scalar_cursor_position.y, 'blue');
+    //draw_dot(canvas_midpoint().x, canvas_midpoint().y, 'black');
 }
 
 window.addEventListener('resize', scale_canvas);
@@ -90,6 +96,13 @@ function clear_canvas() {
     dpi_context.clearRect(0, 0, dpi_canvas.width, dpi_canvas.height);
 }
 function set_scalar_value() {
-    scalar = base_dpi / 1200;
-    console.log(scalar);
+    scalar = .25;//1600 / base_dpi;
+}
+
+function canvas_midpoint(){
+    let rect = dpi_canvas.getBoundingClientRect();
+    return {
+        x: rect.left + (rect.width / 2),
+        y: rect.top + (rect.height / 2)
+    }
 }
