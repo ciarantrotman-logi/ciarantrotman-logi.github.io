@@ -288,6 +288,7 @@ URL Parsing
 // URL queries to disable sections
 let url = new URL(window.location.href);
 let reset_when_finished = url.searchParams.get("reset_when_finished") !== null;
+let click_only = url.searchParams.get("click_only") !== null;
 let disable_timbre = url.searchParams.get("disable_timbre") !== null;
 let disable_tactility = url.searchParams.get("disable_tactility") !== null;
 let disable_glide = url.searchParams.get("disable_glide") !== null;
@@ -300,7 +301,23 @@ let filtered_sections = [];
 if (gliding_only) {
     standard_evaluation_sections = gliding_specific_sections;
 } else {
-    if (premium_keycaps) {
+    if (click_only){
+        standard_evaluation_sections.forEach(section => {
+            switch (section.id) {
+                case 'umux-m':
+                    filtered_sections.push(section);
+                    break;
+                case 'timbre-m':
+                    filtered_sections.push(section);
+                    break;
+                case 'tactility-m':
+                    filtered_sections.push(section);
+                    break;
+                default:
+                    break;
+            }
+        });
+    } else if (premium_keycaps) {
         standard_evaluation_sections.forEach(section => {
             switch (section.id) {
                 case 'attrakdiff-m':
