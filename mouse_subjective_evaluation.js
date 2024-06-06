@@ -296,12 +296,29 @@ let gliding_only = url.searchParams.get("gliding_only") !== null;
 let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
 let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
 let center_of_gravity = url.searchParams.get("center_of_gravity") !== null;
+let thumb_force = url.searchParams.get("thumb_force") !== null;
 let filtered_sections = [];
 
 if (gliding_only) {
     standard_evaluation_sections = gliding_specific_sections;
 } else {
-    if (click_only){
+    if (thumb_force){
+        standard_evaluation_sections.forEach(section => {
+            switch (section.id) {
+                case 'umux-m':
+                    filtered_sections.push(section);
+                    break;
+                case 'tlx-m':
+                    filtered_sections.push(section);
+                    break;
+                case 'ergo-m*':
+                    filtered_sections.push(section);
+                    break;
+                default:
+                    break;
+            }
+        });
+    } else if (click_only){
         standard_evaluation_sections.forEach(section => {
             switch (section.id) {
                 case 'umux-m':
