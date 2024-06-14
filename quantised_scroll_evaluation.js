@@ -1,9 +1,77 @@
 let task_elements = document.getElementById('task-elements');
 
+let canvas = document.getElementById('quantised-scroll-canvas');
+let context = canvas.getContext('2d');
+let rect = canvas.getBoundingClientRect();
+
+let canvas_size = 600;
+let dpr = 1;
+
 const maximum_task_index = 11;
 const minimum_task_index = 1;
+
+const number_of_targets = 11;
+const target_visual_size = 30;
+
 let target_index = random_index();
 let active_element_index = random_index();
+
+let active_target_color = "#fb7474";
+let visible_inactive_target_color = "#F2F2F2";
+
+scale_canvas();
+function scale_canvas() {
+    canvas.style.width = `${canvas_size}px`;
+    canvas.style.height = `${canvas_size}px`;
+    canvas.width = Math.floor(canvas_size * dpr);
+    canvas.height = Math.floor(canvas_size * dpr);
+    context.scale(dpr, dpr);
+    rect = canvas.getBoundingClientRect();
+}
+function generate_scroll_targets(){
+    for (let i = 0; i < number_of_targets; i++) {
+        const angle = (i / number_of_targets) * 2 * Math.PI;
+        let target = {
+            x: get_center().x + (canvas_size * .5) * Math.cos(angle),
+            y: get_center().y + (canvas_size * .5) * Math.sin(angle),
+            size: target_visual_size,
+            index: i,
+            color: red};
+        targets.push(target);}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Generate Evaluation Section
 for (let i = minimum_task_index; i <= maximum_task_index; i++) {
@@ -37,7 +105,7 @@ function manage_active_element(){
         }
     }
 }
-// System Events
+// System Events#677ac1
 document.addEventListener('wheel', scroll);
 function scroll(event){
     let scroll_delta = event.deltaY;

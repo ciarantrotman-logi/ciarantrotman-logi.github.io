@@ -1,65 +1,119 @@
-function generate_blended_data(performance_data, cached_uid){
+function generate_blended_data(performance_data, cached_uid, quantised_data_only){
     let blended_performance_data = [];
-    performance_data.forEach(data => {
-        blended_performance_data.push({
-            'uid': cached_uid,
-            'dpr': dpr,
-            'fps': sessionStorage.getItem('fps'),
-            'polling-rate': sessionStorage.getItem('polling-rate'),
-            'screen-pixel-width' : sessionStorage.getItem('screen-pixel-width'),
-            'screen-pixel-height' : sessionStorage.getItem('screen-pixel-height'),
-            'screen-orientation' : sessionStorage.getItem('screen-orientation'),
-            
-            'amplitude': data.amplitude,
-            'effective_amplitude': data.effective_amplitude,
-            'width': data.width,
-            'effective_width': data.effective_width,
-            'index_of_difficulty': data.index_of_difficulty,
-            'effective_index_of_difficulty': data.effective_index_of_difficulty,
-            'throughput': data.throughput,
-            'effective_throughput': data.effective_throughput,
-            'movement_time_ms': data.movement_time_ms,
-            'target_position_x': data.target.x,
-            'target_position_y': data.target.y,
-            'global_cursor_position_x': data.global_cursor_position.x,
-            'global_cursor_position_y': data.global_cursor_position.y,
-            'local_cursor_position_x': data.local_cursor_position.x,
-            'local_cursor_position_y': data.local_cursor_position.y,
-            'relative_cursor_position_x': data.relative_cursor_position.x,
-            'relative_cursor_position_y': data.relative_cursor_position.y,
-            'approach_vector_x' : data.approach_vector.x,
-            'approach_vector_y' : data.approach_vector.y,
-            'perpendicular_vector_x': data.perpendicular_vector.x,
-            'perpendicular_vector_y': data.perpendicular_vector.y,
-            'selection_index' : data.section_index,
-            'action_index' : data.action_index,
-            'task_type' : data.task_type,
+    if (quantised_data_only){
+        performance_data.forEach(data => {
+            blended_performance_data.push({
+                'uid': cached_uid,
+                'dpr': dpr,
+                'fps': sessionStorage.getItem('fps'),
+                'polling-rate': sessionStorage.getItem('polling-rate'),
+                'screen-pixel-width' : sessionStorage.getItem('screen-pixel-width'),
+                'screen-pixel-height' : sessionStorage.getItem('screen-pixel-height'),
+                'screen-orientation' : sessionStorage.getItem('screen-orientation'),
+                
+                'selection_index' : data.section_index,
+                'action_index' : data.action_index,
+                'task_type' : data.task_type,
 
-            'benchmark-flag': sessionStorage.getItem('benchmark-flag'),
+                'route_efficiency' : data.route_efficiency,
+                'actual_path_length' : data.actual_path_length,
+                'attempted_path_length' : data.attempted_path_length,
+                'upward_path_length' : data.upward_path_length,
+                'downward_path_length' : data.downward_path_length,
+                'correct_node_selected' : data.correct_node_selected,
+                'target_node_index' : data.target_node_index,
+                'selected_node_index' : data.selected_node_index,
+                'selected_node_distance' : data.selected_node_distance,
+                'scroll_direction' : data.scroll_direction,
+                'section_index': data.section_index,
 
-            'user_name': sessionStorage.getItem('user-name'),
-            'user_hand_size': sessionStorage.getItem('user-hand-size'),
-            'user_handedness': sessionStorage.getItem('user-handedness'),
-            'user_mouse_usage': sessionStorage.getItem('user-mouse-usage'),
-            'user_technical_familiarity': sessionStorage.getItem('user-technical-familiarity'),
+                'benchmark-flag': sessionStorage.getItem('benchmark-flag'),
 
-            'evaluation-mouse-make': sessionStorage.getItem('evaluation-mouse-make'),
-            'evaluation-mouse-model': sessionStorage.getItem('evaluation-mouse-model'),
-            'evaluation-mouse-dpi': sessionStorage.getItem('evaluation-mouse-dpi'),
-            'evaluation-mouse-dpi*': sessionStorage.getItem('evaluation-mouse-dpi*'),
-            'evaluation-mouse-acceleration': sessionStorage.getItem('evaluation-mouse-acceleration'),
+                'user_name': sessionStorage.getItem('user-name'),
+                'user_hand_size': sessionStorage.getItem('user-hand-size'),
+                'user_handedness': sessionStorage.getItem('user-handedness'),
+                'user_mouse_usage': sessionStorage.getItem('user-mouse-usage'),
+                'user_technical_familiarity': sessionStorage.getItem('user-technical-familiarity'),
 
-            'evaluation-surface': sessionStorage.getItem('evaluation-surface'),
-            'evaluation-mat-make': sessionStorage.getItem('evaluation-mat-make'),
-            'evaluation-mat-model': sessionStorage.getItem('evaluation-mat-model'),
-            'evaluation-mat-hardness': sessionStorage.getItem('evaluation-mat-hardness'),
-            'evaluation-mat-roughness': sessionStorage.getItem('evaluation-mat-roughness'),
-            'evaluation-desk-material': sessionStorage.getItem('evaluation-mat-material'),
-            'evaluation-mouse-feet': sessionStorage.getItem('evaluation-mouse-feet'),
-            'evaluation-mouse-feet-make': sessionStorage.getItem('evaluation-mouse-feet-make'),
-            'evaluation-mouse-feet-model': sessionStorage.getItem('evaluation-mouse-feet-model')
-        })
-    });
+                'evaluation-mouse-make': sessionStorage.getItem('evaluation-mouse-make'),
+                'evaluation-mouse-model': sessionStorage.getItem('evaluation-mouse-model'),
+                'evaluation-mouse-dpi': sessionStorage.getItem('evaluation-mouse-dpi'),
+                'evaluation-mouse-dpi*': sessionStorage.getItem('evaluation-mouse-dpi*'),
+                'evaluation-mouse-acceleration': sessionStorage.getItem('evaluation-mouse-acceleration'),
+
+                'evaluation-surface': sessionStorage.getItem('evaluation-surface'),
+                'evaluation-mat-make': sessionStorage.getItem('evaluation-mat-make'),
+                'evaluation-mat-model': sessionStorage.getItem('evaluation-mat-model'),
+                'evaluation-mat-hardness': sessionStorage.getItem('evaluation-mat-hardness'),
+                'evaluation-mat-roughness': sessionStorage.getItem('evaluation-mat-roughness'),
+                'evaluation-desk-material': sessionStorage.getItem('evaluation-mat-material'),
+                'evaluation-mouse-feet': sessionStorage.getItem('evaluation-mouse-feet'),
+                'evaluation-mouse-feet-make': sessionStorage.getItem('evaluation-mouse-feet-make'),
+                'evaluation-mouse-feet-model': sessionStorage.getItem('evaluation-mouse-feet-model')
+            })
+        });
+    } else {
+        performance_data.forEach(data => {
+            blended_performance_data.push({
+                'uid': cached_uid,
+                'dpr': dpr,
+                'fps': sessionStorage.getItem('fps'),
+                'polling-rate': sessionStorage.getItem('polling-rate'),
+                'screen-pixel-width' : sessionStorage.getItem('screen-pixel-width'),
+                'screen-pixel-height' : sessionStorage.getItem('screen-pixel-height'),
+                'screen-orientation' : sessionStorage.getItem('screen-orientation'),
+
+                'amplitude': data.amplitude,
+                'effective_amplitude': data.effective_amplitude,
+                'width': data.width,
+                'effective_width': data.effective_width,
+                'index_of_difficulty': data.index_of_difficulty,
+                'effective_index_of_difficulty': data.effective_index_of_difficulty,
+                'throughput': data.throughput,
+                'effective_throughput': data.effective_throughput,
+                'movement_time_ms': data.movement_time_ms,
+                'target_position_x': data.target.x,
+                'target_position_y': data.target.y,
+                'global_cursor_position_x': data.global_cursor_position.x,
+                'global_cursor_position_y': data.global_cursor_position.y,
+                'local_cursor_position_x': data.local_cursor_position.x,
+                'local_cursor_position_y': data.local_cursor_position.y,
+                'relative_cursor_position_x': data.relative_cursor_position.x,
+                'relative_cursor_position_y': data.relative_cursor_position.y,
+                'approach_vector_x' : data.approach_vector.x,
+                'approach_vector_y' : data.approach_vector.y,
+                'perpendicular_vector_x': data.perpendicular_vector.x,
+                'perpendicular_vector_y': data.perpendicular_vector.y,
+                'selection_index' : data.section_index,
+                'action_index' : data.action_index,
+                'task_type' : data.task_type,
+
+                'benchmark-flag': sessionStorage.getItem('benchmark-flag'),
+
+                'user_name': sessionStorage.getItem('user-name'),
+                'user_hand_size': sessionStorage.getItem('user-hand-size'),
+                'user_handedness': sessionStorage.getItem('user-handedness'),
+                'user_mouse_usage': sessionStorage.getItem('user-mouse-usage'),
+                'user_technical_familiarity': sessionStorage.getItem('user-technical-familiarity'),
+
+                'evaluation-mouse-make': sessionStorage.getItem('evaluation-mouse-make'),
+                'evaluation-mouse-model': sessionStorage.getItem('evaluation-mouse-model'),
+                'evaluation-mouse-dpi': sessionStorage.getItem('evaluation-mouse-dpi'),
+                'evaluation-mouse-dpi*': sessionStorage.getItem('evaluation-mouse-dpi*'),
+                'evaluation-mouse-acceleration': sessionStorage.getItem('evaluation-mouse-acceleration'),
+
+                'evaluation-surface': sessionStorage.getItem('evaluation-surface'),
+                'evaluation-mat-make': sessionStorage.getItem('evaluation-mat-make'),
+                'evaluation-mat-model': sessionStorage.getItem('evaluation-mat-model'),
+                'evaluation-mat-hardness': sessionStorage.getItem('evaluation-mat-hardness'),
+                'evaluation-mat-roughness': sessionStorage.getItem('evaluation-mat-roughness'),
+                'evaluation-desk-material': sessionStorage.getItem('evaluation-mat-material'),
+                'evaluation-mouse-feet': sessionStorage.getItem('evaluation-mouse-feet'),
+                'evaluation-mouse-feet-make': sessionStorage.getItem('evaluation-mouse-feet-make'),
+                'evaluation-mouse-feet-model': sessionStorage.getItem('evaluation-mouse-feet-model')
+            })
+        });
+    }
     return blended_performance_data;
 }
 function pearsons_r(target_case, effective_flag){

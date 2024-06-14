@@ -40,11 +40,11 @@ let scroll_target_position = {x: 0, y: 0};
 let evaluation_types = {
     'reciprocal_targets_two_dimensional':   'reciprocal_targets_two_dimensional',
     'random_targets_two_dimensional':       'random_targets_two_dimensional',
-    'reciprocal_targets_one_dimensional':   'reciprocal_targets_one_dimensional'
+    'reciprocal_targets_one_dimensional':   'reciprocal_targets_one_dimensional',
+    'quantised_one_dimensional':            'quantised_one_dimensional'
 }
 
-let evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
-
+let evaluation_type = evaluation_types.quantised_one_dimensional;
 let evaluation_task_in_progress = false;
 
 let dpr = 1;
@@ -59,12 +59,19 @@ let all_performance_data = [];
 let blended_analytic_data = [];
 
 let target_index = 0;
+let current_node_index = 0;
+let start_node_index = 0;
 let previous_target_index = 0;
 let task_index = 0;
 let section_index = 0;
 let action_index = 0;
+let scroll_direction_indicator = 0;
+let previous_scroll_direction_indicator = 0;
+let traversed_node_counter = 0;
+let cached_traversed_node_counter = 0;
 
 let active_target_color = "#fb7474";
+let current_quantised_color = "#677ac1";
 let visible_inactive_target_color = "#F2F2F2";
 let invisible_inactive_target_color = "#ffffff";
 
@@ -72,6 +79,9 @@ fitts_canvas.addEventListener('mousemove', trace);
 document.addEventListener('mousedown', click);
 document.addEventListener('wheel', scroll);
 window.addEventListener('resize', rescale);
+
+const left_click_int = 0;
+const middle_mouse_int = 1;
 
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
@@ -91,13 +101,19 @@ let one_dimensional_evaluation_sections = [
     { tasks: 4, amplitude: 200, width: 20 },
     { tasks: 4, amplitude: 300, width: 10 }
 ]
+let quantised_scroll_evaluation_sections = [
+    { points: 11, radius: 250, size: 20, hid_trigger: middle_mouse_int },
+    { points: 21, radius: 250, size: 20, hid_trigger: middle_mouse_int }
+]
 /*
 ------------------------------------------------------------------------------------------------------------------------URL PARSING
 */
 let url = new URL(window.location.href);
 let debug_check = url.searchParams.get('debug') !== null;
 let pointing_only = url.searchParams.get('pointing_only') !== null;
+let scrolling_only = url.searchParams.get('scrolling_only') !== null;
 let full_analytics = url.searchParams.get('analytics') !== null;
+let quantised__analytics = url.searchParams.get('quantised__analytics') !== null;
 let gliding_only = url.searchParams.get("gliding_only") !== null;
 let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
 let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
@@ -116,6 +132,9 @@ function extract_query_parameters(url_string) {
 /*
 ------------------------------------------------------------------------------------------------------------------------MANAGE ADDITIONAL STATES
 */
+evaluation_type = no_scrolling ? evaluation_types.reciprocal_targets_two_dimensional : evaluation_type;
+evaluation_type = scrolling_only ? evaluation_types.reciprocal_targets_one_dimensional : evaluation_type;
+
 debug_canvas.style.display = debug_check
     ? 'block'
     : 'none';
@@ -128,8 +147,14 @@ console.log(full_analytics
 console.log(no_scrolling
     ? 'Only 2D Evaluation Tasks'
     : 'All Evaluation Tasks');
+
 if (no_scrolling){
     document.getElementById('fe-intro-explainer-third-task').style.display = 'none';
+    document.getElementById('fe-intro-explainer-fourth-task').style.display = 'none';
+}
+if (scrolling_only){
+    document.getElementById('fe-intro-explainer-first-task').style.display = 'none';
+    document.getElementById('fe-intro-explainer-second-task').style.display = 'none';
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
@@ -141,16 +166,20 @@ function trace(event) {
 }
 function click(event) {
     if (fitts_canvas.style.display === 'none') return;
-    if (event.button === 0 && two_dimensional_evaluation_task()) {
-        on_left_click();
+    if (event.button === left_click_int && two_dimensional_evaluation_task()) {
+        on_two_dimensional_fitts_task_selection();
         calculate_progress_bar_width();
     }
-    if (event.button === 1 && one_dimensional_evaluation_task()) {
-        on_middle_click();
+    if (event.button === middle_mouse_int && one_dimensional_evaluation_task()) {
+        on_one_dimensional_fitts_task_selection();
+        calculate_progress_bar_width();
+    }
+    if (quantised_one_dimensional_evaluation_task() && event.button === quantised_scroll_evaluation_sections[section_index].hid_trigger) {
+        on_quantised_one_dimensional_task_selection();
         calculate_progress_bar_width();
     }
 }
-function on_left_click() {
+function on_two_dimensional_fitts_task_selection() {
     if (!evaluation_task_in_progress) return;
     
     draw_line(debug_context, current_target(), get_user_input_position(), '#dddddd');
@@ -170,9 +199,9 @@ function on_left_click() {
     update_target_index();
     update_section_index();
     render_targets();
-    cache_input_location_data();
+    cache_input_data();
 }
-function on_middle_click() {
+function on_one_dimensional_fitts_task_selection() {
     draw_line(debug_context, current_target(), get_user_input_position(), '#dddddd');
     draw_circle(debug_context, get_user_input_position(), 2, '#dddddd', false, true);
     draw_circle(debug_context, get_last_click_position(), 2, '#ffffff', false, true);
@@ -188,9 +217,45 @@ function on_middle_click() {
     update_target_index();
     update_section_index();
     render_targets();
-    cache_input_location_data();
+    cache_input_data();
+}
+function on_quantised_one_dimensional_task_selection() {
+    if (task_index === 0 && !correct_quantised_target()) {
+        return;
+    }
+    if (task_index > 0) {
+        log_quantised_one_dimensional_data();
+    }
+    update_target_index();
+    update_section_index();
+    render_targets();
+    cache_input_data();
 }
 function scroll(event) {
+    if (evaluation_type === evaluation_types.quantised_one_dimensional) {
+        let scroll_delta = event.deltaY;
+        let scrolling_up = scroll_delta > 0;
+        let maximum_index = quantised_scroll_evaluation_sections[section_index].points - 1;
+        let minimum_index = 0;
+        // regardless of scroll direction, increment this
+        traversed_node_counter++;
+        // cache this every time you scroll so you can calculate scroll direction
+        scroll_direction_indicator = scrolling_up
+            ? scroll_direction_indicator + 1
+            : scroll_direction_indicator - 1;
+        // increment based on scroll direction
+        current_node_index = scrolling_up
+            ? current_node_index + 1
+            : current_node_index - 1;
+        // then wrap the index so you can overshoot the target
+        current_node_index = current_node_index > maximum_index
+            ? minimum_index
+            : current_node_index;
+        current_node_index = current_node_index < minimum_index
+            ? maximum_index
+            : current_node_index;
+    }
+    
     update_scroll_position(event.deltaY);
     render_targets();
     calculate_velocity();
@@ -204,8 +269,8 @@ let progress_bar = document.getElementById('progress-bar');
 calculate_total_task_count();
 function calculate_total_task_count(){
     two_dimensional_evaluation_sections.forEach(function (task) {
-        total_task_count += task.points; // Once for reciprocal task
-        total_task_count += task.points; // Once for random task
+        total_task_count += task.points; // once for reciprocal task
+        total_task_count += task.points; // once for random task
     });
     if (no_scrolling) return;
     one_dimensional_evaluation_sections.forEach(function (task) {
@@ -254,6 +319,80 @@ function calculate_throughput() {
     section_performance_data.push(data);
     action_index++;
 }
+function log_quantised_one_dimensional_data() {
+    let on_target = correct_quantised_target();
+    let movement_time_ms = (performance.now() - last_click_data.timestamp);
+    let movement_time_s = movement_time_ms / 1000;
+    let selected_node_distance = Math.abs(target_index - current_node_index);
+    let scroll_direction = previous_scroll_direction_indicator > scroll_direction_indicator 
+        ? 'scroll_down'
+        : 'scroll_up';
+    let upward_path_length = 0;
+    let downward_path_length = 0;
+    
+    let maximum_index = quantised_scroll_evaluation_sections[section_index].points - 1;
+    let minimum_index = 0;
+    
+    let node = start_node_index;
+    while (node !== target_index) {
+        node++;
+        node = node > maximum_index
+            ? minimum_index
+            : node;
+        node = node < minimum_index
+            ? maximum_index
+            : node;
+        upward_path_length++
+    }
+    node = start_node_index;
+    while (node !== target_index) {
+        node--;
+        node = node > maximum_index
+            ? minimum_index
+            : node;
+        node = node < minimum_index
+            ? maximum_index
+            : node;
+        downward_path_length++;
+    }
+    let attempted_path_length = 0;
+    switch (scroll_direction) {
+        case "scroll_up":
+            attempted_path_length = upward_path_length;
+            break;
+        case "scroll_down":
+            attempted_path_length = downward_path_length;
+            break;
+        default:
+            break;
+    }
+    
+    let actual_path_length = traversed_node_counter - cached_traversed_node_counter
+    let route_efficiency = attempted_path_length / actual_path_length;
+    
+    let data = {
+        'route_efficiency' : route_efficiency,
+        'actual_path_length' : actual_path_length,
+        'attempted_path_length' : attempted_path_length,
+        'upward_path_length' : upward_path_length,
+        'downward_path_length' : downward_path_length,
+        'correct_node_selected' : on_target,
+        'target_node_index' : target_index,
+        'selected_node_index' : current_node_index,
+        'selected_node_distance' : selected_node_distance,
+        'scroll_direction' : scroll_direction,
+        'movement_time_ms': movement_time_ms,
+        'movement_time_s': movement_time_s,
+        'section_index': section_index,
+        'action_index': action_index,
+        'task_type' : evaluation_type
+    }
+    
+    console.log(data);
+    
+    section_performance_data.push(data);
+    action_index++;
+}
 function evaluate_two_dimensional_click_accuracy() {
     let any_target_clicked = false;
     let correct_target_clicked = false;
@@ -294,7 +433,7 @@ function was_correct_target_clicked(target){
 function generate_targets(){
     error_count = 0;
     clear_canvas(fitts_context, fitts_canvas);
-    initialise_scroll_position();
+    // initialise_scroll_position();
     calculate_target_parameters();
     render_targets();
 }
@@ -302,6 +441,7 @@ function generate_targets(){
 ------------------------------------------------------------------------------------------------------------------------FIRST FUNCTION CALLS
 */
 evaluate_scaling();
+initialise_scroll_position();
 function initialise_scroll_position(){
     scroll_target_position = get_center();
 }
@@ -335,6 +475,9 @@ function show_evaluation_task_help() {
         case evaluation_types.reciprocal_targets_one_dimensional:
             document.getElementById('reciprocal-targets-one-dimensional-help').style.display = 'block';
             break;
+        case evaluation_types.quantised_one_dimensional:
+            document.getElementById('quantised-one-dimensional-help').style.display = 'block';
+            break;
         default:
             break;
     }
@@ -343,6 +486,7 @@ function reset_evaluation_task_help(){
     document.getElementById('reciprocal-targets-two-dimensional-help').style.display = 'none';
     document.getElementById('random-targets-two-dimensional-help').style.display = 'none';
     document.getElementById('reciprocal-targets-one-dimensional-help').style.display = 'none';
+    document.getElementById('quantised-one-dimensional-help').style.display = 'none';
 }
 function generate_evaluation_section() {
     display_evaluation_task_information();
@@ -376,6 +520,9 @@ function display_evaluation_task_information() {
         case evaluation_types.reciprocal_targets_one_dimensional:
             document.getElementById('reciprocal-targets-one-dimensional').style.display = 'block';
             break;
+        case evaluation_types.quantised_one_dimensional:
+            document.getElementById('quantised-one-dimensional').style.display = 'block';
+            break;
         default:
             break;
     }
@@ -384,6 +531,7 @@ function reset_evaluation_blocks(){
     document.getElementById('reciprocal-targets-two-dimensional').style.display = 'none';
     document.getElementById('random-targets-two-dimensional').style.display = 'none';
     document.getElementById('reciprocal-targets-one-dimensional').style.display = 'none';
+    document.getElementById('quantised-one-dimensional').style.display = 'none';
 }
 function hide_evaluation_canvas() {
     non_canvas_element.style.display = 'block';
@@ -404,6 +552,14 @@ function calculate_target_parameters(){
             break;
         case evaluation_types.reciprocal_targets_one_dimensional:
             generate_reciprocal_one_dimensional_targets(one_dimensional_evaluation_sections[section_index]);
+            break;
+        case evaluation_types.quantised_one_dimensional:
+            generate_reciprocal_two_dimensional_targets(quantised_scroll_evaluation_sections[section_index]);
+            current_node_index = current_target().index + Math.ceil(targets.length / 2);
+            scroll_direction_indicator = 0;
+            previous_scroll_direction_indicator = 0;
+            traversed_node_counter = 0;
+            cached_traversed_node_counter = 0;
             break;
         default:
             break;
@@ -475,7 +631,6 @@ function is_point_in_border(point, border) {
 }
 
 function generate_reciprocal_one_dimensional_targets(section) {
-    initialise_scroll_position();
     for (let i = 0; i < section.tasks; i++) {
         let y_position = get_center().y;
         if (i % 2 === 0){
@@ -492,7 +647,6 @@ function generate_reciprocal_one_dimensional_targets(section) {
         targets.push(target);}
 }
 function generate_random_one_dimensional_targets(section) {
-    initialise_scroll_position();
     let start_point_parameters = generate_randomised_point(section);
     targets.push({
         x: get_center().x,
@@ -575,7 +729,6 @@ function update_section_index(){
         get_next_evaluation_type();
         display_evaluation_task_information();
     }
-
     target_index = 0;
     task_index = 0;
     generate_targets();
@@ -588,40 +741,72 @@ function cache_performance_data(){
         cache_one_dimensional_parameters();
     } else if (two_dimensional_evaluation_task()) {
         calculate_effective_parameters();
+    } else if (quantised_one_dimensional_evaluation_task()){
+        cache_one_dimensional_quantised_parameters();
     }
 }
 function current_evaluation_type_length(){
     if (one_dimensional_evaluation_task()) {
         return one_dimensional_evaluation_sections.length;
+    } else if (quantised_one_dimensional_evaluation_task) {
+        return quantised_scroll_evaluation_sections.length;
     } else return two_dimensional_evaluation_sections.length;
 }
 function get_next_evaluation_type() {
-    switch (evaluation_type){
-        case evaluation_types.reciprocal_targets_two_dimensional:
-            evaluation_type = evaluation_types.random_targets_two_dimensional;
-            break;
-        case evaluation_types.random_targets_two_dimensional:
-            if (no_scrolling) {
+    if (no_scrolling) {
+        switch (evaluation_type){
+            case evaluation_types.reciprocal_targets_two_dimensional:
+                evaluation_type = evaluation_types.random_targets_two_dimensional;
+                break;
+            case evaluation_types.random_targets_two_dimensional:
                 hide_everything();
                 finish_fitts_evaluation();
                 break;
-            }
-            evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
-            break;
-        case evaluation_types.reciprocal_targets_one_dimensional:
-            finish_fitts_evaluation();
-            break;
-        default:
-            break;
+            default:
+                break;
+        }
+    } else if (scrolling_only) {
+        switch (evaluation_type){
+            case evaluation_types.reciprocal_targets_one_dimensional:
+                should_calculate_velocity = false;
+                evaluation_type = evaluation_types.quantised_one_dimensional;
+                break;
+            case evaluation_types.quantised_one_dimensional:
+                hide_everything();
+                finish_fitts_evaluation();
+                break;
+            default:
+                break;
+        }
+    } else {
+        switch (evaluation_type){
+            case evaluation_types.reciprocal_targets_two_dimensional:
+                evaluation_type = evaluation_types.random_targets_two_dimensional;
+                break;
+            case evaluation_types.random_targets_two_dimensional:
+                evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
+                break;
+            case evaluation_types.reciprocal_targets_one_dimensional:
+                should_calculate_velocity = false;
+                evaluation_type = evaluation_types.quantised_one_dimensional;
+                break;
+            case evaluation_types.quantised_one_dimensional:
+                hide_everything();
+                finish_fitts_evaluation();
+                break;
+            default:
+                break;
+        }
     }
 }
 function finish_fitts_evaluation(){
     submitted = true;
     exit_fullscreen();
+    sessionStorage.setItem('dpr', dpr);
     calculate_aggregate_performance_data();
     calculate_aggregate_correlation_data();
     if (full_analytics) {
-        blended_analytic_data = generate_blended_data(all_performance_data, uid);
+        blended_analytic_data = generate_blended_data(all_performance_data, uid, quantised__analytics);
         show_download_buffer();
     } else {
         load_subjective_evaluation();
@@ -641,6 +826,28 @@ function load_subjective_evaluation() {
 /*
 ------------------------------------------------------------------------------------------------------------------------DATA ANALYSIS
 */
+function cache_one_dimensional_quantised_parameters(){
+    section_performance_data.forEach(data => {
+        all_performance_data.push({
+            'route_efficiency' : data.route_efficiency,
+            'actual_path_length' : data.actual_path_length,
+            'attempted_path_length' : data.attempted_path_length,
+            'upward_path_length' : data.upward_path_length,
+            'downward_path_length' : data.downward_path_length,
+            'correct_node_selected' : data.correct_node_selected,
+            'target_node_index' : data.target_node_index,
+            'selected_node_index' : data.selected_node_index,
+            'selected_node_distance' : data.selected_node_distance,
+            'scroll_direction' : data.scroll_direction,
+            'movement_time_ms': data.movement_time_ms,
+            'movement_time_s': data.movement_time_s,
+            'section_index': data.section_index,
+            'action_index': data.action_index,
+            'task_type': data.task_type
+        });
+    });
+    section_performance_data = [];
+}
 function cache_one_dimensional_parameters(){
     section_performance_data.forEach(data => {
         all_performance_data.push({
@@ -755,6 +962,8 @@ function update_target_index(){
 function calculate_next_target_index(){
     if (evaluation_type === evaluation_types.reciprocal_targets_two_dimensional) {
         get_next_reciprocal_index();
+    } else if (evaluation_type === evaluation_types.quantised_one_dimensional) {
+        get_next_reciprocal_index();
     } else {
         get_next_linear_index();
     }
@@ -790,6 +999,9 @@ function render_targets() {
             render_two_dimensional_targets();
             debug_render_two_dimensional_targets();
             break;
+        case evaluation_types.quantised_one_dimensional:
+            render_quantised_one_dimensional_targets();
+            break;
         default:
             break;
     }
@@ -800,6 +1012,18 @@ function render_two_dimensional_targets() {
         draw_circle(fitts_context, targets[i], targets[i].size,  targets[i].color, true, false);
     }
     draw_circle(fitts_context, current_target(), current_target().size,  active_target_color, true, false);
+    draw_circle(fitts_context, current_target(), current_target().size,  active_target_color, true, false);
+}
+function render_quantised_one_dimensional_targets() {
+    clear_canvas(fitts_context, fitts_canvas);
+    for (let i = 0; i < targets.length; i++) {
+        draw_circle(fitts_context, targets[i], targets[i].size,  targets[i].color, true, false);
+    }
+    draw_circle(fitts_context, current_target(), current_target().size,  active_target_color, true, false);
+    draw_circle(fitts_context, targets[current_node_index], targets[current_node_index].size,  current_quantised_color, true, false);
+    if (correct_quantised_target()) {
+        draw_circle(fitts_context, targets[current_node_index], targets[current_node_index].size * .75,  active_target_color, true, false);
+    }
 }
 function debug_render_two_dimensional_targets(){
         for (let i = 0; i < targets.length; i++) {
@@ -878,6 +1102,9 @@ function vector_end_point(start_point, vector){
 function current_target() {
     return targets[target_index];
 }
+function correct_quantised_target(){
+    return target_index === current_node_index;
+}
 function previous_target() {
     return targets[previous_target_index];
 }
@@ -902,18 +1129,26 @@ function get_scroll_position(){
 function get_last_click_position(){
     return last_click_data.position;
 }
-function cache_input_location_data(){
+function cache_input_data(){
+    let cached_scroll_direction_indicator = scroll_direction_indicator;
+    let cached_traversed_nodes = traversed_node_counter;
     last_click_data.position = {
         x: get_user_input_position().x,
         y: get_user_input_position().y
     }
     last_click_data.timestamp = performance.now();
+    previous_scroll_direction_indicator = cached_scroll_direction_indicator;
+    cached_traversed_node_counter = cached_traversed_nodes;
+    start_node_index = current_node_index;
 }
 function two_dimensional_evaluation_task(){
     return evaluation_type === evaluation_types.reciprocal_targets_two_dimensional || evaluation_type === evaluation_types.random_targets_two_dimensional;
 }
 function one_dimensional_evaluation_task(){
     return evaluation_type === evaluation_types.reciprocal_targets_one_dimensional;
+}
+function quantised_one_dimensional_evaluation_task(){
+    return evaluation_type === evaluation_types.quantised_one_dimensional;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------ALGEBRAIC FUNCTIONS
@@ -1070,15 +1305,39 @@ function base_dpr(){
 ------------------------------------------------------------------------------------------------------------------------DATA DOWNLOADING
 */
 function calculate_aggregate_performance_data() {
-    sessionStorage.setItem('dpr', dpr);
-    sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_effective_throughput(evaluation_types.reciprocal_targets_two_dimensional));
-    sessionStorage.setItem('throughput-2D-random', calculate_average_effective_throughput(evaluation_types.random_targets_two_dimensional));
+    if (scrolling_only) {
+        cache_one_dimensional_performance_data();
+    } else if (no_scrolling) {
+        cache_two_dimensional_performance_data();
+    } else {
+        cache_two_dimensional_performance_data();
+        cache_one_dimensional_performance_data();
+    }
+}
+function cache_one_dimensional_performance_data() {
     sessionStorage.setItem('throughput-1D-reciprocal', calculate_average_throughput(evaluation_types.reciprocal_targets_one_dimensional));
+    sessionStorage.setItem('movement-variance-1D-reciprocal', calculate_movement_time_variance(evaluation_types.reciprocal_targets_one_dimensional));
+    sessionStorage.setItem('mean-route-efficiency-1D-quantised', calculate_mean_route_efficiency());
+    sessionStorage.setItem('movement-variance-1D-quantised', calculate_movement_time_variance(evaluation_types.quantised_one_dimensional));
+    sessionStorage.setItem('success-rate-1D-quantised', calculate_section_success_rate(evaluation_types.quantised_one_dimensional));
+}
+function cache_two_dimensional_performance_data() {
+    sessionStorage.setItem('throughput-2D-reciprocal', calculate_average_effective_throughput(evaluation_types.reciprocal_targets_two_dimensional));
+    sessionStorage.setItem('movement-variance-2D-reciprocal', calculate_movement_time_variance(evaluation_types.reciprocal_targets_two_dimensional));
+    sessionStorage.setItem('throughput-2D-random', calculate_average_effective_throughput(evaluation_types.random_targets_two_dimensional));
+    sessionStorage.setItem('movement-variance-2D-random', calculate_movement_time_variance(evaluation_types.random_targets_two_dimensional));
 }
 function calculate_aggregate_correlation_data(){
-    cache_correlation_data('2D-reciprocal', evaluation_types.reciprocal_targets_two_dimensional, true);
-    cache_correlation_data('2D-random', evaluation_types.random_targets_two_dimensional, true);
-    cache_correlation_data('1D-reciprocal', evaluation_types.reciprocal_targets_one_dimensional, false);
+    if (scrolling_only) {
+        cache_correlation_data('1D-reciprocal', evaluation_types.reciprocal_targets_one_dimensional, false);
+    } else if (no_scrolling) {
+        cache_correlation_data('2D-reciprocal', evaluation_types.reciprocal_targets_two_dimensional, true);
+        cache_correlation_data('2D-random', evaluation_types.random_targets_two_dimensional, true);
+    } else {
+        cache_correlation_data('2D-reciprocal', evaluation_types.reciprocal_targets_two_dimensional, true);
+        cache_correlation_data('2D-random', evaluation_types.random_targets_two_dimensional, true);
+        cache_correlation_data('1D-reciprocal', evaluation_types.reciprocal_targets_one_dimensional, false);
+    }
 }
 function cache_correlation_data(suffix, target_case, effective_flag) {
     let correlation_data = calculate_data_correlation(target_case, effective_flag);
@@ -1107,6 +1366,52 @@ function calculate_average_throughput(target_case){
         }
     });
     return aggregate / count;
+}
+function calculate_mean_route_efficiency(){
+    let aggregate = 0.0;
+    let count = 0;
+    all_performance_data.forEach(data => {
+        if (data.correct_node_selected) {
+            aggregate += data.route_efficiency;
+            count++;
+        }
+    });
+    return aggregate / count;
+}
+function calculate_movement_time_variance(target_case) {
+    let aggregate_movement_time_ms = 0.0;
+    let count = 0;
+    all_performance_data.forEach(data => {
+        if (data.task_type === target_case){
+            aggregate_movement_time_ms += data.movement_time_ms;
+            count++;
+        }
+    });
+    let mean_movement_time_ms = aggregate_movement_time_ms / count;
+    let sum_of_square_differences = 0.0;
+    count = 0;
+
+    all_performance_data.forEach(data => {
+        if (data.task_type === target_case){
+            sum_of_square_differences += Math.pow(data.movement_time_ms - mean_movement_time_ms, 2);
+            count++;
+        }
+    });
+    
+    return sum_of_square_differences / count;
+}
+function calculate_section_success_rate(target_case){
+    let failed_task_counter = 0;
+    let count = 0;
+    all_performance_data.forEach(data => {
+        if (data.task_type === target_case){
+            if (!data.correct_node_selected){
+                failed_task_counter++;
+            }
+            count++;
+        }
+    });
+    return 1 - (failed_task_counter / count);
 }
 function calculate_average_effective_throughput(target_case){
     let aggregate = 0.0;

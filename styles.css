@@ -107,21 +107,21 @@ html, body {
   color: lightgrey;
   font-weight: normal;
   font-size: x-small;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
 }
 .section-indicator.target{
-  border: 2px solid orangered;
-  color: orangered;
+  border: 2px solid cornflowerblue;
+  color: cornflowerblue;
   font-weight: bolder;
   font-size: x-small;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
 }
 .section-indicator.correct{
-  border: 2px solid green;
+  border: 2px solid lawngreen;
+  color: lawngreen;
   border-radius: 5px;
-  color: green;
   font-size: small;
   font-weight: bolder;
   width: 24px;
