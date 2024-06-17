@@ -297,6 +297,7 @@ let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
 let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
 let center_of_gravity = url.searchParams.get("center_of_gravity") !== null;
 let thumb_force = url.searchParams.get("thumb_force") !== null;
+let scrolling_only = url.searchParams.get("scrolling_only") !== null;
 let filtered_sections = [];
 
 if (gliding_only) {
@@ -318,9 +319,31 @@ if (gliding_only) {
                     break;
             }
         });
+    } else if (scrolling_only){
+        standard_evaluation_sections.forEach(section => {
+            switch (section.id) {
+                case 'tlx-m':
+                    filtered_sections.push(section);
+                    break;
+                case 'umux-m*':
+                    filtered_sections.push(section);
+                    break;
+                case 'timbre-m*':
+                    filtered_sections.push(section);
+                    break;
+                case 'tactility-m*':
+                    filtered_sections.push(section);
+                    break;
+                default:
+                    break;
+            }
+        });
     } else if (click_only){
         standard_evaluation_sections.forEach(section => {
             switch (section.id) {
+                case 'tlx-m':
+                    filtered_sections.push(section);
+                    break;
                 case 'umux-m':
                     filtered_sections.push(section);
                     break;
