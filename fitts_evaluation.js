@@ -166,6 +166,9 @@ function trace(event) {
 }
 function click(event) {
     if (fitts_canvas.style.display === 'none') return;
+    // prevent issue with windows scroll view
+    event.preventDefault();
+    // continue as usual
     if (event.button === left_click_int && two_dimensional_evaluation_task()) {
         on_two_dimensional_fitts_task_selection();
         calculate_progress_bar_width();
