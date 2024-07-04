@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Keyboard Layout Evaluation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body class="evaluation-block">
+<div id="rocker-evaluation-introduction">
+    <h1 id="rocker-evaluation-header">rocker-evaluation-header</h1>
+    <p id="rocker-evaluation-task-welcome">
+        rocker-evaluation-task-welcome
+    </p>
+    <p id="rocker-evaluation-task-explanation">
+        rocker-evaluation-task-explanation
+    </p>
+    <div id="rocker-evaluation-evaluation-details">
+        <h3 id="rocker-evaluation-details-header">rocker-evaluation-details-header</h3>
+        <ol>
+            <li>What's your name? <label for="user-name"></label><input class="text-box" type="text" id="user-name"></li>
+            <li>Which mouse are you using? <label for="evaluation-mouse-model"></label><select id="evaluation-mouse-model">
+                <option value="g502x">G502X</option>
+                <option value="cirilla">Rocker Prototype</option>
+            </select></li>
+        </ol>
+    </div>
+    <button class = "full-width" id="start-evaluation" onclick="begin_evaluation()">Start Evaluation</button>
+</div>
+<div id="rocker-evaluation-task-area" style="display: block">
+    <div class="container">
+        <b>evaluation task goes here</b>
+    </div>
+    <p id="progress-visualisation"></p>
+</div>
+<script src="rocker_evaluation.js"></script>
+</body>
+</html>
