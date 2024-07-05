@@ -25,13 +25,27 @@
             </select></li>
         </ol>
     </div>
-    <button class = "full-width" id="start-evaluation" onclick="begin_evaluation()">Start Evaluation</button>
+    <button class = "full-width" id="start-evaluation" onclick="start_evaluation()">Start Evaluation</button>
 </div>
-<div id="rocker-evaluation-task-area" style="display: block">
+<div id="rocker-evaluation-task-area" style="display: none">
+    <div id="progress-bar" class="progress-bar"></div>
+    <div class="progress-bar-background"></div>
     <div class="container">
-        <b>evaluation task goes here</b>
+        <div class="rocker-target-container">
+            <div id="up-left" class="rocker-target-item">up-left</div>
+            <div id="down-right" class="rocker-target-item">down-right</div>
+            <div id="forward" class="rocker-target-item">forward</div>
+            <div id="backward" class="rocker-target-item">backward</div>
+        </div>
     </div>
     <p id="progress-visualisation"></p>
+</div>
+<div id="rocker-evaluation-task-finish" style="display: none">
+    <h1 id="rocker-evaluation-outro-header">rocker-evaluation-outro-header</h1>
+    <p id="rocker-evaluation-task-outro">
+        rocker-evaluation-task-outro
+    </p>
+    </div>
 </div>
 <script src="rocker_evaluation.js"></script>
 </body>
