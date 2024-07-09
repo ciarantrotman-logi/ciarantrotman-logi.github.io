@@ -1,5 +1,3 @@
-let task_sequence_length = 20;
-
 let nodes = [{
         key: "up",
         index: 0,
@@ -31,7 +29,6 @@ function get_node_from_event_code(code) {
 function get_div_from_node_index(index){
     return document.getElementById(nodes.find(node => node.index === index).div_id);
 }
-
 /*
         0   ↔   1
         ⇅       ⇅
@@ -44,6 +41,7 @@ let transformations = [
     "diagonal",
 ]
 
+let uid = Date.now().toString();
 let node_sequence = [];
 
 function get_transformed_index(transformation, target_node) {
@@ -73,38 +71,39 @@ function get_transformed_index(transformation, target_node) {
     }
 }
 
-let repeat_proc = .3;
-let horizontal_proc = .6;
-let vertical_proc = .8;
-let diagonal_proc = 1;
+let cycle_count = 3;
+let transformation_sequence = [
+    "repeat",
+    "horizontal",
+    "repeat",
+    "vertical",
+    "repeat",
+    "horizontal",
+    "repeat",
+    "diagonal",
+    "repeat",
+    "vertical",
+    "repeat",
+    "diagonal",
+]
 
-const transformation_map = new Map([
-    [repeat_proc,       transformations[0]],
-    [horizontal_proc,   transformations[1]],
-    [vertical_proc,     transformations[2]],
-    [diagonal_proc,     transformations[3]],
-]);
-
-function generate_node_sequence() {
-    let next_node_index = Math.floor(Math.random() * nodes.length);
-    for (let i = 0; i < task_sequence_length; i++) {
-        let proc = Math.random();
-        let cached_index = next_node_index;
-        for (const [probability, target_transformation] of transformation_map) {
-            if (proc < probability) {
-                next_node_index = get_transformed_index(target_transformation, nodes[next_node_index]);
-                node_sequence.push({
-                    node: nodes[cached_index],
-                    transformation: target_transformation
-                });
-                break;
-            }
+function generate_node_sequence(){
+    let next_node_index = 0;
+    for (let i = 0; i < cycle_count; i++) {
+        for (let j = 0; j < transformation_sequence.length; j++) {
+            let cached_index = next_node_index;
+            let transformation = transformation_sequence[j];
+            next_node_index = get_transformed_index(transformation, nodes[next_node_index]);
+            node_sequence.push({
+                node: nodes[cached_index],
+                transformation: transformation,
+                cycle: i
+            });
         }
     }
 }
 
 generate_node_sequence();
-console.log(node_sequence);
 
 let task_active = false;
 let task_index = 0;
@@ -132,28 +131,28 @@ function start_evaluation() {
 
     switch (evaluation_mouse_model.value) {
         case 'g502x':
-            up_div.innerText = 'Wheel Left Tilt';
-            down_div.innerText = 'Wheel Right Tilt';
+            up_div.innerText = 'Wheel Left Tilt \n(1)';
+            down_div.innerText = 'Wheel Right Tilt \n(2)';
             break;
         case 'cirilla':
-            up_div.innerText = 'Rocker Up';
-            down_div.innerText = 'Rocker Down';
+            up_div.innerText = 'Rocker Up \n(1)';
+            down_div.innerText = 'Rocker Down \n(2)';
             break;
         default:
             break;
     }
-    forward_div.innerText = 'Forward Button';
-    backward_div.innerText = 'Back Button';
+    forward_div.innerText = 'Forward Button \n(4)';
+    backward_div.innerText = 'Back Button \n(3)';
     
     render_target_node();
 }
 
 document.addEventListener('keydown', function(event) {
-    if (!task_active) return ;
+    if (!task_active) return;
+
     event.preventDefault();
     
     cache_user_input(event);
-    render_target_node();
     calculate_progress_bar_width();
     
     task_index++;
@@ -177,11 +176,13 @@ function validate_user_input(event) {
 }
 
 function cache_user_input(event) {
+    let cached_success = validate_user_input(event); 
     input_sequence.push({
         event: event,
         task: node_sequence[task_index],
-        success: validate_user_input(event)
+        success: cached_success
     })
+    console.log(`target: ${node_sequence[task_index].node.code}, actual: ${event.code}, success: ${cached_success}`);
 }
 
 function calculate_progress_bar_width(){
@@ -196,14 +197,16 @@ function finish_evaluation(){
     console.log(input_sequence);
     
     generate_output_data();
-    download_output_data();
+    download_output_data().then(r => console.log('Data Downloaded'));
 }
 
 function generate_output_data(){
+    // todo: aggregate data instead
     for (let i = 1; i < input_sequence.length; i++) {
         let current_task = input_sequence[i];
         let previous_task = input_sequence[i-1];
         parsed_output_data.push({
+            uid: uid,
             user_name: sanitised_string(document.getElementById('user-name').value),
             evaluation_mouse_make: 'logitech',
             evaluation_mouse_model: sanitised_string(evaluation_mouse_model.value),
@@ -213,6 +216,7 @@ function generate_output_data(){
 
             node_transformation: previous_task.task.transformation,
             task_index: i-1,
+            cycle_index: current_task.cycle,
             
             task_success: current_task.success,
             input_duration: current_task.event.timeStamp - previous_task.event.timeStamp,
@@ -224,23 +228,39 @@ function generate_output_data(){
     console.log(parsed_output_data);
 }
 
-function download_output_data (){
+async function download_output_data (){
     const json = {};
+    const zip = new JSZip();
+    
     Object.keys(parsed_output_data).forEach(key => {
         json[key] = parsed_output_data[key];
     });
-    const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const placeholder = document.createElement("a");
-    placeholder.href = url;
-    placeholder.download = Date.now().toString();
-    document.body.appendChild(placeholder);
-    placeholder.click();
-    document.body.removeChild(placeholder);
-    URL.revokeObjectURL(url);
+
+    for (let key in json) {
+        if (json.hasOwnProperty(key)) {
+            const data = json[key];
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+            console.log(`${uid}-${key}.json`);
+            console.log(data);
+            zip.file(`${uid}-${key}.json`, blob);
+        }
+    }
+
+    const blob = await zip.generateAsync({ type: "blob" });
+    console.log(blob);
+    const download = document.createElement("a");
+    download.href = URL.createObjectURL(blob);
+    download.download = `${uid}.zip`;
+    console.log(download.download);
+    download.click();
 }
 
 function sanitised_string(target){
     let sanitised = target.replace(/\W+/g, "");
     return sanitised.toLowerCase();
 }
+
+setInterval(function() {
+    if (!task_active) return;
+    render_target_node();
+}, 1);
