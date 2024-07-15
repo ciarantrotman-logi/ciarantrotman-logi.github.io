@@ -97,7 +97,7 @@ function generate_node_sequence(){
             node_sequence.push({
                 node: nodes[cached_index],
                 transformation: transformation,
-                cycle: i
+                cycle_index: i
             });
         }
     }
@@ -131,18 +131,18 @@ function start_evaluation() {
 
     switch (evaluation_mouse_model.value) {
         case 'g502x':
-            up_div.innerText = 'Wheel Left Tilt \n(1)';
-            down_div.innerText = 'Wheel Right Tilt \n(2)';
+            up_div.innerText = 'Wheel Left Tilt';       // Digit1
+            down_div.innerText = 'Wheel Right Tilt';    // Digit2
             break;
         case 'cirilla':
-            up_div.innerText = 'Rocker Up \n(1)';
-            down_div.innerText = 'Rocker Down \n(2)';
+            up_div.innerText = 'Rocker Up';             // Digit1
+            down_div.innerText = 'Rocker Down';         // Digit2
             break;
         default:
             break;
     }
-    forward_div.innerText = 'Forward Button \n(4)';
-    backward_div.innerText = 'Back Button \n(3)';
+    forward_div.innerText = 'Forward Button';           // Digit4
+    backward_div.innerText = 'Back Button';             // Digit3
     
     render_target_node();
 }
@@ -201,7 +201,6 @@ function finish_evaluation(){
 }
 
 function generate_output_data(){
-    // todo: aggregate data instead
     for (let i = 1; i < input_sequence.length; i++) {
         let current_task = input_sequence[i];
         let previous_task = input_sequence[i-1];
@@ -210,13 +209,14 @@ function generate_output_data(){
             user_name: sanitised_string(document.getElementById('user-name').value),
             evaluation_mouse_make: 'logitech',
             evaluation_mouse_model: sanitised_string(evaluation_mouse_model.value),
+            evaluation_mouse_iteration: 'v1.0',
             
             target_node: current_task.task.node.key,
             actual_node: get_node_from_event_code(current_task.event.code).key,
 
             node_transformation: previous_task.task.transformation,
             task_index: i-1,
-            cycle_index: current_task.cycle,
+            cycle_index: current_task.task.cycle_index,
             
             task_success: current_task.success,
             input_duration: current_task.event.timeStamp - previous_task.event.timeStamp,
@@ -261,6 +261,13 @@ function sanitised_string(target){
 }
 
 setInterval(function() {
+    checkUserName();
     if (!task_active) return;
     render_target_node();
 }, 1);
+
+const user_name_input = document.getElementById('user-name');
+const start_evaluation_button = document.getElementById('start-evaluation');
+function checkUserName() {
+    start_evaluation_button.disabled = user_name_input.value.trim() === '';
+}
