@@ -216,10 +216,10 @@ html, body {
 
 .box {
   display: inline-block;
-  border: 3px solid black;
+  background-color: lightgreen;
   padding: 16px;
   margin: 16px;
-  border-radius: 7px;
+  border-radius: 4px;
   min-width: 16px;
   min-height: 16px;
   text-align: center;
@@ -227,10 +227,9 @@ html, body {
 }
 
 .box.hide-text {
-  color: lightgrey;
+  color: white;
   font-weight: normal;
-  background-color: white;
-  border: 2px solid lightgrey;
+  background-color: lightgrey;
 }
 
 .container {
