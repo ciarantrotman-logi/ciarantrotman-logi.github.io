@@ -40,9 +40,9 @@ let key_order = [
     /*
     D Cluster
     */
-    {key_name: "E",             key_code: "KeyE"},
-    {key_name: "F",             key_code: "KeyF"},
-    {key_name: "C",             key_code: "KeyC"},
+    // {key_name: "E",             key_code: "KeyE"},
+    // {key_name: "F",             key_code: "KeyF"},
+    // {key_name: "C",             key_code: "KeyC"},
 ]
 
 let base_key = {key_name: "D", key_code: "KeyD"};

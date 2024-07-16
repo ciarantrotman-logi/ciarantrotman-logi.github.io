@@ -71,7 +71,7 @@ function get_transformed_index(transformation, target_node) {
     }
 }
 
-let cycle_count = 3;
+let cycle_count = 5;
 let transformation_sequence = [
     "repeat",
     "horizontal",
@@ -85,6 +85,9 @@ let transformation_sequence = [
     "vertical",
     "repeat",
     "diagonal",
+    "repeat",
+    "vertical"
+    
 ]
 
 function generate_node_sequence(){
