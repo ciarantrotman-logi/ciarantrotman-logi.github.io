@@ -1,11 +1,24 @@
 const inputElement = document.getElementById('input');
-inputElement.addEventListener('input', onInputChange);
-inputElement.addEventListener('focus', startListening);
+inputElement.addEventListener('input', on_input_change);
+inputElement.addEventListener('focus', start_listening);
 document.addEventListener('DOMContentLoaded', function() {
-    resetListeners();
+    reset_listeners();
 });
-function restartEvaluation(){
-    resetListeners();
+
+let url = new URL(window.location.href);
+let query_string = "";
+extract_query_parameters(url.toString());
+function extract_query_parameters(url_string) {
+    let question_mark_index = url_string.indexOf("?");
+    if (question_mark_index !== -1) {
+        query_string = '?';
+        query_string += url_string.substring(question_mark_index + 1);
+    }
+}
+console.log(`Query Parameters = ${query_string}`);
+
+function restart_evaluation(){
+    reset_listeners();
     submitted = true;
     window.location.href = 'typing_evaluation.html';
 }
@@ -13,11 +26,11 @@ function start(){
     document.getElementById('introduction').style.display = "none";
     document.getElementById('input-area').style.display = "block";
 }
-function startListening() {
+function start_listening() {
     listening = true;
 }
 
-let mackenziePhrases = [
+let mackenzie_phrases = [
     "my watch fell in the water",
     "prevailing wind from the east",
     "never too rich and never too thin",
@@ -520,7 +533,7 @@ let mackenziePhrases = [
 ]
 const terminations = ['.', '.', '!', '?'];
 
-function getRandomInt(min, max) {
+function get_random_int(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -535,18 +548,18 @@ let paragraphs = [
 //   {id: "evaluation", phrases: 1}
 // ];
 
-let phraseIndex = 0;
+let phrase_index = 0;
 let phrases = [];
 
-generateEvaluationPhrases();
+generate_evaluation_phrases();
 
-function generateEvaluationPhrases(){
+function generate_evaluation_phrases(){
     paragraphs.forEach(paragraph =>{
         let div = document.createElement("div");
         let span = document.createElement("span");
         let id = 'phrase-' + paragraph.id;
 
-        let evaluation = generateParagraph(paragraph.phrases);
+        let evaluation = generate_paragraph(paragraph.phrases);
         let content = {
             id: id,
             phrase: evaluation
@@ -565,16 +578,16 @@ function generateEvaluationPhrases(){
     })
 }
 
-function choosePhrase() {
-    currentPhrase = phrases[phraseIndex].phrase;
-    visualiseCharacterValidity();
+function choose_phrase() {
+    current_phrase = phrases[phrase_index].phrase;
+    visualise_character_validity();
 }
 
-function generateParagraph(i){
+function generate_paragraph(i){
     let generated = '';
     for (let j = 0; j < i; j++) {
-        generated += sentenceCase(mackenziePhrases[getRandomInt(0, mackenziePhrases.length - 1)]);
-        generated += terminations[getRandomInt(0, terminations.length - 1)];
+        generated += convert_to_sentence_case(mackenzie_phrases[get_random_int(0, mackenzie_phrases.length - 1)]);
+        generated += terminations[get_random_int(0, terminations.length - 1)];
         if (j < i - 1 ){
             generated += " ";
         }
@@ -582,15 +595,15 @@ function generateParagraph(i){
     return generated;
 }
 
-function sentenceCase(string){
+function convert_to_sentence_case(string){
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-let startTime;
-let endTime;
-let timeTaken;
+let start_time;
+let end_time;
+let time_taken;
 
-let currentPhrase;
+let current_phrase;
 let currentInput = '';
 
 let accuracy = 100;
@@ -629,29 +642,29 @@ const millisecondsToSeconds = 1000.0;
 const secondsToMinutes = 60.0;
 const charactersToWords = 5.0;
 
-function onInputChange() {
+function on_input_change() {
     if (listening && !started){
-        startTime = new Date();
+        start_time = new Date();
         started = true;
     }
     if (!finished)
     {
-        if (currentInput !== currentPhrase.slice(0, currentInput.length)) {
+        if (currentInput !== current_phrase.slice(0, currentInput.length)) {
             mistakes++;
             keyEvents[keyEvents.length - 2].correct = false;
         }
         currentInput = inputElement.value;
         calculatePerformance();
-        visualiseCharacterValidity();
+        visualise_character_validity();
     }
-    if (currentInput.length >= currentPhrase.length)
+    if (currentInput.length >= current_phrase.length)
     {
-        phraseIndex++;
-        if (phraseIndex < paragraphs.length){
+        phrase_index++;
+        if (phrase_index < paragraphs.length){
             calculatePerformance();
             parseMetrics();
-            resetListeners();
-            choosePhrase();
+            reset_listeners();
+            choose_phrase();
         }
         else {
             finished = true;
@@ -681,13 +694,13 @@ function calculatePerformance(){
     calculateVariance();
 }
 
-function resetListeners(){
+function reset_listeners(){
     inputElement.value = '';
     currentInput = '';
     
-    startTime = new Date();
-    endTime = new Date();
-    timeTaken = 0;
+    start_time = new Date();
+    end_time = new Date();
+    time_taken = 0;
 
     accuracy = 100;
     mistakes = 0;
@@ -721,10 +734,10 @@ function resetListeners(){
 }
 
 
-/*function visualiseCharacterValidity(){
-    let visualiser = document.getElementById(phrases[phraseIndex].id);
+/*function visualise_character_validity(){
+    let visualiser = document.getElementById(phrases[phrase_index].id);
     visualiser.textContent = null;
-    currentPhrase.split('').forEach(char => {
+    current_phrase.split('').forEach(char => {
         const charSpan = document.createElement('span');
         if (char === '\n') {
             charSpan.innerHTML = '<br>';
@@ -759,13 +772,13 @@ function resetCharacter(char){
 }
 */
 
-function visualiseCharacterValidity() {
-    const visualiser = document.getElementById(phrases[phraseIndex].id);
+function visualise_character_validity() {
+    const visualiser = document.getElementById(phrases[phrase_index].id);
     visualiser.textContent = null;
 
     const fragment = document.createDocumentFragment(); // Use a document fragment for better performance
 
-    currentPhrase.split('').forEach(char => {
+    current_phrase.split('').forEach(char => {
         const charSpan = document.createElement('span');
         if (char === '\n') {
             charSpan.innerHTML = '<br>';
@@ -851,7 +864,7 @@ function keydownAnalysis(event){
     }
 }
 function logKey(event, previous){
-    let target = currentPhrase.charAt(inputElement.value.length);
+    let target = current_phrase.charAt(inputElement.value.length);
     keyEvents.push({
         keydown: event,
         keyup: null,
@@ -944,9 +957,9 @@ function evaluateEfficiency() {
     correctionEfficiency = (correctedErrorCount / deletedCharacterCount) * 100.0;
 }
 function evaluateTypingPerformance() {
-    wordsPerMinute = Math.round(((currentInput.length / charactersToWords) / timeTaken) * secondsToMinutes);
-    charactersPerMinute = Math.round((currentInput.length / timeTaken) * secondsToMinutes);
-    accuracy = checkAccuracy(currentPhrase, currentInput);
+    wordsPerMinute = Math.round(((currentInput.length / charactersToWords) / time_taken) * secondsToMinutes);
+    charactersPerMinute = Math.round((currentInput.length / time_taken) * secondsToMinutes);
+    accuracy = checkAccuracy(current_phrase, currentInput);
 }
 function checkAccuracy(toReference, toCheck) {
     let errors = 0;
@@ -963,8 +976,8 @@ function checkAccuracy(toReference, toCheck) {
 }
 setInterval(function() {
     if (!finished && started){
-        endTime = new Date();
-        timeTaken = ((endTime - startTime) / millisecondsToSeconds);
+        end_time = new Date();
+        time_taken = ((end_time - start_time) / millisecondsToSeconds);
         durationMean = totalKeystrokeDuration / totalKeys;
         spacingMean = totalKeystrokeSpacing / totalKeys;
         transitionMean = totalKeyTransitionDuration / totalKeys;
@@ -972,9 +985,9 @@ setInterval(function() {
 })
 function parseMetrics(store = false){
     let metrics = [
-        {id: 'target-phrase',               value: currentPhrase},
+        {id: 'target-phrase',               value: current_phrase},
         {id: 'entered-phrase',              value: currentInput},
-        {id: 'time-taken',                  value: timeTaken},
+        {id: 'time-taken',                  value: time_taken},
         {id: 'words-per-minute',            value: wordsPerMinute},
         {id: 'characters-per-minute',       value: charactersPerMinute},
         {id: 'total-characters-typed',      value: totalCharacters},
@@ -1008,7 +1021,7 @@ window.addEventListener('beforeunload', function (event) {
     }
 });
 
-choosePhrase();
+choose_phrase();
 // checkData();
 
 /*function checkData(){

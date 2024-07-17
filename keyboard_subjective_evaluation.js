@@ -6,6 +6,27 @@ function on_continue(){
 let evaluation_section_area = document.getElementById('evaluation-area');
 let progress_bar = document.getElementById('progress-bar');
 
+let url = new URL(window.location.href);
+let disable_tlx = url.searchParams.get("no_tlx") !== null;
+let disable_umux = url.searchParams.get("no_umux") !== null;
+let disable_attrakdiff = url.searchParams.get("no_attrakdiff") !== null;
+let disable_timbre = url.searchParams.get("no_timbre") !== null;
+let disable_tactility = url.searchParams.get("no_tactility") !== null;
+let disable_ergo = url.searchParams.get("no_ergo") !== null;
+let disable_fss = url.searchParams.get("no_fss") !== null;
+let manually_download_data = url.searchParams.get("manual_download") !== null;
+let query_string = "";
+extract_query_parameters(url.toString());
+function extract_query_parameters(url_string) {
+    let question_mark_index = url_string.indexOf("?");
+    if (question_mark_index !== -1) {
+        query_string = '?';
+        query_string += url_string.substring(question_mark_index + 1);
+    }
+}
+console.log(`Query Parameters = ${query_string}`);
+console.log(`Manual Download = ${manually_download_data}`);
+
 let sections = [
     {   id: 'tlx-k',
         metrics: [
@@ -102,6 +123,51 @@ let sections = [
         range: {min: -2, max: 2, value: 0}}
 ]
 
+let filtered_sections = [];
+
+sections.forEach(section => {
+    switch (section.id) {
+        case 'tlx-k':
+            if (!disable_tlx) {
+                filtered_sections.push(section);
+            }
+            break;
+        case 'umux-k':
+            if (!disable_umux) {
+                filtered_sections.push(section);
+            }
+            break;
+        case 'attrakdiff-k':
+            if (!disable_attrakdiff) {
+                filtered_sections.push(section);
+            }
+            break;
+        case 'timbre-k':
+            if (!disable_timbre) {
+                filtered_sections.push(section);
+            }
+            break;
+        case 'tactility-k':
+            if (!disable_tactility) {
+                filtered_sections.push(section);
+            }
+            break;
+        case 'ergo-k':
+            if (!disable_ergo) {
+                filtered_sections.push(section);
+            }
+            break;
+        case 'fss-k':
+            if (!disable_fss) {
+                filtered_sections.push(section);
+            }
+            break;
+        default:
+            break;
+    }
+});
+
+sections = filtered_sections;
 
 function construct_element_with_id(tag, id, class_name){
     let element = document.createElement(tag);
@@ -249,22 +315,26 @@ function submit(){
 let submitted = false;
 
 function download_data() {
-    const data = sessionStorage;
-    let stamp = Date.now().toString();
-    database.ref(stamp).set(data)
+    let stamp = sessionStorage.getItem('uid');
+    if (manually_download_data){
+        manual_download(sessionStorage);
+        return;
+    }
+    database.ref(stamp).set(sessionStorage)
         .then(function() {
             document.getElementById("finish-screen").innerHTML =
                 "Thank you for participating in this user test! You may now close this window."
         })
         .catch(function(error) {
-            document.getElementById("finish-screen").innerHTML =
-                "Thank you for participating in this user test, please download this .JSON file and send it to the facilitator.";
-            manual_download(data);
+            console.log(error);
+            manual_download(sessionStorage);
         });
     submitted = true;
 }
 
 function manual_download(data){
+    document.getElementById("finish-screen").innerHTML =
+        "Thank you for participating in this user test, please download this .JSON file and send it to the facilitator.";
     const json = {};
     Object.keys(data).forEach(key => {
         json[key] = data[key];
@@ -273,7 +343,7 @@ function manual_download(data){
     const url = URL.createObjectURL(blob);
     const placeholder = document.createElement("a");
     placeholder.href = url;
-    placeholder.download = Date.now().toString();
+    placeholder.download = sessionStorage.getItem('uid');
     document.body.appendChild(placeholder);
     placeholder.click();
     document.body.removeChild(placeholder);

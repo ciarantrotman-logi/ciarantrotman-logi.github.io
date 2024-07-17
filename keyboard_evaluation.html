@@ -29,7 +29,7 @@
                     <li id="evaluation-stage-explainer-subjective-evaluation"></li>
                 </ol>
                 <p id="privacy-consent-explainer"></p>
-                <button class = "full-width" id="button-label-privacy-consent-agreement" onclick="inputUserInformation()"></button>
+                <button class = "full-width" id="button-label-privacy-consent-agreement" onclick="cache_user_information()"></button>
             </div>
             <div id="user-information" style="display: none">
                 <p id="user-information-explanation"><p>
@@ -107,7 +107,7 @@
                     </li>
                 </ol>
                 <br>
-                <button onclick="inputKeyboardInformation()" id="continue-to-keyboard-data" class="full-width" ></button></a>
+                <button onclick="cache_keyboard_information()" id="continue-to-keyboard-data" class="full-width" ></button></a>
             </div>
             <div id="keyboard-information" style="display: none">
                 <p id="keyboard-information-introduction"></p>
@@ -169,7 +169,7 @@
                     </li>
                 </ol>
                 <br>
-                <a href="typing_evaluation.html"><button onclick="startEvaluation()" id="continue-to-evaluation" class="full-width" ></button></a>
+                <button onclick="cache_data_and_progress()" id="continue-to-evaluation" class="full-width" ></button>
             </div>
             <script src="keyboard_evaluation.js"></script>
             <script src="localisation.js"></script>

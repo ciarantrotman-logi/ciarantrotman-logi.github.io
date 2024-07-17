@@ -37,91 +37,112 @@ let jis = [
     {id: "japanese", label: "Japanese" }
 ]
 
-let layoutDropdown = document.getElementById('keyboard-layout');
-let languageDropdown = document.getElementById('keyboard-language');
+let layout_dropdown = document.getElementById('keyboard-layout');
+let language_dropdown = document.getElementById('keyboard-language');
 
-layoutDropdown.addEventListener('change', function (){
-    populateKeyboardLanguageOptions();
+layout_dropdown.addEventListener('change', function (){
+    populate_keyboard_language_options();
 });
 
-function populateKeyboardLanguageOptions(){
-    languageDropdown.innerHTML = "";
-    switch (layoutDropdown.value){
+function populate_keyboard_language_options(){
+    language_dropdown.innerHTML = "";
+    switch (layout_dropdown.value){
         case 'iso':
-            generateLanguageOptions(iso);
+            generate_language_options(iso);
             break;
         case 'ansi':
-            generateLanguageOptions(ansi);
+            generate_language_options(ansi);
             break;
         case 'jis':
-            generateLanguageOptions(jis);
+            generate_language_options(jis);
             break;
     }
 }
 
-function generateLanguageOptions(layout){
+function generate_language_options(layout){
     layout.forEach(language =>{
         let option = document.createElement('option');
         option.value = language.id;
         option.id = language.id;
-        languageDropdown.appendChild(option);
+        language_dropdown.appendChild(option);
     })
 }
 
 let url = new URL(window.location.href);
-let userIndex = url.searchParams.get('userID');
-console.log(`User ID = ${userIndex}`);
+let user_index = url.searchParams.get('userID');
+let query_string = "";
+extract_query_parameters(url.toString());
+function extract_query_parameters(url_string) {
+    let question_mark_index = url_string.indexOf("?");
+    if (question_mark_index !== -1) {
+        query_string = '?';
+        query_string += url_string.substring(question_mark_index + 1);
+    }
+}
+console.log(`User ID = ${user_index}`);
+console.log(`Query Parameters = ${query_string}`);
 
-populateKeyboardLanguageOptions();
+populate_keyboard_language_options();
 
-function inputUserInformation(){
+function cache_user_information(){
     document.getElementById('introduction').style.display = 'none';
     document.getElementById('user-information').style.display = 'block';
 }
-function inputKeyboardInformation(){
+function cache_keyboard_information(){
     document.getElementById('introduction').style.display = 'none';
     document.getElementById('user-information').style.display = 'none';
     document.getElementById('keyboard-information').style.display = 'block';
 }
-function startEvaluation(){
-    sessionStorage.setItem('user-id', userIndex);
-    sessionStorage.setItem('user-name', sanitisedString(document.getElementById('user-name').value));
-    
+function cache_data_and_progress(){
+    cache_session_storage();
+    cache_system_information();
+    submitted = true;
+    window.location.href = `typing_evaluation.html${query_string}`;
+}
+function cache_session_storage(){
+    sessionStorage.setItem('user-id', user_index);
+    sessionStorage.setItem('uid', Date.now().toString());
+    sessionStorage.setItem('user-name', sanitised_string(document.getElementById('user-name').value));
+
     sessionStorage.setItem('user-handedness', document.getElementById('user-handedness').value);
     sessionStorage.setItem('user-hand-size', document.getElementById('user-hand-size').value);
-    
+
     sessionStorage.setItem('user-keyboard-usage', document.getElementById('keyboard-usage').value);
     sessionStorage.setItem('user-technical-familiarity', document.getElementById('technical-familiarity').value);
 
     sessionStorage.setItem('test-condition-flag', document.getElementById('test-condition-flag').value);
     sessionStorage.setItem('ergonomic-flag', document.getElementById('ergonomic-flag').value);
-    
+
     sessionStorage.setItem('usage-environment', document.getElementById('usage-environment').value);
     sessionStorage.setItem('workspace-type', document.getElementById('workspace-type').value);
-    
-    sessionStorage.setItem('evaluated-keyboard-make', sanitisedString(document.getElementById('evaluated-keyboard-make').value));
-    sessionStorage.setItem('evaluated-keyboard-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
+
+    sessionStorage.setItem('evaluated-keyboard-make', sanitised_string(document.getElementById('evaluated-keyboard-make').value));
+    sessionStorage.setItem('evaluated-keyboard-model', sanitised_string(document.getElementById('evaluated-keyboard-model').value));
 
     sessionStorage.setItem('mechanical-flag', document.getElementById('mechanical-flag').value);
     if (document.getElementById('mechanical-flag').value === "true"){
-        sessionStorage.setItem('switch-make', sanitisedString(document.getElementById('switch-make').value));
-        sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('switch-model').value));
+        sessionStorage.setItem('switch-make', sanitised_string(document.getElementById('switch-make').value));
+        sessionStorage.setItem('switch-model', sanitised_string(document.getElementById('switch-model').value));
     } else {
-        sessionStorage.setItem('switch-make',  sanitisedString(document.getElementById('evaluated-keyboard-make').value));
-        sessionStorage.setItem('switch-model', sanitisedString(document.getElementById('evaluated-keyboard-model').value));
+        sessionStorage.setItem('switch-make',  sanitised_string(document.getElementById('evaluated-keyboard-make').value));
+        sessionStorage.setItem('switch-model', sanitised_string(document.getElementById('evaluated-keyboard-model').value));
     }
-    
+
     sessionStorage.setItem('evaluated-keyboard-layout', document.getElementById('keyboard-layout').value);
     sessionStorage.setItem('evaluated-keyboard-language', document.getElementById('keyboard-language').value);
-    
+
     sessionStorage.setItem('benchmark-flag', document.getElementById('benchmark-flag').value);
     sessionStorage.setItem('palm-rest-flag', document.getElementById('palm-rest-flag').value);
-    
+
     sessionStorage.setItem('user-information-check', 'true');
-    submitted = true;
+}
+function cache_system_information(){
+    sessionStorage.setItem('browser-name', navigator.userAgent);
+    sessionStorage.setItem('operating-system', navigator.platform);
+    sessionStorage.setItem('preferred-language', navigator.language);
 }
 
-function sanitisedString(target){
+function sanitised_string(target){
     let sanitised = target.replace(/\W+/g, "");
     return sanitised.toLowerCase();
 }
