@@ -62,11 +62,6 @@ let output_data = [];
 let progression_readout= document.getElementById('progress-visualisation');
 let base_key_readout= document.getElementById('base-key');
 let target_key_readout= document.getElementById('target-key');
-
-let input_user_name= document.getElementById('user-name');
-let input_keyboard_model= document.getElementById('keyboard-model');
-let input_keyboard_make= document.getElementById('keyboard-make');
-let input_keyboard_condition= document.getElementById('keyboard-condition');
 /*
 -----[System Events]
 */
@@ -210,9 +205,7 @@ function begin_evaluation(){
 }
 function cache_evaluation_data(){
     sessionStorage.setItem('user-name', sanitised_string(document.getElementById('user-name').value));
-    sessionStorage.setItem('keyboard-make', sanitised_string(document.getElementById('keyboard-make').value));
     sessionStorage.setItem('keyboard-model', sanitised_string(document.getElementById('keyboard-model').value));
-    sessionStorage.setItem('keyboard-condition', sanitised_string(input_keyboard_condition.value));
 }
 /*
 -----[Initial Calls]

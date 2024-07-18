@@ -168,6 +168,3 @@ window.addEventListener('beforeunload', function (event) {
         return warningMessage;
     }
 });
-
-let check = sessionStorage.getItem('user-information-check');
-console.log(`Session Storage has been set: ${check}`);

@@ -316,14 +316,15 @@ let submitted = false;
 
 function download_data() {
     let stamp = sessionStorage.getItem('uid');
-    if (manually_download_data){
-        manual_download(sessionStorage);
-        return;
-    }
     database.ref(stamp).set(sessionStorage)
         .then(function() {
-            document.getElementById("finish-screen").innerHTML =
-                "Thank you for participating in this user test! You may now close this window."
+            // still cache this data on the web server just in case
+            if (manually_download_data){
+                manual_download(sessionStorage);
+            } else {
+                document.getElementById("finish-screen").innerHTML =
+                    "Thank you for participating in this user test! You may now close this window."
+            }
         })
         .catch(function(error) {
             console.log(error);
