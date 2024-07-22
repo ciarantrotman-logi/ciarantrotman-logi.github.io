@@ -89,11 +89,18 @@ function validate_user_input(event){
         ? event.code ===  current_task().target.key_code 
         : event.code ===  current_task().base.key_code;
 }
+function get_target_key(){
+    return is_seeking_task()
+        ? current_task().target.key_code
+        : current_task().base.key_code;
+}
 function calculate_user_performance(event, correct_input){
+    console.log(get_target_key());
     during_task_data_collection.push({
         event: event,
         correct_input: correct_input,
         task_type: task_type(),
+        target_key: get_target_key(),
         action_index : action_index,
         task_index : task_index,
         cycle_index : cycle_index()
@@ -136,7 +143,7 @@ function calculate_task_performance(){
             user_name: sessionStorage.getItem('user-name'),
             keyboard_make: sessionStorage.getItem('keyboard-make'),
             keyboard_model: sessionStorage.getItem('keyboard-model'),
-            keyboard_condition: sessionStorage.getItem('keyboard-condition'),
+            target_key: current_input.target_key,
             pressed_key_code: current_input.event.code,
             previous_key_code: previous_input.event.code,
             input_duration: current_input.event.timeStamp - previous_input.event.timeStamp,
@@ -205,7 +212,8 @@ function begin_evaluation(){
 }
 function cache_evaluation_data(){
     sessionStorage.setItem('user-name', sanitised_string(document.getElementById('user-name').value));
-    sessionStorage.setItem('keyboard-model', sanitised_string(document.getElementById('keyboard-model').value));
+    sessionStorage.setItem('keyboard-make', 'logitech');
+    sessionStorage.setItem('keyboard-model', document.getElementById('keyboard-model').value);
 }
 /*
 -----[Initial Calls]
