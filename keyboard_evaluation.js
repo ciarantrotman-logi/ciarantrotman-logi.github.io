@@ -70,6 +70,7 @@ function generate_language_options(layout){
 
 let url = new URL(window.location.href);
 let user_index = url.searchParams.get('userID');
+let skip_typing_evaluation = url.searchParams.get("skip_evaluation") !== null;
 let query_string = "";
 extract_query_parameters(url.toString());
 function extract_query_parameters(url_string) {
@@ -97,7 +98,9 @@ function cache_data_and_progress(){
     cache_session_storage();
     cache_system_information();
     submitted = true;
-    window.location.href = `typing_evaluation.html${query_string}`;
+    window.location.href = skip_typing_evaluation 
+        ? `keyboard_subjective_evaluation.html${query_string}`
+        : `typing_evaluation.html${query_string}`;
 }
 function cache_session_storage(){
     sessionStorage.setItem('user-id', user_index);
