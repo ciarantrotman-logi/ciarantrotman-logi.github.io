@@ -44,7 +44,7 @@ let evaluation_types = {
     'quantised_one_dimensional':            'quantised_one_dimensional'
 }
 
-let evaluation_type = evaluation_types.quantised_one_dimensional;
+let evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
 let evaluation_task_in_progress = false;
 
 let dpr = 1;
