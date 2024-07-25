@@ -132,8 +132,6 @@ function extract_query_parameters(url_string) {
 /*
 ------------------------------------------------------------------------------------------------------------------------MANAGE ADDITIONAL STATES
 */
-evaluation_type = no_scrolling ? evaluation_types.reciprocal_targets_two_dimensional : evaluation_type;
-evaluation_type = scrolling_only ? evaluation_types.reciprocal_targets_one_dimensional : evaluation_type;
 
 debug_canvas.style.display = debug_check
     ? 'block'
@@ -390,8 +388,6 @@ function log_quantised_one_dimensional_data() {
         'action_index': action_index,
         'task_type' : evaluation_type
     }
-    
-    console.log(data);
     
     section_performance_data.push(data);
     action_index++;
@@ -751,7 +747,7 @@ function cache_performance_data(){
 function current_evaluation_type_length(){
     if (one_dimensional_evaluation_task()) {
         return one_dimensional_evaluation_sections.length;
-    } else if (quantised_one_dimensional_evaluation_task) {
+    } else if (quantised_one_dimensional_evaluation_task()) {
         return quantised_scroll_evaluation_sections.length;
     } else return two_dimensional_evaluation_sections.length;
 }
