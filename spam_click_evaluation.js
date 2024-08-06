@@ -19,6 +19,10 @@ let cursor_position = {
     y: 0
 };
 
+
+
+let click_size = 0;
+
 window.addEventListener('resize', scale_canvas);
 spam_click_canvas.addEventListener('mousemove', mouse_movement);
 spam_click_canvas.addEventListener('click', mouse_click);
@@ -61,10 +65,7 @@ function mouse_click(event){
         evaluation_timer();
         evaluation_start_timestamp = Date.now();
     }
-    
-    fade_canvas();
-    draw_dot(cursor_position.x, cursor_position.y, 'black', 2);
-    
+    click_size += 15;
     click_events.push(event);
 }
 
@@ -77,7 +78,7 @@ function draw_dot(x, y, color = 'black', size = 3) {
 }
 function fade_canvas() {
     spam_click_context.beginPath();
-    spam_click_context.fillStyle = '#FFFFFF30';
+    spam_click_context.fillStyle = '#FFFFFF1A';
     spam_click_context.fillRect(0, 0, spam_click_canvas.width * 2, spam_click_canvas.height * 2);
     spam_click_context.closePath();
 }
@@ -172,12 +173,19 @@ async function download_output_data (){
     console.log(download.download);
     download.click();
 }
-
 setInterval(function(){
     check_user_name();
+})
+setInterval(function(){
     let elapsed_duration = Date.now() - evaluation_start_timestamp;
     const progress = (elapsed_duration / evaluation_duration) * 100;
     progress_bar.style.width = progress + '%';
+})
+setInterval(function(){
+    fade_canvas();
+    click_size -= .3;
+    click_size = click_size < 1 ? 1 : click_size;
+    draw_dot(cursor_position.x, cursor_position.y, 'black', click_size);
 })
 
 function sanitised_string(target){
