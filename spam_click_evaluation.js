@@ -19,8 +19,6 @@ let cursor_position = {
     y: 0
 };
 
-
-
 let click_size = 0;
 
 window.addEventListener('resize', scale_canvas);
@@ -58,6 +56,8 @@ function start_evaluation(){
     user_name = sanitised_string(document.getElementById('user-name').value);
     evaluation_mouse_make = sanitised_string(document.getElementById('evaluation-mouse-make').value);
     evaluation_mouse_model = sanitised_string(document.getElementById('evaluation-mouse-model').value);
+    
+    document.body.style.cursor = 'none';
 }
 
 function mouse_click(event){
@@ -141,6 +141,7 @@ function calculate_split_performance(){
 }
 
 function finish_evaluation(){
+    document.body.style.cursor = 'auto';
     evaluation_screen.style.display = 'none';
     post_evaluation_screen.style.display = 'block';
     download_output_data().then(r => function(){
