@@ -2,6 +2,18 @@ const spam_click_canvas = document.getElementById('spam-click-canvas')
 const spam_click_context = spam_click_canvas.getContext('2d');
 const spam_click_rect = spam_click_canvas.getBoundingClientRect();
 
+let progress_bar = document.getElementById('progress-bar');
+
+let pre_evaluation_screen = document.getElementById('pre-evaluation-screen');
+let evaluation_screen = document.getElementById('evaluation-screen');
+let post_evaluation_screen = document.getElementById('post-evaluation-screen');
+
+let start_evaluation_button = document.getElementById('start-evaluation');
+
+let user_name = "";
+let evaluation_mouse_make = "";
+let evaluation_mouse_model = "";
+
 let cursor_position = {
     x: 0,
     y: 0
@@ -11,7 +23,14 @@ window.addEventListener('resize', scale_canvas);
 spam_click_canvas.addEventListener('mousemove', mouse_movement);
 spam_click_canvas.addEventListener('click', mouse_click);
 
+document.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+});
+
+let uid = Date.now().toString();
 let click_events = [];
+
+let evaluation_start_timestamp;
 
 function scale_canvas(){
     spam_click_canvas.width = window.innerWidth;
@@ -28,12 +47,23 @@ function set_cursor_position(event){
     }
 }
 
+function start_evaluation(){
+    pre_evaluation_screen.style.display = 'none';
+    evaluation_screen.style.display = 'block';
+    
+    user_name = sanitised_string(document.getElementById('user-name').value);
+    evaluation_mouse_make = sanitised_string(document.getElementById('evaluation-mouse-make').value);
+    evaluation_mouse_model = sanitised_string(document.getElementById('evaluation-mouse-model').value);
+}
+
 function mouse_click(event){
     if (click_events.length === 0){
         evaluation_timer();
+        evaluation_start_timestamp = Date.now();
     }
+    
     fade_canvas();
-    draw_dot(cursor_position.x, cursor_position.y, 'black', 10);
+    draw_dot(cursor_position.x, cursor_position.y, 'black', 2);
     
     click_events.push(event);
 }
@@ -57,13 +87,106 @@ function clear_canvas() {
 
 scale_canvas();
 
+let split_count = 10;
+let split_duration = 3000;
+let evaluation_duration = split_duration * split_count;
+
+let current_split_index = 0;
+let previous_split_click_index = 1;
+
+let split_data = [];
+
 function evaluation_timer() {
-    setTimeout(function() {
-        let aggregate_click_duration = 0;
-        for (let i = 1; i < click_events.length; i++) {
-            let click_duration = click_events[i].timeStamp - click_events[i-1].timeStamp;
-            aggregate_click_duration += click_duration;
+    setTimeout(calculate_split_performance, split_duration);
+}
+
+function calculate_split_performance(){
+    if (current_split_index >= split_count) {
+        finish_evaluation();
+        return;
+    }
+    
+    let aggregate_click_duration = 0;
+    let click_durations = [];
+    for (let i = previous_split_click_index + 1; i < click_events.length; i++) {
+        let click_duration = click_events[i].timeStamp - click_events[i-1].timeStamp;
+        aggregate_click_duration += click_duration;
+        click_durations.push(click_duration);
+    }
+    
+    let mean_click_duration = aggregate_click_duration / click_durations.length;
+    let click_duration_variance = click_durations.reduce((accumulator, duration) => accumulator + Math.pow(duration - mean_click_duration, 2), 0) / click_durations.length;
+    console.log(`Split ${current_split_index + 1}\n
+    Mean Click Duration: ${mean_click_duration}\n
+    Click Duration Variance: ${click_duration_variance}
+    `);
+    
+    split_data.push({
+        'uid' : uid,
+        'user-name' : user_name,
+        'evaluation-mouse-make' : evaluation_mouse_make,
+        'evaluation-mouse-model' : evaluation_mouse_model,
+        'split-index' : current_split_index,
+        'split-duration-ms' : split_duration,
+        'mean-click-duration' : mean_click_duration,
+        'click-duration-variance' : click_duration_variance,
+        'split-click-count' : click_durations.length
+    })
+    
+    previous_split_click_index = click_events.length - 1;
+    current_split_index++;
+    
+    evaluation_timer();
+}
+
+function finish_evaluation(){
+    evaluation_screen.style.display = 'none';
+    post_evaluation_screen.style.display = 'block';
+    download_output_data().then(r => function(){
+        console.log('Data downloaded successfully!');
+    });
+}
+
+async function download_output_data (){
+    const json = {};
+    const zip = new JSZip();
+
+    Object.keys(split_data).forEach(key => {
+        json[key] = split_data[key];
+    });
+
+    for (let key in json) {
+        if (json.hasOwnProperty(key)) {
+            const data = json[key];
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+            console.log(data);
+            zip.file(`${uid}-${key}.json`, blob);
         }
-        console.log(aggregate_click_duration / click_events.length)
-    }, 5000);
+    }
+
+    const blob = await zip.generateAsync({ type: "blob" });
+    console.log(blob);
+    const download = document.createElement("a");
+    download.href = URL.createObjectURL(blob);
+    download.download = `${uid}.zip`;
+    console.log(download.download);
+    download.click();
+}
+
+setInterval(function(){
+    check_user_name();
+    let elapsed_duration = Date.now() - evaluation_start_timestamp;
+    const progress = (elapsed_duration / evaluation_duration) * 100;
+    progress_bar.style.width = progress + '%';
+})
+
+function sanitised_string(target){
+    let sanitised = target.replace(/\W+/g, "");
+    return sanitised.toLowerCase();
+}
+function check_user_name() {
+    start_evaluation_button.disabled =
+        document.getElementById('user-name').value.trim() === '' ||
+        document.getElementById('evaluation-mouse-make').value.trim() === '' ||
+        document.getElementById('evaluation-mouse-model').value.trim() === '';
 }

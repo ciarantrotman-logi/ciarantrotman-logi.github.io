@@ -8,7 +8,41 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
 </head>
 <body class="fullscreen-canvas-body">
+<div id="pre-evaluation-screen" class="evaluation-block">
+    <h1>Spam Click Evaluation</h1>
+    <p id="spam-click-evaluation-task-welcome">
+        Thank you for participating in this mouse evaluation.
+    </p>
+    <p id="spam-click-evaluation-task-explanation">
+        In this evaluation we are looking to understand how you find spam clicking with the mouse you are evaluating.
+    </p>
+    <b id="rocker-evaluation-task-emphasis">
+        When the evaluation task begins, click as quickly as you can for the duration of the test.
+    </b>
+    <div id="spam-click-evaluation-details">
+        <h3 id="spam-click-evaluation-details-header">Evaluation Details</h3>
+        <ol>
+            <li>What's your name? <label for="user-name"></label><input class="text-box" type="text" id="user-name"></li>
+            <li>What make of mouse are you evaluating? <label for="evaluation-mouse-make"></label><input class="text-box" type="text" id="evaluation-mouse-make"></li>
+            <li>What model of mouse are you evaluating? <label for="evaluation-mouse-model"></label><input class="text-box" type="text" id="evaluation-mouse-model"></li>
+        </ol>
+    </div>
+    <button class = "full-width" id="start-evaluation" onclick="start_evaluation()">Start Evaluation</button>
+</div>
+<div id="evaluation-screen" style="display: none">
+    <div id="progress-bar" class="progress-bar"></div>
+    <div class="progress-bar-background"></div>
     <canvas id="spam-click-canvas" class="fullscreen-canvas"></canvas>
-    <script src="spam_click_evaluation.js"></script>
+</div>
+<div id="post-evaluation-screen" class="evaluation-block" style="display: none">
+    <h1>Spam Click Evaluation</h1>
+    <p id="spam-click-evaluation-task-outro">
+        Thank you again for participating in this evaluation.
+    </p>
+    <p>
+        You may now close this window.
+    </p>
+</div>
+<script src="spam_click_evaluation.js"></script>
 </body>
 </html>

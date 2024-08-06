@@ -264,13 +264,13 @@ function sanitised_string(target){
 }
 
 setInterval(function() {
-    checkUserName();
+    check_user_name();
     if (!task_active) return;
     render_target_node();
 }, 1);
 
 const user_name_input = document.getElementById('user-name');
 const start_evaluation_button = document.getElementById('start-evaluation');
-function checkUserName() {
+function check_user_name() {
     start_evaluation_button.disabled = user_name_input.value.trim() === '';
 }
