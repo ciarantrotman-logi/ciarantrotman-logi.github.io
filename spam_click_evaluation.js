@@ -90,7 +90,7 @@ scale_canvas();
 
 let split_count = 10;
 let split_duration = 3000;
-let evaluation_duration = split_duration * split_count;
+let evaluation_duration = split_duration * (split_count + 1);
 
 let current_split_index = 0;
 let previous_split_click_index = 1;
