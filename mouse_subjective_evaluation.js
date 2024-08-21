@@ -298,12 +298,29 @@ let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
 let center_of_gravity = url.searchParams.get("center_of_gravity") !== null;
 let thumb_force = url.searchParams.get("thumb_force") !== null;
 let scrolling_only = url.searchParams.get("scrolling_only") !== null;
+let gamescom = url.searchParams.get("gamescom") !== null;
 let filtered_sections = [];
 
 if (gliding_only) {
     standard_evaluation_sections = gliding_specific_sections;
 } else {
-    if (thumb_force){
+    if(gamescom){
+        standard_evaluation_sections.forEach(section => {
+            switch (section.id) {
+                case 'tlx-m':
+                    filtered_sections.push(section);
+                    break;
+                case 'ergo-m*':
+                    filtered_sections.push(section);
+                    break;
+                case 'ergo-m':
+                    filtered_sections.push(section);
+                    break;
+                default:
+                    break;
+            }
+        });
+    } else if (thumb_force){
         standard_evaluation_sections.forEach(section => {
             switch (section.id) {
                 case 'umux-m':
