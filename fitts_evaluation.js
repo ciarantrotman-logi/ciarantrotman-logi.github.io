@@ -110,8 +110,10 @@ let quantised_scroll_evaluation_sections = [
 */
 let url = new URL(window.location.href);
 let debug_check = url.searchParams.get('debug') !== null;
+
 let pointing_only = url.searchParams.get('pointing_only') !== null;
 let scrolling_only = url.searchParams.get('scrolling_only') !== null;
+
 let full_analytics = url.searchParams.get('analytics') !== null;
 let quantised__analytics = url.searchParams.get('quantised__analytics') !== null;
 let gliding_only = url.searchParams.get("gliding_only") !== null;
@@ -149,10 +151,12 @@ console.log(no_scrolling
 if (no_scrolling){
     document.getElementById('fe-intro-explainer-third-task').style.display = 'none';
     document.getElementById('fe-intro-explainer-fourth-task').style.display = 'none';
+    evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
 }
 if (scrolling_only){
     document.getElementById('fe-intro-explainer-first-task').style.display = 'none';
     document.getElementById('fe-intro-explainer-second-task').style.display = 'none';
+    evaluation_type = evaluation_types.reciprocal_targets_one_dimensional;
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------SYSTEM EVENTS
