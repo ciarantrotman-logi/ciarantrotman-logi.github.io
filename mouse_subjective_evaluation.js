@@ -78,7 +78,7 @@ let standard_evaluation_sections = [
             {id: "tlx-m-effort"},
             {id: "tlx-m-frustration"}
         ],
-        range: {min: -10, max: 10, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'umux-m',
         metrics: [
             {id: "umux-m-effectiveness"},
@@ -109,7 +109,7 @@ let standard_evaluation_sections = [
             {id: "attrakdiff-m-p-structured"},
             {id: "attrakdiff-m-h-captivating"}
         ],
-        range: {min: -3, max: 3, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'ergo-m*',
         metrics: [
             {id: "ergo-m*-size"},
@@ -117,21 +117,29 @@ let standard_evaluation_sections = [
             {id: "ergo-m*-confidence"},
             {id: "ergo-m*-balance"},
         ],
-        range: {min: -3, max: 3, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'ergo-m',
         metrics: [
             {id: "ergo-m-size-high"},
             {id: "ergo-m-size-wide"},
             {id: "ergo-m-size-tilted"},
             {id: "ergo-m-weight-heavy"},
-            {id: "ergo-m-material-hard"},
-            {id: "ergo-m-material-warm"},
-            {id: "ergo-m-material-rigid"},
             {id: "ergo-m-quality-comfortable"},
-            {id: "ergo-m-quality-pleasant"},
-            {id: "ergo-m-quality-premium"}
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
+    {   id: 'material-m',
+        metrics: [
+            {id: "material-m-tactile-semantic-rough"},
+            {id: "material-m-tactile-semantic-sticky"},
+            {id: "material-m-tactile-semantic-hard"},
+            {id: "material-m-affective-semantic-comfortable"},
+            {id: "material-m-affective-semantic-pleasant"},
+            {id: "material-m-grip-confident"},
+            {id: "material-m-skin-dry"},
+            {id: "material-m-skin-hot"},
+            {id: "material-m-skin-sensitive"},
+        ],
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'glide-m',
         metrics: [
             {id: "glide-m-interface-textured"},
@@ -146,7 +154,7 @@ let standard_evaluation_sections = [
             {id: "glide-m-quality-premium"},
             {id: "glide-m-quality-satisfying"}
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'timbre-m',
         metrics: [
             {id: "timbre-m-hard"},
@@ -165,7 +173,7 @@ let standard_evaluation_sections = [
             {id: "timbre-m-premium"},
             {id: "timbre-m-satisfying"},
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'timbre-m*',
         metrics: [
             {id: "timbre-m*-loud"},
@@ -175,7 +183,7 @@ let standard_evaluation_sections = [
             {id: "timbre-m*-premium"},
             {id: "timbre-m*-satisfying"},
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'tactility-m',
         metrics: [
             {id: "tactility-m-comfortable"},
@@ -188,7 +196,7 @@ let standard_evaluation_sections = [
             {id: "tactility-m-premium"},
             {id: "tactility-m-satisfying"},
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'tactility-m*',
         metrics: [
             {id: "tactility-m*-comfortable"},
@@ -201,7 +209,7 @@ let standard_evaluation_sections = [
             {id: "tactility-m*-premium"},
             {id: "tactility-m*-satisfying"},
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'fss-m',
         metrics: [
             {id: "fss-m-a-challenge"},
@@ -215,7 +223,7 @@ let standard_evaluation_sections = [
             {id: "fss-m-f-control"},
             {id: "fss-m-a-thought"}
         ],
-        range: {min: -2, max: 2, value: 0}}
+        range: {min: -2, max: 2, value: 0}},
 ]
 let gliding_specific_sections = [
     {   id: 'umux-g',
@@ -237,7 +245,7 @@ let gliding_specific_sections = [
             {id: "usability-g*-directionality-horizontal"},
             {id: "usability-g*-directionality-vertical"},
         ],
-        range: {min: -3, max: 3, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'usability-g',
         metrics: [
             {id: "usability-g-fast"},
@@ -247,7 +255,7 @@ let gliding_specific_sections = [
             {id: "usability-g-unresponsive"},
             {id: "usability-g-inconsistent"},
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'timbre-g',
         metrics: [
             {id: "timbre-g-loud"},
@@ -255,7 +263,7 @@ let gliding_specific_sections = [
             {id: "timbre-g-premium"},
             {id: "timbre-g-satisfying"},
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'tactility-g',
         metrics: [
             {id: "tactility-g-rough"},
@@ -266,7 +274,7 @@ let gliding_specific_sections = [
             {id: "tactility-g-premium"},
             {id: "tactility-g-satisfying"},
         ],
-        range: {min: -50, max: 50, value: 0}},
+        range: {min: -2, max: 2, value: 0}},
     {   id: 'attrakdiff-g',
         metrics: [
             {id: "attrakdiff-g-p-simple"},
@@ -280,7 +288,7 @@ let gliding_specific_sections = [
             {id: "attrakdiff-g-p-structured"},
             {id: "attrakdiff-g-h-captivating"}
         ],
-        range: {min: -3, max: 3, value: 0}}
+        range: {min: -2, max: 2, value: 0}},
 ]
 /*
 URL Parsing
@@ -288,193 +296,58 @@ URL Parsing
 // URL queries to disable sections
 let url = new URL(window.location.href);
 let reset_when_finished = url.searchParams.get("reset_when_finished") !== null;
-let click_only = url.searchParams.get("click_only") !== null;
-let disable_timbre = url.searchParams.get("disable_timbre") !== null;
-let disable_tactility = url.searchParams.get("disable_tactility") !== null;
-let disable_glide = url.searchParams.get("disable_glide") !== null;
-let gliding_only = url.searchParams.get("gliding_only") !== null;
-let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
-let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
-let center_of_gravity = url.searchParams.get("center_of_gravity") !== null;
-let thumb_force = url.searchParams.get("thumb_force") !== null;
-let scrolling_only = url.searchParams.get("scrolling_only") !== null;
-let gamescom = url.searchParams.get("gamescom") !== null;
+
+let include_url_metrics = url.searchParams.get("include") !== null;
+let exclude_url_metrics = url.searchParams.get("exclude") !== null;
+
+let tlx_m = url.searchParams.get("tlx_m") !== null;
+let umux_m = url.searchParams.get("umux_m") !== null;
+let umux_m_star = url.searchParams.get("umux_m_star") !== null;
+let attrakdiff_m = url.searchParams.get("attrakdiff_m") !== null;
+let ergo_m = url.searchParams.get("ergo_m") !== null;
+let ergo_m_star = url.searchParams.get("ergo_m_star") !== null;
+let material_m = url.searchParams.get("material_m") !== null;
+let glide_m = url.searchParams.get("glide_m") !== null;
+let timbre_m = url.searchParams.get("timbre_m") !== null;
+let timbre_m_star = url.searchParams.get("timbre_m_star") !== null;
+let tactility_m = url.searchParams.get("tactility_m") !== null;
+let tactility_m_star = url.searchParams.get("tactility_m_star") !== null;
+let fss_m = url.searchParams.get("fss_m") !== null;
+
+let gliding = url.searchParams.get("gliding") !== null;
+let manual_download = url.searchParams.get("download") !== null;
+
 let filtered_sections = [];
 
-if (gliding_only) {
+if (gliding) {
     standard_evaluation_sections = gliding_specific_sections;
-} else {
-    if(gamescom){
-        standard_evaluation_sections.forEach(section => {
-            switch (section.id) {
-                case 'tlx-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'ergo-m*':
-                    filtered_sections.push(section);
-                    break;
-                case 'ergo-m':
-                    filtered_sections.push(section);
-                    break;
-                default:
-                    break;
-            }
-        });
-    } else if (thumb_force){
-        standard_evaluation_sections.forEach(section => {
-            switch (section.id) {
-                case 'umux-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'tlx-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'ergo-m*':
-                    filtered_sections.push(section);
-                    break;
-                default:
-                    break;
-            }
-        });
-    } else if (scrolling_only){
-        standard_evaluation_sections.forEach(section => {
-            switch (section.id) {
-                case 'tlx-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'umux-m*':
-                    filtered_sections.push(section);
-                    break;
-                case 'timbre-m*':
-                    filtered_sections.push(section);
-                    break;
-                case 'tactility-m*':
-                    filtered_sections.push(section);
-                    break;
-                default:
-                    break;
-            }
-        });
-    } else if (click_only){
-        standard_evaluation_sections.forEach(section => {
-            switch (section.id) {
-                case 'tlx-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'umux-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'timbre-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'tactility-m':
-                    filtered_sections.push(section);
-                    break;
-                default:
-                    break;
-            }
-        });
-    } else if (premium_keycaps) {
-        standard_evaluation_sections.forEach(section => {
-            switch (section.id) {
-                case 'attrakdiff-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'ergo-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'timbre-m':
-                    filtered_sections.push(section);
-                    break;
-                case 'tactility-m':
-                    filtered_sections.push(section);
-                    break;
-                default:
-                    break;
-            }
-        });
-    } else if (mouse_gliding_only) {
-        standard_evaluation_sections.forEach(section => {
-            switch (section.id) {
-                case 'umux-m':
-                    filtered_sections.push(section);
-                    break;
-                default:
-                    break;
-            }
-        });
-        gliding_specific_sections.forEach(section => {
-            switch (section.id) {
-                case 'usability-g*':
-                    filtered_sections.push(section);
-                    break;
-                case 'usability-g':
-                    filtered_sections.push(section);
-                    break;
-                case 'timbre-g':
-                    filtered_sections.push(section);
-                    break;
-                default:
-                    break;
-            }
-        });
-    } else if (center_of_gravity) {
+} else if (include_url_metrics || exclude_url_metrics) {
+    const mapping = {
+        'tlx-m': tlx_m,
+        'umux-m': umux_m,
+        'umux-m*': umux_m_star,
+        'attrakdiff-m': attrakdiff_m,
+        'ergo-m': ergo_m,
+        'ergo-m*': ergo_m_star,
+        'material-m': material_m,
+        'glide-m': glide_m,
+        'timbre-m': timbre_m,
+        'timbre-m*': timbre_m_star,
+        'tactility-m': tactility_m,
+        'tactility-m*': tactility_m_star,
+        'fss-m': fss_m,
+    };
     standard_evaluation_sections.forEach(section => {
-        switch (section.id) {
-            case 'tlx-m':
+        const section_map = mapping[section.id];
+        if (section_map !== undefined) {
+            if ((section_map && include_url_metrics) || (!section_map && exclude_url_metrics)) {
                 filtered_sections.push(section);
-                break;
-            case 'umux-m':
-                filtered_sections.push(section);
-                break;
-            case 'ergo-m*':
-                filtered_sections.push(section);
-                break;
-            default:
-                break;
-        }
-    });
-    gliding_specific_sections.forEach(section => {
-        switch (section.id) {
-            case 'usability-g*':
-                filtered_sections.push(section);
-                break;
-            case 'usability-g':
-                filtered_sections.push(section);
-                break;
-            default:
-                break;
-        }
-    });
-} else {
-        standard_evaluation_sections.forEach(section =>{
-            switch (section.id) {
-                case 'glide-m':
-                    if (!disable_glide){
-                        filtered_sections.push(section);
-                    } break;
-                case 'timbre-m':
-                    if (!disable_timbre){
-                        filtered_sections.push(section);
-                    } break;
-                case 'timbre-m*':
-                    if (!disable_timbre){
-                        filtered_sections.push(section);
-                    } break;
-                case 'tactility-m':
-                    if (!disable_tactility){
-                        filtered_sections.push(section);
-                    } break;
-                case 'tactility-m*':
-                    if (!disable_tactility){
-                        filtered_sections.push(section);
-                    } break;
-                default:
-                    filtered_sections.push(section);
-                    break;
             }
-        });
-    }
+        } else {
+            filtered_sections.push(section);
+        }
+    });
+
     standard_evaluation_sections = filtered_sections;
 }
 /*
@@ -606,6 +479,9 @@ function download_data() {
     database.ref(stamp).set(data)
         .then(function() {
             successful_upload_message.style.display = 'block';
+            if (manual_download){
+                direct_download_data(data)
+            }
             if (reset_when_finished) {
                 sessionStorage.clear();
                 window.location.href = `mouse_evaluation.html${query_string}`;

@@ -14,8 +14,11 @@ Caching
 */
 let url = new URL(window.location.href);
 let user_index = url.searchParams.get('userID');
+let skip_fitts_evaluation = url.searchParams.get('skip_evaluation') !== null;
 let full_analytics = url.searchParams.get('analytics') !== null;
+
 let query_string = "";
+
 extract_query_parameters(url.toString());
 function extract_query_parameters(url_string) {
     let question_mark_index = url_string.indexOf("?");
@@ -42,7 +45,12 @@ function proceed_to_fitts_evaluation(){
     cache_session_storage();
     cache_system_information();
     submitted = true;
-    window.location.href = `fitts_evaluation.html${query_string}`
+    
+    if (skip_fitts_evaluation){
+        window.location.href = `mouse_subjective_evaluation.html${query_string}`
+    } else {
+        window.location.href = `fitts_evaluation.html${query_string}`
+    }
 }
 /*
 Session Storage Management

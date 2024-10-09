@@ -116,13 +116,9 @@ let scrolling_only = url.searchParams.get('scrolling_only') !== null;
 
 let full_analytics = url.searchParams.get('analytics') !== null;
 let quantised__analytics = url.searchParams.get('quantised__analytics') !== null;
-let gliding_only = url.searchParams.get("gliding_only") !== null;
-let mouse_gliding_only = url.searchParams.get("mouse_gliding_only") !== null;
-let premium_keycaps = url.searchParams.get("premium_keycaps") !== null;
-
-let no_scrolling = pointing_only || gliding_only || premium_keycaps || mouse_gliding_only;
 
 let query_string = "";
+
 extract_query_parameters(url.toString());
 function extract_query_parameters(url_string) {
     let question_mark_index = url_string.indexOf("?");
@@ -144,11 +140,11 @@ console.log(debug_check
 console.log(full_analytics
     ? 'Full Analytics Enabled'
     : 'Full Analytics Disabled');
-console.log(no_scrolling
+console.log(pointing_only
     ? 'Only 2D Evaluation Tasks'
     : 'All Evaluation Tasks');
 
-if (no_scrolling){
+if (pointing_only){
     document.getElementById('fe-intro-explainer-third-task').style.display = 'none';
     document.getElementById('fe-intro-explainer-fourth-task').style.display = 'none';
     evaluation_type = evaluation_types.reciprocal_targets_two_dimensional;
@@ -277,7 +273,7 @@ function calculate_total_task_count(){
         total_task_count += task.points; // once for reciprocal task
         total_task_count += task.points; // once for random task
     });
-    if (no_scrolling) return;
+    if (pointing_only) return;
     one_dimensional_evaluation_sections.forEach(function (task) {
         total_task_count += task.tasks;
     });
@@ -756,7 +752,7 @@ function current_evaluation_type_length(){
     } else return two_dimensional_evaluation_sections.length;
 }
 function get_next_evaluation_type() {
-    if (no_scrolling) {
+    if (pointing_only) {
         switch (evaluation_type){
             case evaluation_types.reciprocal_targets_two_dimensional:
                 evaluation_type = evaluation_types.random_targets_two_dimensional;
@@ -1310,7 +1306,7 @@ function base_dpr(){
 function calculate_aggregate_performance_data() {
     if (scrolling_only) {
         cache_one_dimensional_performance_data();
-    } else if (no_scrolling) {
+    } else if (pointing_only) {
         cache_two_dimensional_performance_data();
     } else {
         cache_two_dimensional_performance_data();
@@ -1333,7 +1329,7 @@ function cache_two_dimensional_performance_data() {
 function calculate_aggregate_correlation_data(){
     if (scrolling_only) {
         cache_correlation_data('1D-reciprocal', evaluation_types.reciprocal_targets_one_dimensional, false);
-    } else if (no_scrolling) {
+    } else if (pointing_only) {
         cache_correlation_data('2D-reciprocal', evaluation_types.reciprocal_targets_two_dimensional, true);
         cache_correlation_data('2D-random', evaluation_types.random_targets_two_dimensional, true);
     } else {
