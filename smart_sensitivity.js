@@ -24,7 +24,7 @@ function generate_targets(){
         material.castShadow = true;
         let object = new THREE.Mesh(geometry, material);
 
-        object.type = 'rotate';//Math.random() < 0.5 ? 'oscillate' : 'rotate';
+        object.type = Math.random() < 0 ? 'oscillate' : 'rotate';
         object.oscillation_amplitude = Math.random() * 2;
         object.speed = random_float(-.2, .2);
         object.is_valid_target = true;
@@ -98,7 +98,7 @@ function animate() {
     requestAnimationFrame(animate);
     spawned_objects.forEach(object => {
         if (object.type === 'oscillate') {
-            // object.position.y += Math.sin(Date.now()) * object.oscillation_amplitude;
+            object.position.y += Math.sin(Date.now()) * object.oscillation_amplitude;
         } else if (object.type === 'rotate') {
             rotate_object_in_circle(object, object.initial_radius, object.speed);
         }
