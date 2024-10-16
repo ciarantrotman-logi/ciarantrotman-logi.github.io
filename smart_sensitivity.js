@@ -14,18 +14,19 @@ scene.background = new THREE.Color(0xbbc9f4);
 let spawned_objects = [];
 
 function generate_targets(){
-    for (let i = 0; i < 30; i++) {
-        let geometry = new THREE.DodecahedronGeometry();
+    for (let i = 0; i < 35; i++) {
+        let geometry = new THREE.SphereGeometry();
         let material = new THREE.MeshBasicMaterial({
             color: 0xffffff,
             transparent: true,
-            opacity: 0.75
+            opacity: 0.75,
+            doubleSided: true
         });
         material.castShadow = true;
         let object = new THREE.Mesh(geometry, material);
 
-        object.type = Math.random() < 0 ? 'oscillate' : 'rotate';
-        object.oscillation_amplitude = Math.random() * 2;
+        object.type = Math.random() < .15 ? 'oscillate' : 'rotate';
+        object.oscillation_amplitude = random_float(-.03, 0.03);
         object.speed = random_float(-.2, .2);
         object.is_valid_target = true;
         
@@ -62,8 +63,8 @@ function generate_reticule() {
         opacity: 0.75
     });
     let object = new THREE.Mesh(geometry, material);
-    object.position.set(0, 0, -1);
-    object.scale.set(.01, .01, .01);
+    object.position.set(0, 0, -.25);
+    object.scale.set(.0025, .0025, .005);
     camera.add(object);
 }
 
@@ -98,7 +99,7 @@ function animate() {
     requestAnimationFrame(animate);
     spawned_objects.forEach(object => {
         if (object.type === 'oscillate') {
-            object.position.y += Math.sin(Date.now()) * object.oscillation_amplitude;
+            object.position.y += Math.sin(Date.now() * 0.001) * object.oscillation_amplitude;
         } else if (object.type === 'rotate') {
             rotate_object_in_circle(object, object.initial_radius, object.speed);
         }
