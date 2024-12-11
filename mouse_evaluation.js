@@ -27,9 +27,12 @@ function extract_query_parameters(url_string) {
         query_string += url_string.substring(question_mark_index + 1);
     }
 }
-console.log(`User ID = ${user_index}`);
-console.log(`Full Analytics = ${full_analytics}`);
-console.log(`Query Parameters = ${query_string}`);
+console.log(`user id = ${user_index}`);
+console.log(`full analytics = ${full_analytics}`);
+console.log(`full parameters = ${query_string}`);
+if (url.searchParams.get("redirect") !== null){
+    console.log(`will redirect to [${url.searchParams.get('redirect')}] when finished`);
+}
 /*
 State Management
 */

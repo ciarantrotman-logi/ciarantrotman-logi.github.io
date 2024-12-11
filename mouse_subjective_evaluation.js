@@ -316,6 +316,12 @@ let fss_m = url.searchParams.get("fss_m") !== null;
 
 let gliding = url.searchParams.get("gliding") !== null;
 let manual_download = url.searchParams.get("download") !== null;
+let should_redirect = url.searchParams.get("redirect") !== null;
+let redirect_url = url.searchParams.get('redirect');
+
+if (should_redirect){
+    console.log(`will redirect to [${redirect_url}] when finished`);
+}
 
 let filtered_sections = [];
 
@@ -457,6 +463,7 @@ function submit_data(){
     cache_submission_time();
     cache_evaluation_metric_data();
     download_data();
+    redirect();
 }
 function cache_submission_time(){
     sessionStorage.setItem('evaluation-year', new Date().getUTCFullYear().toString());
@@ -493,7 +500,6 @@ function download_data() {
         });
     submitted = true;
 }
-
 function direct_download_data(data){
     direct_download_message.style.display = 'block';
     const json = {};
@@ -509,6 +515,10 @@ function direct_download_data(data){
     placeholder.click();
     document.body.removeChild(placeholder);
     URL.revokeObjectURL(url);
+}
+function redirect(){
+    if (!should_redirect) return;
+    window.location.href = redirect_url;
 }
 /*
 Utility Functions
