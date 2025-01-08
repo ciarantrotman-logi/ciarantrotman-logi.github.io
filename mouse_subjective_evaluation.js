@@ -264,15 +264,17 @@ let gliding_specific_sections = [
             {id: "timbre-g-satisfying"},
         ],
         range: {min: -2, max: 2, value: 0}},
-    {   id: 'tactility-g',
+    {   id: 'material-g',
         metrics: [
-            {id: "tactility-g-rough"},
-            {id: "tactility-g-sticky"},
-            {id: "tactility-g-firm"},
-            {id: "tactility-g-hard"},
-            {id: "tactility-g-pleasant"},
-            {id: "tactility-g-premium"},
-            {id: "tactility-g-satisfying"},
+            {id: "material-g-tactile-semantic-rough"},
+            {id: "material-g-tactile-semantic-sticky"},
+            {id: "material-g-tactile-semantic-hard"},
+            {id: "material-g-tactile-semantic-firm"},
+            {id: "material-g-affective-semantic-comfortable"},
+            {id: "material-g-affective-semantic-pleasant"},
+            {id: "material-g-skin-dry"},
+            {id: "material-g-skin-hot"},
+            {id: "material-g-skin-sensitive"}
         ],
         range: {min: -2, max: 2, value: 0}},
     {   id: 'attrakdiff-g',
@@ -314,6 +316,13 @@ let tactility_m = url.searchParams.get("tactility_m") !== null;
 let tactility_m_star = url.searchParams.get("tactility_m_star") !== null;
 let fss_m = url.searchParams.get("fss_m") !== null;
 
+let umux_g = url.searchParams.get("umux_g") !== null;
+let usability_g = url.searchParams.get("usability_g") !== null;
+let usability_g_star = url.searchParams.get("usability_g_star") !== null;
+let timbre_g = url.searchParams.get("timbre_g") !== null;
+let material_g = url.searchParams.get("material_g") !== null;
+let attrakdiff_g = url.searchParams.get("attrakdiff_g") !== null;
+
 let gliding = url.searchParams.get("gliding") !== null;
 let manual_download = url.searchParams.get("download") !== null;
 let should_redirect = url.searchParams.get("redirect") !== null;
@@ -326,7 +335,29 @@ if (should_redirect){
 let filtered_sections = [];
 
 if (gliding) {
-    standard_evaluation_sections = gliding_specific_sections;
+    if (include_url_metrics || exclude_url_metrics) {
+        const mapping = {
+            'umux-g': umux_g,
+            'usability-g': usability_g,
+            'usability-g*': usability_g_star,
+            'attrakdiff-g': attrakdiff_g,
+            'timbre-g': timbre_g,
+            'material-g': material_g,
+        };
+        gliding_specific_sections.forEach(section => {
+            const section_map = mapping[section.id];
+            if (section_map !== undefined) {
+                if ((section_map && include_url_metrics) || (!section_map && exclude_url_metrics)) {
+                    filtered_sections.push(section);
+                }
+            } else {
+                filtered_sections.push(section);
+            }
+        });
+    } else {
+        filtered_sections = gliding_specific_sections;
+    }
+    standard_evaluation_sections = filtered_sections;
 } else if (include_url_metrics || exclude_url_metrics) {
     const mapping = {
         'tlx-m': tlx_m,
