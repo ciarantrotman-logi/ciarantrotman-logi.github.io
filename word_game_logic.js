@@ -348,7 +348,7 @@ let output = {};
 while (!output.solvable) {
     output = await generate_board_data();
 }
-console.log('generated board shortest solution is:', output.solution);
+// console.log('generated board shortest solution is:', output.solution);
 
 // ---------------------------------------------------------------------------------------------------------------------    [INPUT MANAGEMENT]
 
@@ -482,7 +482,6 @@ function set_solved_for_all_letters() {
         state.submitted = false;
         state.solved = true;
     }
-    console.log(by_button)
 }
 function display_current_word() {
     const container = document.getElementById('current_word');
