@@ -1,6 +1,7 @@
 /* container */
 .body {
     font-family: monospace;
+    background-color: #e4e1e3;
 }
 
 /* container */
@@ -19,17 +20,15 @@
     z-index: -10;
 }
 .board-connector {
-    stroke: dodgerblue;
+    stroke: rgba(100, 149, 237, 1);
     stroke-width: 6;
     stroke-linecap: round;
     opacity: 0.9;
 }
 .board-connector--submitted {
-    stroke: dodgerblue;
+    stroke: rgba(100, 149, 237, 0.3);
     stroke-width: 6;
     stroke-linecap: round;
-    stroke-dasharray: 16;
-    opacity: 0.3;
 }
 
 .game_area-wrap {
@@ -81,8 +80,8 @@
 .gameplay-button {
     font-family: monospace;
     
-    width: 128px;
-    height: 64px;
+    width: 248px;
+    height: 96px;
     font-size: 24px;
     margin: 16px;
 }
@@ -94,24 +93,40 @@
     font-size: 32px;
     box-sizing: border-box;
     flex: 0 0 auto;
+    
+    appearance: none;
+    border: 1px;
+    border-radius: 64px;
+    background-color: transparent;
 }
 .board-button--selected {
     font-weight: bold;
-    color: cornflowerblue;
+    
+    color: rgba(100, 149, 237, 1);
+    border: 6px solid;
+    background-color: #e4e1e3;
 }
 .board-button--submitted {
-    color: lightgrey;
     font-weight: lighter;
+
+    color: rgba(100, 149, 237, 0.3);
+    border: 6px solid;
+    background-color: #e4e1e3;
 }
 .board-button--submitted-and-selected {
-    color: dodgerblue;
     font-weight: bold;
+    
+    color: rgba(100, 149, 237, 1);
+    border: 6px solid;
+    background-color: #e4e1e3;
 }
 .board-button--solved {
-    font-weight: bolder;
-    color: dodgerblue;
-}
+    font-weight: bold;
+    color: rgba(100, 149, 237, 1);
 
+    border: 6px solid;
+    background-color: #e4e1e3;
+}
 /* readout */
 .readout-area {
     display: flex;

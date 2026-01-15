@@ -356,7 +356,10 @@ let current_input_chain = [];
 let current_word = { word: '', valid: false };
 let historical_input_chain = [];
 let current_word_chain = [];
+let historical_word_chain = [];
 let solved_state = false;
+
+check_enter_button_validity();
 
 function log_letter_press_attempt(letter_information) {
     if (solved_state){
@@ -367,10 +370,23 @@ function log_letter_press_attempt(letter_information) {
         let last_input = current_input_chain.slice(-1)[0];
         if (letter_information.value.reference === last_input.value.reference) {
             if (current_word_chain.length >= 1 && current_input_chain.length === 1) {
+                /*
+                console.log("[!]\tremoval special case, reverting to [", current_word_chain.slice(-1)[0].current_input_chain, "]");
+                console.log("[!]\tchain is", historical_word_chain.slice(-1)[0]);
                 
                 // todo pop the late word in current word chain
                 //  clear current input chain
                 //  add the letters in that word to the input chain
+                
+                
+                current_input_chain = historical_word_chain.slice(-1)[0].current_input_chain;
+                current_word_chain.pop();
+                historical_input_chain.pop();
+
+                remove_letter_from_chain(current_input_chain.slice(-1)[0]);
+                generate_and_validate_input_thread();
+                display_word_history();
+                */
                 
                 console.log("[!]\t[", last_input.letter, "] cannot be removed because it is a forced letter");
             } else {
@@ -386,7 +402,6 @@ function log_letter_press_attempt(letter_information) {
         add_letter_to_chain(letter_information);
     }
 }
-
 function generate_and_validate_input_thread(){
     current_word = { word: '', valid: false };
 
@@ -395,10 +410,10 @@ function generate_and_validate_input_thread(){
     });
 
     current_word.valid = (allowed_words.includes(current_word.word) && !current_word_chain.includes(current_word.word));
-    
+
+    check_enter_button_validity();
     display_current_word();
     handle_button_state();
-    //update_temporary_line();
     draw_polyline_for_chain(current_input_chain, 'chain-connector');
 }
 function add_letter_to_chain(letter_information){
@@ -435,7 +450,10 @@ function enter_word() {
     if (current_word.valid){
         console.log("entered valid word [", current_word.word, "]")
         current_word_chain.push(current_word.word);
-
+        
+        historical_word_chain.push({current_input_chain});
+        console.log(historical_word_chain);
+        
         freeze_chain_as_polyline(current_input_chain, 'board-connector--submitted')
         set_submitted_for_chain(current_input_chain);
         
@@ -460,6 +478,7 @@ function enter_word() {
 function reset_word() {
     location.reload();
 }
+
 // ---------------------------------------------------------------------------------------------------------------------    [GUI MANAGEMENT]
 function set_selected(button, selected_state) {
     const state = by_button.get(button);
@@ -482,6 +501,9 @@ function set_solved_for_all_letters() {
         state.submitted = false;
         state.solved = true;
     }
+}
+function check_enter_button_validity(){
+    document.getElementById('enter_button').disabled = !current_word.valid || current_input_chain.length < min_word_length;
 }
 function display_current_word() {
     const container = document.getElementById('current_word');
@@ -513,68 +535,29 @@ function handle_button_state() {
         }
     }
 }
-// ---------------------------------------------------- [SVG CONNECTIONS]
-
-function svg_element() {
-    return document.getElementById('board_svg');
-}
-function generate_line_element(id = 'button-connector') {
-    const svg = svg_element();
-    let line = svg.querySelector(`#${id}`);
-    if (!line) {
-        line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.id = id;
-        line.classList.add('board-connector');
-        svg.appendChild(line);
-    }
-    return line;
-}
+// ---------------------------------------------------------------------------------------------------------------------    [SVG CONNECTIONS]
+let svg_element = document.getElementById('board_svg');
 function get_button_position(button) {
-    const svg = svg_element();
-    const svgRect = svg.getBoundingClientRect();
-    const btnRect = button.getBoundingClientRect();
+    const svg_rect = svg_element.getBoundingClientRect();
+    const button_rect = button.getBoundingClientRect();
 
-    const cx = btnRect.left + btnRect.width / 2 - svgRect.left;
-    const cy = btnRect.top + btnRect.height / 2 - svgRect.top;
+    const cx = button_rect.left + button_rect.width / 2 - svg_rect.left;
+    const cy = button_rect.top + button_rect.height / 2 - svg_rect.top;
     return { x: cx, y: cy };
 }
 
-function drawLineBetweenButtons(button_a, button_b, id = 'button-connector') {
-    if (!button_a || !button_b) return;
-
-    const a = get_button_position(button_a);
-    const b = get_button_position(button_b);
-
-    const line = generate_line_element(id);
-    line.setAttribute('x1', a.x);
-    line.setAttribute('y1', a.y);
-    line.setAttribute('x2', b.x);
-    line.setAttribute('y2', b.y);
-}
-
 function remove_line(id = 'button-connector') {
-    const svg = svg_element();
-    const line = svg.querySelector(`#${id}`);
+    const line = svg_element.querySelector(`#${id}`);
     if (line) line.remove();
 }
-/*function update_temporary_line() {
-    if (current_input_chain.length >= 2) {
-        const last = current_input_chain[current_input_chain.length - 1].button;
-        const prev = current_input_chain[current_input_chain.length - 2].button;
-        drawLineBetweenButtons(prev, last, 'temp-connector');
-    } else {
-        remove_line('temp-connector');
-    }
-}*/
 function create_poly_line(id = 'chain-connector') {
-    const svg = svg_element();
-    let polyline = svg.querySelector(`#${id}`);
+    let polyline = svg_element.querySelector(`#${id}`);
     if (!polyline) {
         polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
         polyline.id = id;
         polyline.classList.add('board-connector');
         polyline.setAttribute('fill', 'none');
-        svg.appendChild(polyline);
+        svg_element.appendChild(polyline);
     }
     return polyline;
 }
@@ -587,23 +570,22 @@ function draw_polyline_for_chain(chain, id = 'chain-connector') {
         const p = get_button_position(ci.button);
         return `${p.x},${p.y}`;
     }).join(' ');
-    const pl = create_poly_line(id);
-    pl.setAttribute('points', points);
+    const polyLine = create_poly_line(id);
+    polyLine.setAttribute('points', points);
 }
-function freeze_chain_as_polyline(chain, cssClass = 'board-connector') {
+function freeze_chain_as_polyline(chain, css_class = 'board-connector') {
     if (chain.length < 2) return;
-    const svg = svg_element();
     const id = `word-connector-${current_word_chain.length}`; // unique
     const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     polyline.id = id;
-    polyline.classList.add(cssClass);
+    polyline.classList.add(css_class);
     polyline.setAttribute('fill', 'none');
     const points = chain.map(ci => {
         const p = get_button_position(ci.button);
         return `${p.x},${p.y}`;
     }).join(' ');
     polyline.setAttribute('points', points);
-    svg.appendChild(polyline);
+    svg_element.appendChild(polyline);
 }
 
 
