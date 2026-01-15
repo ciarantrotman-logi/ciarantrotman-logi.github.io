@@ -398,6 +398,8 @@ function generate_and_validate_input_thread(){
     
     display_current_word();
     handle_button_state();
+    //update_temporary_line();
+    draw_polyline_for_chain(current_input_chain, 'chain-connector');
 }
 function add_letter_to_chain(letter_information){
     current_input_chain.push(letter_information);
@@ -434,6 +436,7 @@ function enter_word() {
         console.log("entered valid word [", current_word.word, "]")
         current_word_chain.push(current_word.word);
 
+        freeze_chain_as_polyline(current_input_chain, 'board-connector--submitted')
         set_submitted_for_chain(current_input_chain);
         
         solved_state = validate_if_board_is_satisfied(current_word_chain, cached_board_information.letters);
@@ -511,3 +514,97 @@ function handle_button_state() {
         }
     }
 }
+// ---------------------------------------------------- [SVG CONNECTIONS]
+
+function svg_element() {
+    return document.getElementById('board_svg');
+}
+function generate_line_element(id = 'button-connector') {
+    const svg = svg_element();
+    let line = svg.querySelector(`#${id}`);
+    if (!line) {
+        line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.id = id;
+        line.classList.add('board-connector');
+        svg.appendChild(line);
+    }
+    return line;
+}
+function get_button_position(button) {
+    const svg = svg_element();
+    const svgRect = svg.getBoundingClientRect();
+    const btnRect = button.getBoundingClientRect();
+
+    const cx = btnRect.left + btnRect.width / 2 - svgRect.left;
+    const cy = btnRect.top + btnRect.height / 2 - svgRect.top;
+    return { x: cx, y: cy };
+}
+
+function drawLineBetweenButtons(button_a, button_b, id = 'button-connector') {
+    if (!button_a || !button_b) return;
+
+    const a = get_button_position(button_a);
+    const b = get_button_position(button_b);
+
+    const line = generate_line_element(id);
+    line.setAttribute('x1', a.x);
+    line.setAttribute('y1', a.y);
+    line.setAttribute('x2', b.x);
+    line.setAttribute('y2', b.y);
+}
+
+function remove_line(id = 'button-connector') {
+    const svg = svg_element();
+    const line = svg.querySelector(`#${id}`);
+    if (line) line.remove();
+}
+/*function update_temporary_line() {
+    if (current_input_chain.length >= 2) {
+        const last = current_input_chain[current_input_chain.length - 1].button;
+        const prev = current_input_chain[current_input_chain.length - 2].button;
+        drawLineBetweenButtons(prev, last, 'temp-connector');
+    } else {
+        remove_line('temp-connector');
+    }
+}*/
+function create_poly_line(id = 'chain-connector') {
+    const svg = svg_element();
+    let polyline = svg.querySelector(`#${id}`);
+    if (!polyline) {
+        polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.id = id;
+        polyline.classList.add('board-connector');
+        polyline.setAttribute('fill', 'none');
+        svg.appendChild(polyline);
+    }
+    return polyline;
+}
+function draw_polyline_for_chain(chain, id = 'chain-connector') {
+    if (!chain || chain.length < 2) {
+        remove_line(id);
+        return;
+    }
+    const points = chain.map(ci => {
+        const p = get_button_position(ci.button);
+        return `${p.x},${p.y}`;
+    }).join(' ');
+    const pl = create_poly_line(id);
+    pl.setAttribute('points', points);
+}
+function freeze_chain_as_polyline(chain, cssClass = 'board-connector') {
+    if (chain.length < 2) return;
+    const svg = svg_element();
+    const id = `word-connector-${current_word_chain.length}`; // unique
+    const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    polyline.id = id;
+    polyline.classList.add(cssClass);
+    polyline.setAttribute('fill', 'none');
+    const points = chain.map(ci => {
+        const p = get_button_position(ci.button);
+        return `${p.x},${p.y}`;
+    }).join(' ');
+    polyline.setAttribute('points', points);
+    svg.appendChild(polyline);
+}
+
+

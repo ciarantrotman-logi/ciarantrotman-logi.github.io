@@ -12,14 +12,24 @@
 #board_svg {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
     pointer-events: none;
-    z-index: 10;
+    z-index: -10;
 }
 .board-connector {
-    stroke: #4caf50;
-    stroke-width: 3;
+    stroke: dodgerblue;
+    stroke-width: 6;
     stroke-linecap: round;
     opacity: 0.9;
+}
+.board-connector--submitted {
+    stroke: dodgerblue;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 16;
+    opacity: 0.3;
 }
 
 .game_area-wrap {
@@ -98,8 +108,8 @@
     font-weight: bold;
 }
 .board-button--solved {
-    font-weight: bold;
-    color: limegreen;
+    font-weight: bolder;
+    color: dodgerblue;
 }
 
 /* readout */
