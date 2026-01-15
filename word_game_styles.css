@@ -1,22 +1,41 @@
 /* container */
+.body {
+    font-family: monospace;
+}
+
+/* container */
 #game_area {
     position: relative;
-    width: min(64vmin, 248px);
+    width: min(90vmin, 98vw);
     aspect-ratio: 1 / 1;
 }
+#board_svg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+.board-connector {
+    stroke: #4caf50;
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0.9;
+}
+
 .game_area-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 32px;
-    padding: 64px 64px 0;
+    padding: 64px 32px 32px;
 }
 
 /* common side styles */
 .side {
     position: absolute;
     display: flex;
+    gap: 32px;
 }
 
 /* sides around the board */
@@ -49,19 +68,59 @@
 }
 
 /* buttons */
+.gameplay-button {
+    font-family: monospace;
+    
+    width: 128px;
+    height: 64px;
+    font-size: 24px;
+    margin: 16px;
+}
 .board-button {
-    width: 32px;
-    height: 32px;
+    font-family: monospace;
+    
+    width: 128px;
+    height: 128px;
+    font-size: 32px;
     box-sizing: border-box;
     flex: 0 0 auto;
 }
 .board-button--selected {
-    font-weight: 1000;
+    font-weight: bold;
+    color: cornflowerblue;
 }
 .board-button--submitted {
-    color: grey;
+    color: lightgrey;
+    font-weight: lighter;
 }
 .board-button--submitted-and-selected {
-    color: grey;
-    font-weight: 1000;
+    color: dodgerblue;
+    font-weight: bold;
+}
+.board-button--solved {
+    font-weight: bold;
+    color: limegreen;
+}
+
+/* readout */
+.readout-area {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin: 16px;
+    justify-content: center;
+    align-items: center;
+}
+.current-word {
+    justify-content: center;
+    
+    font-size: 36px;
+    font-weight: bold;
+    display: flex;
+}
+.all-words {
+    justify-content: center;
+    
+    font-size: 32px;
+    color: lightgrey;
 }

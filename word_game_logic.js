@@ -103,6 +103,7 @@ console.log('seed for generation is', seed);
 // ---------------------------------------------------------------------------------------------------------------------    [BOARD GENERATION]
 
 let input_buttons = [];
+let by_button = new Map();
 
 function generate_letters() {
     let letters = [];
@@ -174,14 +175,13 @@ function score_board_configuration(sides) {
 }
 function generate_board_interface(board_info) {
     const container = document.getElementById('game_area');
-    container.innerHTML = '';
+    //container.innerHTML = '';
 
     const margin = 8;
 
     for (let side = 0; side < 4; side++) {
         const side_div = document.createElement('div');
         side_div.className = `side side-${side}`;
-        side_div.style.gap = margin + 'px';
         container.appendChild(side_div);
     }
 
@@ -206,7 +206,9 @@ function generate_board_interface(board_info) {
             });
             side_div.appendChild(button_to_add);
 
-            input_buttons.push({button: button_to_add, submitted: false, selected: false});
+            let reference = {button: button_to_add, submitted: false, selected: false, solved: false};
+            input_buttons.push(reference);
+            by_button.set(button_to_add, reference);
         });
     }
 }
@@ -365,6 +367,11 @@ function log_letter_press_attempt(letter_information) {
         let last_input = current_input_chain.slice(-1)[0];
         if (letter_information.value.reference === last_input.value.reference) {
             if (current_word_chain.length >= 1 && current_input_chain.length === 1) {
+                
+                // todo pop the late word in current word chain
+                //  clear current input chain
+                //  add the letters in that word to the input chain
+                
                 console.log("[!]\t[", last_input.letter, "] cannot be removed because it is a forced letter");
             } else {
                 console.log("[!]\t[", last_input.letter, "] was removed from the input chain");
@@ -387,42 +394,25 @@ function generate_and_validate_input_thread(){
         current_word.word += input.letter;
     });
 
-    current_word.valid = allowed_words.includes(current_word.word);
+    current_word.valid = (allowed_words.includes(current_word.word) && !current_word_chain.includes(current_word.word));
     
     display_current_word();
     handle_button_state();
 }
+function add_letter_to_chain(letter_information){
+    current_input_chain.push(letter_information);
+    historical_input_chain.push(letter_information);
 
+    set_selected(letter_information.button, true);
+    generate_and_validate_input_thread();
+}
 function remove_letter_from_chain(letter_information){
     current_input_chain.pop();
     historical_input_chain.pop();
 
-    // set the selected state for the matching object to false
-    // todo refine
-    input_buttons.forEach(value => {
-        if (letter_information.button === value.button){
-            value.selected = false;
-        }
-    });
-    
+    set_selected(letter_information.button, false);
     generate_and_validate_input_thread();
 }
-
-function add_letter_to_chain(letter_information){
-    current_input_chain.push(letter_information);
-    historical_input_chain.push(letter_information);
-    
-    // set the selected state for the matching object to true
-    // todo refine
-    input_buttons.forEach(value => {
-        if (letter_information.button === value.button){
-            value.selected = true;
-        }
-    });
-    
-    generate_and_validate_input_thread();
-}
-
 function validate_if_board_is_satisfied(words, letters) {
     const all_mask = create_bitmask(letters);
     let combined_word_mask = 0;
@@ -444,21 +434,14 @@ function enter_word() {
         console.log("entered valid word [", current_word.word, "]")
         current_word_chain.push(current_word.word);
 
-        // set the submitted state for the matching object to true
-        // todo refine
-        input_buttons.forEach(value => {
-            current_input_chain.forEach(input => {
-                if (input.button === value.button){
-                    value.submitted = true;
-                    value.selected = false;
-                }
-            })
-        });
-
+        set_submitted_for_chain(current_input_chain);
+        
         solved_state = validate_if_board_is_satisfied(current_word_chain, cached_board_information.letters);
         
         if (solved_state) {
             console.log("board has been solved");
+            set_solved_for_all_letters();
+            handle_button_state();
         } else {
             console.log("board is not solved");
             let last_input = current_input_chain.slice(-1)[0];
@@ -475,6 +458,29 @@ function reset_word() {
     location.reload();
 }
 // ---------------------------------------------------------------------------------------------------------------------    [GUI MANAGEMENT]
+function set_selected(button, selected_state) {
+    const state = by_button.get(button);
+    if (state) {
+        state.selected = !!selected_state
+    }
+}
+function set_submitted_for_chain(input_chain) {
+    for (const input_chain_item of input_chain) {
+        const state = by_button.get(input_chain_item.button);
+        if (state) {
+            state.submitted = true;
+            state.selected = false;
+        }
+    }
+}
+function set_solved_for_all_letters() {
+    for (const [button, state] of by_button.entries()) {
+        state.selected = false;
+        state.submitted = false;
+        state.solved = true;
+    }
+    console.log(by_button)
+}
 function display_current_word() {
     const container = document.getElementById('current_word');
     container.innerHTML = '';
@@ -484,19 +490,24 @@ function display_word_history(){
     const container = document.getElementById('history_word');
     container.innerHTML = '';
     current_word_chain.forEach(value => {
-        container.innerText += `\n${value}`;
+        container.innerText += `[${value}]`;
     })
 }
 function handle_button_state() {
-    input_buttons.forEach(value => {
-        if (value.selected && value.submitted) {
-            value.button.className = 'board-button board-button--submitted-and-selected';
-        } else if (value.selected) {
-            value.button.className = 'board-button board-button--selected';
-        } else if (value.submitted) {
-            value.button.className = 'board-button board-button--submitted';
-        } else {
-            value.button.className = 'board-button';
+    for (const input_button of input_buttons) {
+        input_button.button.classList.remove(
+            'board-button--submitted-and-selected',
+            'board-button--selected',
+            'board-button--submitted'
+        );
+        if (input_button.selected && input_button.submitted) {
+            input_button.button.classList.add('board-button--submitted-and-selected');
+        } else if (input_button.selected) {
+            input_button.button.classList.add('board-button--selected');
+        } else if (input_button.submitted) {
+            input_button.button.classList.add('board-button--submitted');
+        } else if (input_button.solved) {
+            input_button.button.classList.add('board-button--solved');
         }
-    });
+    }
 }

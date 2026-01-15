@@ -5,16 +5,18 @@
     <link rel="stylesheet" href="word_game_styles.css">
     <title>Word Game</title>
 </head>
-<body>
+<body class="body">
     <div class="game_area-wrap">
-        <div id="game_area"></div>
-        <div id="controls">
-            <button id="reset_button">RESET</button>
-            <button id="enter_button">ENTER</button>
+        <div id="game_area">
+            <svg id="board_svg" style="position:absolute;inset:0;pointer-events:none;"></svg>
         </div>
-        <div id="outputs">
-            <div id="current_word"></div>
-            <div id="history_word"></div>
+        <div id="controls">
+            <button id="reset_button" class="gameplay-button">RESET</button>
+            <button id="enter_button" class="gameplay-button">ENTER</button>
+        </div>
+        <div id="outputs" class="readout-area">
+            <div id="current_word" class="current-word"></div>
+            <div id="history_word" class="all-words"></div>
         </div>
     </div>
     <script type = "module" src="/word_game_logic.js"></script>
